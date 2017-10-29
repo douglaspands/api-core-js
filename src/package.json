@@ -1,0 +1,25 @@
+{
+  "name": "core-rest-spa-js",
+  "version": "0.2.0",
+  "description": "Motor de API-REST com SPA em Node.js.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node ./app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/douglaspands/core-rest-spa-js.git"
+  },
+  "author": "@douglaspands",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/douglaspands/core-rest-spa-js/issues"
+  },
+  "homepage": "https://github.com/douglaspands/core-rest-spa-js#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "morgan": "^1.9.0"
+  }
+}
