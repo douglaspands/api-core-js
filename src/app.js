@@ -21,8 +21,8 @@ utilsExpress.scanRoutes(path.join(__dirname, 'rest_api'));
 app.use((req, res, next) => {
 	res.status(404).send('Rota não encontrada!');
 });
-
-const server = app.listen(process.env.PORT || 3000, () => {
+let port = process.env.PORT || 3000;
+const server = app.listen(port, () => {
 	console.log('Servidor disponivel na url: %s%s', 'http://localhost:', server.address().port);
 	utilsExpress.forEachRoute(route => {
 		console.log('Rota registrada: %s [%s]', route.path, route.method);

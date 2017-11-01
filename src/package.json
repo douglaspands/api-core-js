@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node ./app.js",
     "start-dev": "nodemon --exec npm start",
+    "start-prof": "node --prof ./app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
