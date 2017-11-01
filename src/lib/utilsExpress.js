@@ -4,6 +4,15 @@
  * @since 2017-10-29
  */
 'use strict';
+/**
+ * @typedef {object} utilsExpress
+ * @property {function} forEachRoute Lista rotas registradas.
+ * @property {function} scanRoutes Pesquisar rotas disponiveis.
+ */
+/**
+ * @param {object} express Servidor require('express')().
+ * @return {utilsExpress} Retorna funções.
+ */
 module.exports = (express) => {
     /**
      * Executa iteração para cada rota.
