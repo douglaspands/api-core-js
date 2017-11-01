@@ -10,14 +10,14 @@ const path = require('path');
 const morgan = require('morgan');
 
 const app = express();
-const utilsExpress = require('./lib/utilsExpress')(app);
+const utilsExpress = require('./lib/utils-express')(app);
 
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-utilsExpress.scanRoutes(path.join(__dirname, 'rest_api'));
+utilsExpress.scanRoutes(path.join(__dirname, 'rest-apis'));
 app.use((req, res, next) => {
 	res.status(404).send('Rota não encontrada!');
 });
