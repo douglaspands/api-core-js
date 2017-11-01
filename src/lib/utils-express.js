@@ -5,7 +5,7 @@
  */
 'use strict';
 /**
- * @typedef {object} utilsExpress
+ * @typedef {object} utilsExpress Funções de apoio ao framework express.
  * @property {function} forEachRoute Lista rotas registradas.
  * @property {function} scanRoutes Pesquisar rotas disponiveis.
  */
