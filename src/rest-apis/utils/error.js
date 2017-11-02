@@ -15,9 +15,7 @@ function Erro(statusCode, message) {
     this.code = _.isNumber(statusCode)
         ? statusCode
         : 500;
-    this.message = _.isString(message)
-        ? mensagem
-        : '';
+    this.message = message;
 }
 
 module.exports = Erro;
