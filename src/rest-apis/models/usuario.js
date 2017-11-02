@@ -6,6 +6,7 @@
 'use strict';
 const _ = require('lodash');
 const Usuario = require('../domains/usuario');
+const Error = require('../utils/error');
 /**
  * Criar usuario.
  * @param {object} usuario
@@ -16,10 +17,7 @@ function create(usuario) {
         if (_.isObject(usuario)) {
             resolve(new Usuario('', usuario.nome, usuario.idade, usuario.sexo));
         } else {
-            reject({
-                code: 500,
-                message: 'Usuario invalido!'
-            });
+            reject(new Error(500, 'Usuario invalido!'));
         }    
     });
 }
@@ -34,10 +32,7 @@ function update(id, usuario) {
         if (_.isString(id) && _.size(id) > 0 && _.isObject(usuario)) {
             resolve(new Usuario(id, usuario.nome, usuario.idade, usuario.sexo));
         } else {
-            reject({
-                code: 500,
-                message: 'Problema na atualização do usuario!'
-            });
+            reject(new Error(500, 'Problema na atualização do usuario!'));
         } 
     });
 }
@@ -51,10 +46,7 @@ function remove(id) {
         if (_.isString(id) && _.size(id) > 0) {
             resolve({});
         } else {
-            reject({
-                code: 500,
-                message: 'Problema na exclusão do usuario!'
-            });
+            reject(new Error(500, 'Problema na exclusão do usuario!'));
         }            
     });
 }
@@ -68,16 +60,14 @@ function find(id) {
         if (_.isString(id) && _.size(id) > 0) {
             resolve(new Usuario(id, 'João da Silva', 23, 'masculino'));
         } else {
-            reject({
-                code: 204,
-                message: 'Não foi encontrado o usuario!'
-            });
+            reject(new Error(204));
         }            
     });
 }
+
 module.exports = {
-    update,
+    create,
     remove,
     update,
     find
-}
+};
