@@ -9,7 +9,8 @@ const form = require('../forms/form');
 const model = require('../../models/usuario');
 /**
  * Controller da API.
- * @param {object} req Parametros de entrada da API. 
+ * @param {object} req Parametros de entrada da API.
+ * @return {Promise.<Object>} Retorna o objeto Usuario.
  */
 function controller(req) {
     return new Promise((resolve, reject) => {
