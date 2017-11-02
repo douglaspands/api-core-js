@@ -1,0 +1,20 @@
+{
+  "name": "route-v1-usuarios-id-get",
+  "version": "1.0.0",
+  "description": "Consultar usuario",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc --reporter=html --all mocha --full-trace spec ./test/*/*.test.js"
+  },
+  "author": "@douglaspands",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.17.4"
+  },
+  "devDependencies": {
+    "assert": "^1.4.1",
+    "mocha": "^4.0.1",
+    "mock-require": "^2.0.2",
+    "nyc": "^11.2.1"
+  }
+}

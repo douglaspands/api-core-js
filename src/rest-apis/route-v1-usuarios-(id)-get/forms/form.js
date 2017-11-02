@@ -15,8 +15,8 @@ function validator (req) {
     
     let errors = [];
 
-    if (!_.isString(req.params.id) || !(/[0-9]+/g).test(req.params.id)) {
-        errors.push(new Erro('id', req.params.id, 'Campo preenchido de forma incorreta.'));
+    if (!_.isString(req.params.id) || !(/^[0-9]+$/g).test(req.params.id)) {
+        errors.push(new Erro('id', req.params.id, 'Campo preenchido com caracteres não numericos.'));
     }
 
     return errors;
