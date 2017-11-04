@@ -6,9 +6,9 @@
 'use strict';
 const assert = require('assert');
 const _ = require('lodash');
-const form = require('../../forms/form');
+const form = require('../../modules/form');
 
-describe('> ./forms/form.js', function () {
+describe('# ./modules/form.js', function () {
     let i = 0;
     it(++i + ' - Validação sem erros', function (done) {
         let req = {

@@ -4,7 +4,8 @@
   "description": "Consultar usuario",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --reporter=html --all mocha --full-trace spec ./test/*/*.test.js"
+    "test": "mocha --full-trace --timeout 15000 ./test/*/*.test.js",
+    "test-cover": "nyc --reporter=html --all mocha ./test/*/*.test.js"
   },
   "author": "@douglaspands",
   "license": "ISC",

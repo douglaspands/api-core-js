@@ -13,14 +13,19 @@ function route(server) {
     let method = 'get';
     let route = '/v1/usuarios/:id';
     server[method](route, (req, res, next) => {
+        const _ = require('lodash');
         const controller = require('./controllers/controller');
-        controller(req)
-            .then(resultado => {
-                res.status(200).send(resultado);
-            })
-            .catch(erro => {
-                res.status(erro.code).send(erro)
-            });
+        controller(req, (erro, resultado) => {
+            if (erro) {
+                res.status(erro.code).send(erro);
+            } else {
+                if (_.isEmpty(resultado.data)) {
+                    res.sendStatus(204);
+                } else {
+                    res.status(200).send(resultado);
+                }
+            }
+        });
     });
 };
 module.exports = route;

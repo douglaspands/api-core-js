@@ -5,29 +5,28 @@
  */
 'use strict';
 const _ = require('lodash');
-const form = require('../forms/form');
+const form = require('../modules/form');
 const model = require('../../models/usuario');
+const Error = require('../../utils/error');
 /**
  * Controller da API.
  * @param {object} req Parametros de entrada da API.
- * @return {Promise.<Object>} Retorna o objeto Usuario.
+ * @param {function} done Callback de finalização.
+ * @return {void}
  */
-function controller(req) {
-    return new Promise((resolve, reject) => {
-        let errors = form(req);
-        if (_.size(errors) > 0) {
-            const Error = require('../../utils/error');
-            return reject(new Error(400, errors));
-        }
-        model.find(req.params.id)
-            .then(resultado => {
-                resolve({
-                    data: resultado
-                });
-            })
-            .catch(erro => {
-                reject(erro);
+function controller(req, done) {
+    let errors = form(req);
+    if (_.size(errors) > 0) {
+        return done(new Error(400, errors));
+    }
+    model.find(req.params.id, (erro, resultado) => {
+        if (erro) {
+            done(erro);
+        } else {
+            done(null, {
+                data: resultado
             });
+        }
     });
-}
+};
 module.exports = controller;
