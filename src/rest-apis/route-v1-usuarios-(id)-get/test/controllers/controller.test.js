@@ -5,20 +5,8 @@
  */
 'use strict';
 const assert = require('assert');
-const mock = require('mock-require');
 const _ = require('lodash');
 let i = 0;
-
-mock('../../models/usuario', {
-    find: (id, callback) => {
-        console.log('#id:', id);
-        if (id === '12345') {
-            callback(null, { id: id, nome: 'João da Silva', idade: 23, sexo: 'masculino' });
-        } else {
-            callback({ code: 204 });
-        }
-    }
-});
 
 describe('# ./controllers/controller.js', () => {
 
@@ -38,15 +26,16 @@ describe('# ./controllers/controller.js', () => {
     it(++i + ' - Execução com sucesso', (done) => {
         let req = {
             params: {
-                id: '12345'
+                id: '00001'
             }
         };
         let controller = require('../../controllers/controller');
         controller(req, (erro, resultado) => {
-            assert.equal(resultado.data.id, '12345', '1');
-            assert.equal(resultado.data.nome, 'João da Silva', '2');
-            assert.equal(resultado.data.idade, 23, '3');
-            assert.equal(resultado.data.sexo, 'masculino', '4');
+            assert.equal(erro, null, '1');
+            assert.equal(resultado.data.id, '00001', '2');
+            assert.equal(resultado.data.nome, 'João da Silva', '3');
+            assert.equal(resultado.data.idade, 23, '4');
+            assert.equal(resultado.data.sexo, 'masculino', '5');
             done();
         })
     });
