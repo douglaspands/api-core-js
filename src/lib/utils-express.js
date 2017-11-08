@@ -51,8 +51,9 @@ module.exports = (express) => {
                         let method = (_.get(api, 'route.method', '')).toLowerCase();
                         let uri = (_.get(api, 'route.route', '')).toLowerCase();
                         express[method](uri, (req, res) => {
-                            let context = new (require('./context'))(folderRoute, method, uri, req, res);
-                            api.controller(context.request(), context.response, context);
+                            let context = new (require('./context'))(folderRoute, method, uri, req);
+                            let response = new (require('./response'))(res, null);
+                            api.controller(context.request(), response, context);
                         });
                     } catch (err) {
                         console.log(err);

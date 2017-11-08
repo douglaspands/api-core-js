@@ -26,14 +26,17 @@ function response(res, log) {
             ret.body = retorno;
         } else {
             ret.status = 500;
-            ret.body = 'Erro no retorno da API';
+            ret.body = {
+                code: 'Send error',
+                message: 'Erro no retorno da API'
+            };
         }
         res.status(ret.status).send(ret.body);
-        if (_.isObject(log) && _.isFunction(log.push)) {
-            logs.push('response', ret);
+        if (_.isObject(log) && _.isFunction(log.insert)) {
+            log.insert('response', ret);
             // Geração de log no console.
             console.log('==========================')
-            console.log(JSON.stringify(logs, null, 4));
+            console.log(JSON.stringify(log.get(), null, 4));
             console.log('==========================');
         }
     }
@@ -41,3 +44,4 @@ function response(res, log) {
         send
     }
 }
+module.exports = response;

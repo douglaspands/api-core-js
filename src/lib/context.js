@@ -253,38 +253,6 @@ function Context(folder, method, uri, xReq) {
      * @param {object} retorno Retorno da api.
      * @return {void}
      */
-    function response() {
-        return {
-            send: (status, retorno) => {
-                let ret = {
-                    status: 500,
-                    body: {}
-                }
-                if (_.isNumber(status) && _.isObject(retorno)) {
-                    ret.status = status;
-                    ret.body = retorno;
-                }
-                if (!process.env['NODE_ENV']) {
-                    logs.push({
-                        index: ++(indice),
-                        code: 'response',
-                        message: ret
-                    });
-                }
-                res.status(ret.status).send(ret.body);
-                // Geração de log no console.
-                console.log('==========================')
-                console.log(JSON.stringify(logs, null, 4));
-                console.log('==========================');
-            }
-        }
-    }
-    /**
-     * Response da api.
-     * @param {number} status Status code da api.
-     * @param {object} retorno Retorno da api.
-     * @return {void}
-     */
     function request() {
         if (!process.env['NODE_ENV']) {
             logs.push({
