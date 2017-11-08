@@ -4,11 +4,11 @@
  * @since 2017-10-29
  */
 'use strict';
-module.exports = (server) => {
-    let method = 'get';
-    let route = '/';
-    server[method](route, (req, res, next) => {
+module.exports.route = {
+    method: 'get',
+    route: '/'
+}
+module.exports.controller = (req, res, context) => {
         let index = path.join(__dirname, '../../public/index.html');
-        res.status(200).sendFile(index);
-    });
+        context.res.status(200).sendFile(index);
 };

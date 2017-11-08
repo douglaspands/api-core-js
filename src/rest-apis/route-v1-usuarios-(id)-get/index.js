@@ -5,27 +5,31 @@
  */
 'use strict';
 /**
+ * Registro da Rota 
+ */
+module.exports.route = {
+    method: 'get',
+    route: '/v1/usuarios/:id'
+};
+/**
  * Registro da rota.
  * @param {object} server Objeto do framework http.
  * @return {void}
  */
-function route(server) {
-    let method = 'get';
-    let route = '/v1/usuarios/:id';
-    server[method](route, (req, res, next) => {
-        const _ = require('lodash');
-        const controller = require('./controllers/controller');
-        controller(req, (erro, resultado) => {
-            if (erro) {
-                res.status(erro.code).send(erro);
+module.exports.controller = (req, res, context) => {
+    const _ = context.require('lodash');
+    const processor = context.processor('processor2');
+    processor(req, context, (erro, resultado) => {
+        if (erro) {
+            res.send(erro.code, erro);
+        } else {
+            if (_.isEmpty(resultado)) {
+                res.send(204, {});
             } else {
-                if (_.isEmpty(resultado.data)) {
-                    res.sendStatus(204);
-                } else {
-                    res.status(200).send(resultado);
-                }
+                res.send(200, {
+                    data: resultado
+                });
             }
-        });
+        }
     });
 };
-module.exports = route;

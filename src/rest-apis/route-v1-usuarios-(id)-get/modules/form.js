@@ -4,15 +4,16 @@
  * @since 2017-11-01
  */
 'use strict';
-const _ = require('lodash');
-const Erro = require('../../utils/formError');
 /**
  * Validar parametros de entrada.
  * @param {object} req Objeto com parametros de entrada.
  * @return {Array.<Object>}
  */
-function validator (req) {
-    
+function validator (req, context) {
+
+    const _ = context.require('lodash');
+    const Erro = context.util('formError');
+        
     let errors = [];
 
     if (!_.isString(req.params.id) || !(/^[0-9]+$/g).test(req.params.id)) {

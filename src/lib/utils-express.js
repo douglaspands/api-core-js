@@ -4,6 +4,7 @@
  * @since 2017-10-29
  */
 'use strict';
+const _ = require('lodash');
 /**
  * @typedef {object} utilsExpress Funções de apoio ao framework express.
  * @property {function} forEachRoute Lista rotas registradas.
@@ -35,18 +36,27 @@ module.exports = (express) => {
     /**
      * Procura arquivo index.js no segundo nivel de diretorios.
      * @param {string} folder Diretorio que será pesquisado no segundo nivel o arquivo index.js
-     * @param {function} callback Funcao que sera executada a cada rota encontrada.
      * @return {void}
      */
-    function scanRoutes(folder, callback) {
+    function scanRoutes(folder) {
         const fs = require('fs');
         const path = require('path');
         return (fs.readdirSync(folder)).forEach(route => {
             if ((/^(route-)(.)+$/g).test(route)) {
+                let folderRoute = path.join(folder, route);
                 let controller = path.join(folder, route, 'index.js');
                 if (fs.existsSync(controller)) {
-                    if (typeof callback === 'function') callback(controller);
-                    else require(controller)(express);
+                    let api = require(controller);
+                    try {
+                        let method = (_.get(api, 'route.method', '')).toLowerCase();
+                        let uri = (_.get(api, 'route.route', '')).toLowerCase();
+                        express[method](uri, (req, res) => {
+                            let context = new (require('./context'))(folderRoute, method, uri, req, res);
+                            api.controller(context.request(), context.response, context);
+                        });
+                    } catch (err) {
+                        console.log(err);
+                    }
                 }
             }
         });

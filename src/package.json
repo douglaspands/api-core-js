@@ -4,7 +4,7 @@
   "description": "Motor de API-REST com SPA em Node.js.",
   "main": "app.js",
   "scripts": {
-    "start": "node ./app.js",
+    "start": "NODE_ENV=develop node ./app.js",
     "start-dev": "nodemon --exec npm start",
     "start-prof": "node --prof ./app.js",
     "test": "echo \"Error: Sem especificação de teste!\" && exit 1"

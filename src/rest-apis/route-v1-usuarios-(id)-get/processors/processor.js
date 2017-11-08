@@ -4,18 +4,19 @@
  * @since 2017-11-01
  */
 'use strict';
-const _ = require('lodash');
-const form = require('../modules/form');
-const model = require('../../models/usuario');
-const Error = require('../../utils/error');
 /**
  * Controller da API.
  * @param {object} req Parametros de entrada da API.
+ * @param {object} context Objeto de contexto.
  * @param {function} done Callback de finalização.
  * @return {void}
  */
-function controller(req, done) {
-    let errors = form(req);
+function controller(req, context, done) {
+    const _ = context.require('lodash');
+    const form = context.module('form');
+    const model = context.model('usuario');
+    const Error = context.util('error');    
+    let errors = form(req, context);
     if (_.size(errors) > 0) {
         return done(new Error(400, errors));
     }
@@ -23,9 +24,7 @@ function controller(req, done) {
         if (erro) {
             done(erro);
         } else {
-            done(null, {
-                data: resultado
-            });
+            done(null, resultado);
         }
     });
 };
