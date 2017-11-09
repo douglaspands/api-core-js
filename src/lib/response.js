@@ -21,27 +21,50 @@ function response(res, log) {
      */
     function send(status, retorno) {
         let ret = {};
-        if (_.isNumber(status) && _.gte(status, 200) && _.lt(status, 600) && _.isObject(retorno)) {
+        if (_.isNumber(status) && _.gte(status, 200) && _.lt(status, 600) && _.isObjectLike(retorno)) {
             ret.status = status;
             ret.body = retorno;
+            res.status(ret.status).send(ret.body);
+            if (log) log.push('Response', ret);
         } else {
             ret.status = 500;
             ret.body = {
                 code: 'Send error',
                 message: 'Erro no retorno da API'
             };
+            if (log) log.push('Response Error', ret);
         }
-        res.status(ret.status).send(ret.body);
-        if (_.isObject(log) && _.isFunction(log.insert)) {
-            log.insert('response', ret);
-            // Geração de log no console.
-            console.log('==========================')
-            console.log(JSON.stringify(log.get(), null, 4));
-            console.log('==========================');
+    }
+    /**
+     * Envia arquivo html da api.
+     * @param {number} status Status code da api.
+     * @param {string} filePath Arquivo html que será retornado.
+     * @return {void}
+     */
+    function sendFile(status, filePath) {
+        let ret = {};
+        if (_.isNumber(status) && _.gte(status, 200) && _.lt(status, 600) && _.isString(filePath) && !_.isEmpty(filePath)) {
+            ret.status = status;
+            ret.filePath = retorno;
+            try {
+                res.status(ret.status).sendFile(ret.filePath);
+                if (log) log.push('Response', ret);
+            } catch (error) {
+                if (log) log.push('Response Error', error);
+            }
+        } else {
+            ret.status = 500;
+            ret.body = {
+                code: 'Send error',
+                message: 'Erro no retorno da API'
+            };
+            res.status(ret.status).send(ret.body);
+            if (log) log.push('Response Error', ret);
         }
     }
     return {
-        send
+        send,
+        sendFile
     }
 }
 module.exports = response;

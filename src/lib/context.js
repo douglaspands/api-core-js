@@ -12,18 +12,9 @@ const path = require('path');
  * @param {string} diretorio Diretorio da api
  * @return {object} Retorna objeto de funções.
  */
-function Context(folder, method, uri, xReq) {
-    let erros = [];
+function Context(folder, log) {
     let indice = 0;
-    let logs = [];
     let diretorio = '';
-    let metodo = method;
-    let rota = uri;
-    let req = {
-        headers: _.get(xReq, 'headers', {}),
-        query: _.get(xReq, 'query', {}),
-        body: _.get(xReq, 'body', {})
-    }
     if (_.isString(folder) && fs.existsSync(folder) && fs.statSync(folder).isDirectory()) {
         diretorio = folder;
     }
@@ -247,30 +238,12 @@ function Context(folder, method, uri, xReq) {
         }
         return mod;
     }
-    /**
-     * Response da api.
-     * @param {number} status Status code da api.
-     * @param {object} retorno Retorno da api.
-     * @return {void}
-     */
-    function request() {
-        if (!process.env['NODE_ENV']) {
-            logs.push({
-                index: ++(indice),
-                code: 'request',
-                message: req
-            });
-        }
-        return req;
-    }
-
     return {
         require,
         processor,
         util,
         model,
         module,
-        request
     }
 }
 module.exports = Context;

@@ -9,6 +9,7 @@ module.exports.route = {
     route: '/'
 }
 module.exports.controller = (req, res, context) => {
+        const path = context.require('path');
         let index = path.join(__dirname, '../../public/index.html');
-        context.res.status(200).sendFile(index);
+        res.sendFile(200, index);
 };

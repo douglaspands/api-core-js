@@ -41,19 +41,34 @@ module.exports = (express) => {
     function scanRoutes(folder) {
         const fs = require('fs');
         const path = require('path');
-        return (fs.readdirSync(folder)).forEach(route => {
+        (fs.readdirSync(folder)).forEach(route => {
             if ((/^(route-)(.)+$/g).test(route)) {
-                let folderRoute = path.join(folder, route);
-                let controller = path.join(folder, route, 'index.js');
+                const folderRoute = path.join(folder, route);
+                const controller = path.join(folder, route, 'index.js');
                 if (fs.existsSync(controller)) {
-                    let api = require(controller);
+                    const api = require(controller);
+                    const method = (_.get(api, 'route.method', '')).toLowerCase();
+                    const uri = (_.get(api, 'route.route', '')).toLowerCase();
                     try {
-                        let method = (_.get(api, 'route.method', '')).toLowerCase();
-                        let uri = (_.get(api, 'route.route', '')).toLowerCase();
                         express[method](uri, (req, res) => {
-                            let context = new (require('./context'))(folderRoute, method, uri, req);
-                            let response = new (require('./response'))(res, null);
-                            api.controller(context.request(), response, context);
+                            const log = require('./log');
+                            const context = new (require('./context'))(folderRoute, log);
+                            const response = new (require('./response'))(res, log);
+                            log.push('Request', {
+                                method: method,
+                                uri: uri,
+                                headers: req.headers,
+                                params: req.params,
+                                query: req.query,
+                                body: req.body
+                            });
+                            try {
+                                api.controller(req, response, context);
+                            } catch (error) {
+                                log.push('Error', error);
+                            }
+                            // Geração de log no console.
+                            log.console();
                         });
                     } catch (err) {
                         console.log(err);
