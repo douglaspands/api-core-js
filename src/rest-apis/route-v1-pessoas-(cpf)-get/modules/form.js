@@ -16,8 +16,8 @@ function validator (req, context) {
         
     let errors = [];
 
-    if (!_.isString(req.params.id) || !(/^[0-9]+$/g).test(req.params.id)) {
-        errors.push(new FormError('id', req.params.id, 'Campo preenchido com caracteres não numericos.'));
+    if (!_.isString(req.params.cpf) || !(/^[0-9]+$/g).test(req.params.cpf)) {
+        errors.push(new FormError('cpf', req.params.cpf, 'CPF Invalido!'));
     }
 
     return errors;

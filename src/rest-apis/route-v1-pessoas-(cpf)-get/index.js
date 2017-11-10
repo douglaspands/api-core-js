@@ -9,7 +9,7 @@
  */
 module.exports.route = {
     method: 'get',
-    route: '/v1/usuarios/:id'
+    route: '/v1/pessoas/:cpf'
 };
 /**
  * Registro da rota.

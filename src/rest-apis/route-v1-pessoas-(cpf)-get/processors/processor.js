@@ -14,18 +14,20 @@
 function controller(req, context, done) {
     const _ = context.require('lodash');
     const form = context.module('form');
-    const model = context.model('usuario');
     const Error = context.util('error');    
+    
     let errors = form(req, context);
+    
     if (_.size(errors) > 0) {
         return done(new Error(400, errors));
     }
-    model.find(req.params.id, (erro, resultado) => {
-        if (erro) {
-            done(erro);
-        } else {
-            done(null, resultado);
-        }
-    });
+
+    done(null, [{
+            nome: 'Pedro',
+            idade: 20
+        }]
+    );
+
+    
 };
 module.exports = controller;

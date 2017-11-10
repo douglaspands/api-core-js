@@ -34,7 +34,7 @@ function Context(folder, log) {
     * @param {string} modulo Modulo requisitado.
     * @return {object} Retorna modulo solicitado.
     */
-    function module(modulo) {
+    function requireModule(modulo) {
         try {
             var mod = require(modulo);
             logger('require', modulo);
@@ -123,11 +123,11 @@ function Context(folder, log) {
         return getModule(modulo, tipo);
     }
     return {
-        localModule,
-        processor,
-        util,
-        model,
-        module,
+        module: localModule,
+        processor: processor,
+        util: util,
+        model: model,
+        require: requireModule
     }
 }
 module.exports = Context;
