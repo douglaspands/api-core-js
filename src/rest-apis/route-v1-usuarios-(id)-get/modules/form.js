@@ -11,7 +11,7 @@
  */
 function validator (req, context) {
 
-    const _ = context.require('lodash');
+    const _ = context.module('lodash');
     const Erro = context.util('formError');
         
     let errors = [];

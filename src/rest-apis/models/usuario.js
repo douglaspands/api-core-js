@@ -59,8 +59,8 @@ function remove(id) {
  * @return {void}
  */
 function find(id, done) {
-    if (_.isString(id) && id === '00001') {
-        done(null, new Usuario(id, 'João da Silva', 23, 'masculino'));
+    if ((/^[0-9]+$/g).test(id) && parseInt(id, 10) === 1) {
+        done(null, new Usuario(_.padStart(parseInt(id, 10), 5, '0'), 'João da Silva', 23, 'masculino'));
     } else {
         done(new Error(204));
     }

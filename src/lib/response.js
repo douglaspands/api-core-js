@@ -45,7 +45,7 @@ function response(res, log) {
         let ret = {};
         if (_.isNumber(status) && _.gte(status, 200) && _.lt(status, 600) && _.isString(filePath) && !_.isEmpty(filePath)) {
             ret.status = status;
-            ret.filePath = retorno;
+            ret.filePath = filePath;
             try {
                 res.status(ret.status).sendFile(ret.filePath);
                 if (log) log.push('Response', ret);

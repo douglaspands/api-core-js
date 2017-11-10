@@ -10,7 +10,7 @@ const _ = require('lodash');
  * Função de geração de Log.
  * @return {object} Retorna objeto com funções.
  */
-function Log(){
+function Log() {
     let registros = [];
     /**
      * Inclui Log.
@@ -21,21 +21,15 @@ function Log(){
     function push(code, log) {
         let registro = {
             index: _.size(registros) + 1,
-            timestamp: moment().format('YYYY.MM.DD.HH:MM:Sss'),
+            timestamp: moment().format('YYYY.MM.DD_HH:MM:Sss'),
         };
+        if (_.isString(code) && !_.isEmpty(code)) registro.code = code;
         switch (true) {
-            case (_.isString(code) && !_.isEmpty(code)):
-                registro.code = code;
-            case (_.includes(['string', 'number'], typeof log)):
-                registro.log = log;
-                break;
             case (_.isPlainObject(log)):
                 registro = _.merge(registro, log);
                 break;
-            case (_.isArray(log)):
-                registro.log = log;
-                break;
             default:
+                registro.log = log;
                 break;
         }
         registros.push(registro);
@@ -51,18 +45,18 @@ function Log(){
      * Console da Log Completa.
      * @return {array} Retorna lista com todas as logs incluidas.
      */
-    function console() {
-        console.log('==========================')
+    function display() {
+        console.log('==========================');
         console.log(JSON.stringify(registros, null, 4));
         console.log('==========================');
     }
     return {
         push,
         getAll,
-        console
+        display
     }
 }
 /**
  * Modulos exportados.
  */
-module.exports = new Log();
+module.exports = Log;

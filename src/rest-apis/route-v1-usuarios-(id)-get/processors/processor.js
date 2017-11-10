@@ -12,8 +12,8 @@
  * @return {void}
  */
 function controller(req, context, done) {
-    const _ = context.require('lodash');
-    const form = context.module('form');
+    const _ = context.module('lodash');
+    const form = context.localModule('form');
     const model = context.model('usuario');
     const Error = context.util('error');    
     let errors = form(req, context);

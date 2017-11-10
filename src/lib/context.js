@@ -18,40 +18,60 @@ function Context(folder, log) {
     if (_.isString(folder) && fs.existsSync(folder) && fs.statSync(folder).isDirectory()) {
         diretorio = folder;
     }
-    if (!process.env['NODE_ENV']) {
-        logs.push({
-            index: ++(indice),
-            code: 'request',
-            message: {
-                method: metodo,
-                route: rota
-            }
-        });
-    };
     /**
- * Require de modulos com geração de Log.
- * @param {string} modulo Modulo requisitado.
- * @return {object} Retorna modulo solicitado.
- */
-    function require(modulo) {
-        let mod;
+     * Gerador de log
+     * @param {string} code codigo da mensagem
+     * @param {any} message mensagem que será gravado
+     * @return {void}
+     */
+    function logger(code, message) {
+        if (log) log.push(code, message);
+    }
+    /**
+    * Require de modulos com geração de Log.
+    * @param {string} modulo Modulo requisitado.
+    * @return {object} Retorna modulo solicitado.
+    */
+    function module(modulo) {
         try {
-            mod = require(modulo);
-            if (!process.env['NODE_ENV']) {
-                logs.push({
-                    index: ++(indice),
-                    code: 'require',
-                    message: modulo
-                });
-            }
+            var mod = require(modulo);
+            logger('require', modulo);
         } catch (e) {
-            if (!process.env['NODE_ENV']) {
-                logs.push({
-                    index: ++(indice),
-                    code: 'require error',
-                    message: e
-                });
+            logger('require error', e);
+        }
+        return mod;
+    }
+    /**
+     * Obter modulos.
+     * @param {string} modulo Nome do modulo.
+     * @param {string} tipo Tipo do modulo.
+     * @param {string} nivel Nivel do diretorio.
+     * @return {object} Objeto requisitado pelo modulo.
+     */
+    function getModule(modulo, tipo, nivel = '', semNivel = false) {
+        let mod = null;
+        if ((semNivel && !nivel) || _.size(nivel) < 4) {
+            let files = [
+                path.join(diretorio, nivel, tipo, modulo + '.js'),
+                path.join(diretorio, nivel, tipo, modulo + '.json'),
+            ]
+            switch (true) {
+                case fs.existsSync(files[0]):
+                    // mod = require(files[0].replace(/(.js|.json)/g, ''));
+                    mod = require(files[0]);
+                    logger(('Require ' + tipo), files[0]);
+                    break;
+                case fs.existsSync(files[1]):
+                    // mod = require(files[1].replace(/(.js|.json)/g, ''));
+                    mod = require(files[1]);
+                    logger(('Require ' + tipo), files[1]);
+                    break;
+                default:
+                    mod = getModule(modulo, tipo, (nivel + '..'));
+                    break;
             }
+        } else {
+            logger(('Require ' + tipo + ' error'), modulo);
         }
         return mod;
     }
@@ -60,42 +80,9 @@ function Context(folder, log) {
      * @param {string} modulo Modulo requisitado.
      * @return {object} Retorna modulo solicitado.
      */
-    function module(modulo) {
-        let mod, tipo = 'modules';
-        switch (true) {
-            case fs.existsSync(path.join(diretorio, tipo, modulo + '.js')):
-            case fs.existsSync(path.join(diretorio, tipo, modulo + '.json')):
-                mod = require(path.join(diretorio, tipo, modulo));
-                if (!process.env['NODE_ENV']) {
-                    logs.push({
-                        index: ++(indice),
-                        code: 'Module found',
-                        message: modulo
-                    });
-                }
-                break;
-            case fs.existsSync(path.join(diretorio, '..', tipo, modulo + '.js')):
-            case fs.existsSync(path.join(diretorio, '..', tipo, modulo + '.json')):
-                mod = require(path.join(diretorio, '..', tipo, modulo));
-                if (!process.env['NODE_ENV']) {
-                    logs.push({
-                        index: ++(indice),
-                        code: 'Module found',
-                        message: modulo
-                    });
-                }
-                break;
-            default:
-                if (!process.env['NODE_ENV']) {
-                    logs.push({
-                        index: ++(indice),
-                        code: 'Module not found',
-                        message: modulo
-                    });
-                }
-                break;
-        }
-        return mod;
+    function localModule(modulo) {
+        let tipo = 'modules';
+        return getModule(modulo, tipo);
     }
     /**
      * Require de model com geração de Log.
@@ -103,39 +90,8 @@ function Context(folder, log) {
      * @return {object} Retorna modulo solicitado.
      */
     function model(modulo) {
-        let mod, tipo = 'models';
-        switch (true) {
-            case fs.existsSync(path.join(diretorio, tipo, modulo + '.js')):
-                mod = require(path.join(diretorio, tipo, modulo));
-                if (!process.env['NODE_ENV']) {
-                    logs.push({
-                        index: ++(indice),
-                        code: 'Model found',
-                        message: modulo
-                    });
-                }
-                break;
-            case fs.existsSync(path.join(diretorio, '..', tipo, modulo + '.js')):
-                mod = require(path.join(diretorio, '..', tipo, modulo));
-                if (!process.env['NODE_ENV']) {
-                    logs.push({
-                        index: ++(indice),
-                        code: 'Model found',
-                        message: modulo
-                    });
-                }
-                break;
-            default:
-                if (!process.env['NODE_ENV']) {
-                    logs.push({
-                        index: ++(indice),
-                        code: 'Model not found',
-                        message: modulo
-                    });
-                }
-                break;
-        }
-        return mod;
+        let tipo = 'models';
+        return getModule(modulo, tipo);
     }
     /**
      * Require de processor com geração de Log.
@@ -143,69 +99,17 @@ function Context(folder, log) {
      * @return {object} Retorna modulo solicitado.
      */
     function processor(modulo) {
-        let mod, tipo = 'processors';
-        switch (true) {
-            case fs.existsSync(path.join(diretorio, tipo, modulo + '.js')):
-                mod = require(path.join(diretorio, tipo, modulo));
-                if (!process.env['NODE_ENV']) {
-                    logs.push({
-                        index: ++(indice),
-                        code: 'Processor found',
-                        message: modulo
-                    });
-                }
-                break;
-            default:
-                if (!process.env['NODE_ENV']) {
-                    logs.push({
-                        index: ++(indice),
-                        code: 'Processor not found',
-                        message: modulo
-                    });
-                }
-                break;
-        }
-        return mod;
+        let tipo = 'processors';
+        return getModule(modulo, tipo, '', true);
     }
     /**
      * Require de service com geração de Log.
      * @param {string} modulo Modulo requisitado.
      * @return {object} Retorna modulo solicitado.
      */
-    function model(modulo) {
-        let mod, tipo = 'services';
-        switch (true) {
-            case fs.existsSync(path.join(diretorio, tipo, modulo + '.js')):
-                mod = require(path.join(diretorio, tipo, modulo));
-                if (!process.env['NODE_ENV']) {
-                    logs.push({
-                        index: ++(indice),
-                        code: 'Service found',
-                        message: modulo
-                    });
-                }
-                break;
-            case fs.existsSync(path.join(diretorio, '..', tipo, modulo + '.js')):
-                mod = require(path.join(diretorio, '..', tipo, modulo));
-                if (!process.env['NODE_ENV']) {
-                    logs.push({
-                        index: ++(indice),
-                        code: 'Service found',
-                        message: modulo
-                    });
-                }
-                break;
-            default:
-                if (!process.env['NODE_ENV']) {
-                    logs.push({
-                        index: ++(indice),
-                        code: 'Service not found',
-                        message: modulo
-                    });
-                }
-                break;
-        }
-        return mod;
+    function service(modulo) {
+        let tipo = 'services';
+        return getModule(modulo, tipo);
     }
     /**
      * Require de util com geração de Log.
@@ -213,33 +117,11 @@ function Context(folder, log) {
      * @return {object} Retorna modulo solicitado.
      */
     function util(modulo) {
-        let mod, tipo = 'utils';
-        switch (true) {
-            case fs.existsSync(path.join(diretorio, '..', tipo, modulo + '.js')):
-            case fs.existsSync(path.join(diretorio, '..', tipo, modulo + '.json')):
-                mod = require(path.join(diretorio, '..', tipo, modulo));
-                if (!process.env['NODE_ENV']) {
-                    logs.push({
-                        index: ++(indice),
-                        code: 'utils found',
-                        message: modulo
-                    });
-                }
-                break;
-            default:
-                if (!process.env['NODE_ENV']) {
-                    logs.push({
-                        index: ++(indice),
-                        code: 'Utils not found',
-                        message: modulo
-                    });
-                }
-                break;
-        }
-        return mod;
+        let tipo = 'utils';
+        return getModule(modulo, tipo);
     }
     return {
-        require,
+        localModule,
         processor,
         util,
         model,

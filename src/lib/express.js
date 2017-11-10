@@ -4,24 +4,42 @@
  * @since 2017-10-29
  */
 'use strict';
+const express = require('express');
+const bodyParser = require('body-parser');
 const _ = require('lodash');
+const fs = require('fs');
+const path = require('path');
+const Log = require('./log');
+const Context = require('./context');
+const Response = require('./response');
+const config = require('../config/server');
 /**
- * @typedef {object} utilsExpress Funções de apoio ao framework express.
- * @property {function} forEachRoute Lista rotas registradas.
- * @property {function} scanRoutes Pesquisar rotas disponiveis.
- */
-/**
- * @param {object} express Servidor require('express')().
+ * @param {string} dir diretorio do servidor.
  * @return {utilsExpress} Retorna funções.
  */
-module.exports = (express) => {
+module.exports = (dir) => {
+
+    let server;
+    let diretorioServidor = dir;
+
+    /**
+     * Criar o servidor.
+     * @return {object} Objeto do express().
+     */
+    function create() {
+        server = express();
+        server.use(express.static(path.join(__dirname, 'public')));
+        server.use(bodyParser.urlencoded({ extended: false }));
+        server.use(bodyParser.json());
+        return server; 
+    }
     /**
      * Executa iteração para cada rota.
      * @param {function} callback Funcao que sera executada a cada rota encontrada.
      * @return {array} Lista de rotas registradas.
      */
     function forEachRoute(callback) {
-        return (express._router.stack || []).reduce((routes, o) => {
+        return (server._router.stack || []).reduce((routes, o) => {
             if (o.route && o.route.path) {
                 let route = {
                     path: o.route.path,
@@ -35,12 +53,10 @@ module.exports = (express) => {
     }
     /**
      * Procura arquivo index.js no segundo nivel de diretorios.
-     * @param {string} folder Diretorio que será pesquisado no segundo nivel o arquivo index.js
      * @return {void}
      */
-    function scanRoutes(folder) {
-        const fs = require('fs');
-        const path = require('path');
+    function scanRoutes() {
+        const folder = path.join(diretorioServidor, config.PASTA_APIS);
         (fs.readdirSync(folder)).forEach(route => {
             if ((/^(route-)(.)+$/g).test(route)) {
                 const folderRoute = path.join(folder, route);
@@ -50,13 +66,14 @@ module.exports = (express) => {
                     const method = (_.get(api, 'route.method', '')).toLowerCase();
                     const uri = (_.get(api, 'route.route', '')).toLowerCase();
                     try {
-                        express[method](uri, (req, res) => {
-                            const log = require('./log');
-                            const context = new (require('./context'))(folderRoute, log);
-                            const response = new (require('./response'))(res, log);
+                        server[method](uri, (req, res) => {
+                            const log = new Log();
+                            const context = new Context(folderRoute, log);
+                            const response = new Response(res, log);
                             log.push('Request', {
                                 method: method,
-                                uri: uri,
+                                uri: req.path,
+                                folderRoute: folderRoute,
                                 headers: req.headers,
                                 params: req.params,
                                 query: req.query,
@@ -65,10 +82,13 @@ module.exports = (express) => {
                             try {
                                 api.controller(req, response, context);
                             } catch (error) {
-                                log.push('Error', error);
+                                log.push('Error', {
+                                    code: error.code,
+                                    message: error.message
+                                });
                             }
                             // Geração de log no console.
-                            log.console();
+                            log.display();
                         });
                     } catch (err) {
                         console.log(err);
@@ -76,9 +96,27 @@ module.exports = (express) => {
                 }
             }
         });
+        server.use((req, res, next) => {
+            res.status(404).send('Rota não encontrada!');
+        });        
     }
+    /**
+     * Iniciando o servidor.
+     * @param {number} port Numero da porta de conexão.
+     * @param {function} callback Função que será executada apos iniciar o servidor.
+     * @return {object} Retorno resultado do inicio do servidor. 
+     */
+    function start(port, callback) {
+        let porta = (_.isNumber(port))? port : 3000;
+        return server.listen(porta, callback);
+    }
+    /**
+     * Objeto de retorno.
+     */
     return {
-        forEachRoute: forEachRoute,
-        scanRoutes: scanRoutes
+        start,
+        create,
+        forEachRoute,
+        scanRoutes
     }
 }
