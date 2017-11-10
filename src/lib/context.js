@@ -17,6 +17,8 @@ function Context(folder, log) {
     let diretorio = '';
     if (_.isString(folder) && fs.existsSync(folder) && fs.statSync(folder).isDirectory()) {
         diretorio = folder;
+    } else {
+        throw Error('É necessario passar o nome da pasta da api no contructor do modulo \'Context\'.');
     }
     /**
      * Gerador de log
