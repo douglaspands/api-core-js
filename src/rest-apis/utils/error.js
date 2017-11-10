@@ -11,11 +11,38 @@ const _ = require('lodash');
  * @param {string} message Mensagem de erro
  * @return {Erro} Class de erro. 
  */
-function Erro(statusCode, message) {
-    this.code = _.isNumber(statusCode)
+function errorSend(statusCode, message) {
+    let retorno = {};
+    retorno.code = _.isNumber(statusCode)
         ? statusCode
         : 500;
-    this.message = message;
+    retorno.message = message;
+    return retorno;
 }
-
-module.exports = Erro;
+/**
+ * Classe de erro.
+ * @param {string} nomeCampo 
+ * @param {string} valor 
+ * @param {string} mensagem
+ * @return {Erro} Class de erro. 
+ */
+function errorForm(nomeCampo, valor, mensagem) {
+    let retorno = {};
+    retorno.field = _.isString(nomeCampo)
+        ? nomeCampo
+        : '';
+    retorno.value = _.isString(valor)
+        ? valor
+        : '';
+    retorno.message = _.isString(mensagem)
+        ? mensagem
+        : '';
+    return retorno;
+}
+/**
+ * Modulos de exportação.
+ */
+module.exports = {
+    send: errorSend,
+    form: errorForm
+};

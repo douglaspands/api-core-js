@@ -12,12 +12,12 @@
 function validator (req, context) {
 
     const _ = context.require('lodash');
-    const FormError = context.util('formError');
+    const error = context.util('error');
         
     let errors = [];
 
     if (!_.isString(req.params.id) || !(/^[0-9]+$/g).test(req.params.id)) {
-        errors.push(new FormError('id', req.params.id, 'Campo preenchido com caracteres não numericos.'));
+        errors.push(error.form('id', req.params.id, 'Campo preenchido com caracteres não numericos.'));
     }
 
     return errors;

@@ -14,7 +14,7 @@ let i = 0;
 describe('# ./processors/processor.js', () => {
 
     beforeEach(() => {
-        context = new Context(path.join(__dirname, '..'));
+        context = new Context(path.join(__dirname, '../..'));
     });
 
     it(++i + ' - Validação com erro', (done) => {
