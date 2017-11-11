@@ -11,7 +11,7 @@
  */
 const _ = require('lodash');
 const Usuario = require('../domains/usuario');
-const Error = require('../utils/error');
+const error = require('../utils/error');
 /**
  * Criar usuario.
  * @param {object} usuario
@@ -22,7 +22,7 @@ function create(usuario, done) {
     if (_.isObject(usuario)) {
         done(null, new Usuario('', usuario.nome, usuario.idade, usuario.sexo));
     } else {
-        done(new Error(500, 'Usuario invalido!'));
+        done(error.create(500, 'Usuario invalido!'));
     }
 }
 /**
@@ -36,7 +36,7 @@ function update(id, usuario, done) {
     if (_.isString(id) && _.size(id) > 0 && _.isObject(usuario)) {
         done(null, new Usuario(id, usuario.nome, usuario.idade, usuario.sexo));
     } else {
-        done(new Error(500, 'Problema na atualização do usuario!'));
+        done(error.create(500, 'Problema na atualização do usuario!'));
     }
 };
 /**
@@ -49,7 +49,7 @@ function remove(id) {
     if (_.isString(id) && _.size(id) > 0) {
         done(null, {});
     } else {
-        reject(new Error(500, 'Problema na exclusão do usuario!'));
+        reject(error.create(500, 'Problema na exclusão do usuario!'));
     }
 }
 /**
@@ -62,7 +62,7 @@ function find(id, done) {
     if ((/^[0-9]+$/g).test(id) && parseInt(id, 10) === 1) {
         done(null, new Usuario(_.padStart(parseInt(id, 10), 5, '0'), 'João da Silva', 23, 'masculino'));
     } else {
-        done(new Error(204));
+        done(error.create(204));
     }
 }
 module.exports = {

@@ -19,20 +19,17 @@ function response(res, log) {
      * @param {object} retorno Retorno da api.
      * @return {void}
      */
-    function send(status, retorno) {
+    function send(status, retorno = {}) {
         let ret = {};
         if (_.isNumber(status) && _.gte(status, 200) && _.lt(status, 600) && _.isObjectLike(retorno)) {
             ret.status = status;
             ret.body = retorno;
             res.status(ret.status).send(ret.body);
-            if (log) log.push('Response', ret);
+            if (log) log.push('response', ret);
         } else {
             ret.status = 500;
-            ret.body = {
-                code: 'Send error',
-                message: 'Erro no retorno da API'
-            };
-            if (log) log.push('Response Error', ret);
+            ret.body = { code: 'send error', message: 'Erro no retorno da API!' };
+            if (log) log.push('response error', ret);
         }
     }
     /**
@@ -48,18 +45,15 @@ function response(res, log) {
             ret.filePath = filePath;
             try {
                 res.status(ret.status).sendFile(ret.filePath);
-                if (log) log.push('Response', ret);
+                if (log) log.push('response', ret);
             } catch (error) {
-                if (log) log.push('Response Error', error);
+                if (log) log.push('response error', error);
             }
         } else {
             ret.status = 500;
-            ret.body = {
-                code: 'Send error',
-                message: 'Erro no retorno da API'
-            };
+            ret.body = { code: 'send error', message: 'Erro no retorno da API!' };
             res.status(ret.status).send(ret.body);
-            if (log) log.push('Response Error', ret);
+            if (log) log.push('response error', ret);
         }
     }
     return {

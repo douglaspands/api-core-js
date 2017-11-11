@@ -34,7 +34,7 @@ function Context(folder, log) {
     * @param {string} modulo Modulo requisitado.
     * @return {object} Retorna modulo solicitado.
     */
-    function requireModule(modulo) {
+    function getRequire(modulo) {
         try {
             var mod = require(modulo);
             logger('require', modulo);
@@ -61,19 +61,19 @@ function Context(folder, log) {
                 case fs.existsSync(files[0]):
                     // mod = require(files[0].replace(/(.js|.json)/g, ''));
                     mod = require(files[0]);
-                    logger(('Require ' + tipo), files[0]);
+                    logger(('require ' + tipo), files[0]);
                     break;
                 case fs.existsSync(files[1]):
                     // mod = require(files[1].replace(/(.js|.json)/g, ''));
                     mod = require(files[1]);
-                    logger(('Require ' + tipo), files[1]);
+                    logger(('require ' + tipo), files[1]);
                     break;
                 default:
                     mod = getModule(modulo, tipo, (nivel + '..'));
                     break;
             }
         } else {
-            logger(('Require ' + tipo + ' error'), modulo);
+            logger(('require ' + tipo + ' error'), modulo);
         }
         return mod;
     }
@@ -82,7 +82,7 @@ function Context(folder, log) {
      * @param {string} modulo Modulo requisitado.
      * @return {object} Retorna modulo solicitado.
      */
-    function localModule(modulo) {
+    function getLocalModule(modulo) {
         let tipo = 'modules';
         return getModule(modulo, tipo);
     }
@@ -91,7 +91,7 @@ function Context(folder, log) {
      * @param {string} modulo Modulo requisitado.
      * @return {object} Retorna modulo solicitado.
      */
-    function model(modulo) {
+    function getModel(modulo) {
         let tipo = 'models';
         return getModule(modulo, tipo);
     }
@@ -100,7 +100,7 @@ function Context(folder, log) {
      * @param {string} modulo Modulo requisitado.
      * @return {object} Retorna modulo solicitado.
      */
-    function processor(modulo) {
+    function getProcessor(modulo) {
         let tipo = 'processors';
         return getModule(modulo, tipo, '', true);
     }
@@ -109,7 +109,7 @@ function Context(folder, log) {
      * @param {string} modulo Modulo requisitado.
      * @return {object} Retorna modulo solicitado.
      */
-    function service(modulo) {
+    function getService(modulo) {
         let tipo = 'services';
         return getModule(modulo, tipo);
     }
@@ -118,16 +118,26 @@ function Context(folder, log) {
      * @param {string} modulo Modulo requisitado.
      * @return {object} Retorna modulo solicitado.
      */
-    function util(modulo) {
+    function getUtil(modulo) {
         let tipo = 'utils';
         return getModule(modulo, tipo);
     }
+    /**
+     * Require de domain com geração de Log.
+     * @param {string} modulo Modulo requisitado.
+     * @return {object} Retorna modulo solicitado.
+     */
+    function getDomain(modulo) {
+        let tipo = 'domains';
+        return getModule(modulo, tipo);
+    }
     return {
-        module: localModule,
-        processor: processor,
-        util: util,
-        model: model,
-        require: requireModule
+        module: getLocalModule,
+        processor: getProcessor,
+        util: getUtil,
+        model: getModel,
+        domain: getDomain,
+        require: getRequire
     }
 }
 module.exports = Context;

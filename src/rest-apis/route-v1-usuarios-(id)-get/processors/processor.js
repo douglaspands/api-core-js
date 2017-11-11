@@ -12,15 +12,20 @@
  * @return {void}
  */
 function controller(req, context, done) {
+
+    // Modulos
     const _ = context.require('lodash');
     const form = context.module('form');
     const model = context.model('usuario');
     const error = context.util('error');    
 
-    let errors = form(req, context);
-    if (_.size(errors) > 0) {
-        return done(error.send(400, errors));
+    // Validar parametros de entrada
+    const errorForm = form(req, context);
+    if (!_.isEmpty(errorForm)) {
+        return done(error.create(400, errorForm));
     }
+
+    // Pesquisando usuario pelo id
     model.find(req.params.id, (erro, resultado) => {
         if (erro) {
             done(erro);
@@ -29,4 +34,5 @@ function controller(req, context, done) {
         }
     });
 };
+
 module.exports = controller;

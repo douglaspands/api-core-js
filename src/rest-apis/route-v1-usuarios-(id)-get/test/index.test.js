@@ -25,13 +25,13 @@ describe('# ./index.js', () => {
         done();
     });
 
-    it(++i + ' - Verificação da rota', (done) => {
+    it(++i + ' - Executando com erro 500', (done) => {
 
         context.processor = (modulo) => {
             switch (modulo) {
                 case 'processor':
                     return (arg1, arg2, callback) => {
-                        callback({code: 500, mensagem: 'Erro'});
+                        callback({ code: 500, message: { code: 'erro', message: 'erro teste'} });
                     }
                 default:
                     return null;
@@ -39,19 +39,85 @@ describe('# ./index.js', () => {
         }
 
         let res = {
-            send: (code, mensagem) => {
+            send: (code, message) => {
                 assert.equal(code, 500, '1');
-                assert.equal(mensagem.code, 500, '2');
-                assert.equal(mensagem.mensagem, 'Erro', '3');        
+                assert.equal(message.code, 'erro', '2');
+                assert.equal(message.message, 'erro teste', '3');
                 done();
             }
         }
-        
+
         let req = {
             params: {
                 id: 1
             }
-        } ;
+        };
+
+        index.controller(req, res, context);
+    });
+
+    it(++i + ' - Executando com sucesso - statusCode 204', (done) => {
+
+        context.processor = (modulo) => {
+            switch (modulo) {
+                case 'processor':
+                    return (arg1, arg2, callback) => {
+                        callback(null, {});
+                    }
+                default:
+                    return null;
+            }
+        }
+
+        let res = {
+            send: (code, message) => {
+                assert.equal(code, 204, '1');
+                assert.equal(_.isEmpty(message), true, '2');
+                done();
+            }
+        }
+
+        let req = {
+            params: {
+                id: 2
+            }
+        };
+
+        index.controller(req, res, context);
+    });
+
+    it(++i + ' - Executando com sucesso - statusCode 200', (done) => {
+
+        context.processor = (modulo) => {
+            switch (modulo) {
+                case 'processor':
+                    return (arg1, arg2, callback) => {
+                        callback(null, {
+                            id: '00001',
+                            nome: 'Joao Silva',
+                            idade: 20
+                        });
+                    }
+                default:
+                    return null;
+            }
+        }
+
+        let res = {
+            send: (code, message) => {
+                assert.equal(code, 200, '1');
+                assert.equal(message.data.id, '00001', '2');
+                assert.equal(message.data.nome, 'Joao Silva', '3');
+                assert.equal(message.data.idade, 20, '4');
+                done();
+            }
+        }
+
+        let req = {
+            params: {
+                id: '001'
+            }
+        };
 
         index.controller(req, res, context);
     });

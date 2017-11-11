@@ -23,9 +23,9 @@ module.exports.controller = (req, res, context) => {
     
     processor(req, context, (erro, resultado) => {
         if (erro) {
-            res.send(erro.code, erro);
+            res.send(erro.code, erro.message);
         } else {
-            if (_.get(resultado, 'data', null) && _.isEmpty(resultado.data)) {
+            if (_.isEmpty(resultado)) {
                 res.send(204, {});
             } else {
                 res.send(200, {

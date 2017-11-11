@@ -1,12 +1,12 @@
 /**
- * @file Class de erro da API.
+ * @file Modulo com tratamentos de erro da API.
  * @author @douglaspands
  * @since 2017-11-01
  */
 'use strict';
 const _ = require('lodash');
 /**
- * Class de erro.
+ * Modulo de criação de erro para envio.
  * @param {number} statusCode statusCode http para o erro. 
  * @param {string} message Mensagem de erro
  * @return {Erro} Class de erro. 
@@ -20,7 +20,19 @@ function errorSend(statusCode, message) {
     return retorno;
 }
 /**
- * Classe de erro.
+ * Modulo de criação de erro generico.
+ * @param {straing|number} code Codigo de erro. 
+ * @param {string} message Mensagem de erro.
+ * @return {object} Objeto de retorno. 
+ */
+function errorCreate(code, message) {
+    let retorno = {};
+    retorno.code = (_.includes(['string', 'number'], typeof code)) ? code : '';
+    retorno.message = message;
+    return retorno;
+}
+/**
+ * Mensagem de erro de campo na validação.
  * @param {string} nomeCampo 
  * @param {string} valor 
  * @param {string} mensagem
@@ -40,9 +52,24 @@ function errorForm(nomeCampo, valor, mensagem) {
     return retorno;
 }
 /**
+ * Mensagem de erro de campo na validação.
+ * @param {array} listaErros 
+ * @return {object} Mensagem de erro. 
+ */
+function errorValidator(listaErros = []) {
+    let message = {};
+    if (_.isArray(listaErros) && !_.isEmpty(listaErros)) {
+        message.code = 'validation error';
+        message.message = listaErros;
+    }
+    return message;
+}
+/**
  * Modulos de exportação.
  */
 module.exports = {
+    create: errorCreate,
     send: errorSend,
-    form: errorForm
+    form: errorForm,
+    validator: errorValidator
 };

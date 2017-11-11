@@ -13,14 +13,14 @@ function validator (req, context) {
 
     const _ = context.require('lodash');
     const error = context.util('error');
-        
-    let errors = [];
+    
+    let listaErros = [];
 
     if (!_.isString(req.params.id) || !(/^[0-9]+$/g).test(req.params.id)) {
-        errors.push(error.form('id', req.params.id, 'Campo preenchido com caracteres não numericos.'));
+        listaErros.push(error.form('id', req.params.id, 'Campo preenchido com caracteres não numericos.'));
     }
 
-    return errors;
+    return error.validator(listaErros);
 
 }
 module.exports = validator;

@@ -82,9 +82,14 @@ module.exports = (dir) => {
                             try {
                                 api.controller(req, response, context);
                             } catch (error) {
-                                log.push('Error', {
+                                response.send(500, {
+                                    code: 'Erro interno',
+                                    message: 'Favor contatar o administrador do sistema!'
+                                });
+                                log.push('error', {
                                     code: error.code,
-                                    message: error.message
+                                    message: error.message,
+                                    stack: error.stack
                                 });
                             }
                             // Geração de log no console.

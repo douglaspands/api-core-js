@@ -25,7 +25,7 @@ describe('# ./modules/form.js', function () {
             }
         };
         let errors = form(req, context);
-        assert.equal(_.size(errors), 0, '1');
+        assert.equal(_.isEmpty(errors), true, '1');
         done();
     });
     it(++i + ' - Validação com erros', function (done) {
@@ -35,7 +35,7 @@ describe('# ./modules/form.js', function () {
             }
         };
         let errors = form(req, context);
-        assert.equal(_.size(errors), 1, '1');
+        assert.equal(_.size(errors.message), 1, '1');
         done();
     });
 });
