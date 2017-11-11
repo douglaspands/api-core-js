@@ -59,7 +59,9 @@ function remove(id) {
  * @return {void}
  */
 function find(id, done) {
-    if ((/^[0-9]+$/g).test(id) && parseInt(id, 10) === 1) {
+    if ((/^[0-9]+$/g).test(id) && parseInt(id, 10) > 99999) {
+        done(error.create(422, { code: 'erro semantico', message: 'ID contem mais de 5 digitos.' }));
+    } else if ((/^[0-9]+$/g).test(id) && parseInt(id, 10) === 1) {
         done(null, new Usuario(_.padStart(parseInt(id, 10), 5, '0'), 'João da Silva', 23, 'masculino'));
     } else {
         done(error.create(204));

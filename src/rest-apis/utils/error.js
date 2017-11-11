@@ -8,8 +8,8 @@ const _ = require('lodash');
 /**
  * Modulo de criação de erro para envio.
  * @param {number} statusCode statusCode http para o erro. 
- * @param {string} message Mensagem de erro
- * @return {Erro} Class de erro. 
+ * @param {any} message Mensagem de erro
+ * @return {object} Class de erro. 
  */
 function errorSend(statusCode, message) {
     let retorno = {};
