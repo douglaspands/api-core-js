@@ -1,22 +1,30 @@
 /**
- * @file Cobertura de testes do modulo de forms
+ * @file Cobertura de testes do modulo de forms.s
  * @author @douglaspands
  * @since 2017-11-01
  */
 'use strict';
+const path = require('path');
 const assert = require('assert');
 const _ = require('lodash');
-const form = require('../../modules/form');
+const Context = require('../../../../lib/context');
+let context, form;
+let i = 0;
 
 describe('# ./modules/form.js', function () {
-    let i = 0;
+
+    before(() => {
+        context = new Context(path.join(__dirname, '../..'));
+        form = context.module('form');
+    });
+
     it(++i + ' - Validação sem erros', function (done) {
         let req = {
             params: {
                 id: '12345'
             }
         };
-        let errors = form(req);
+        let errors = form(req, context);
         assert.equal(_.size(errors), 0, '1');
         done();
     });
@@ -26,7 +34,7 @@ describe('# ./modules/form.js', function () {
                 id: '12345AHSGHJAGSJGAS'
             }
         };
-        let errors = form(req);
+        let errors = form(req, context);
         assert.equal(_.size(errors), 1, '1');
         done();
     });

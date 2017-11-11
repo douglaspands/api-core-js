@@ -17,8 +17,10 @@ module.exports.route = {
  * @return {void}
  */
 module.exports.controller = (req, res, context) => {
+    
     const _ = context.require('lodash');
     const processor = context.processor('processor');
+    
     processor(req, context, (erro, resultado) => {
         if (erro) {
             res.send(erro.code, erro);

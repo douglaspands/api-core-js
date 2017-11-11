@@ -1,5 +1,5 @@
 /**
- * @file Cobertura de testes da controller.
+ * @file Cobertura de testes da processor.
  * @author @douglaspands
  * @since 2017-11-01
  */
