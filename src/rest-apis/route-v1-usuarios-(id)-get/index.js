@@ -1,5 +1,5 @@
 /**
- * @file Obter lista de usuarios.
+ * @file Consultar usuario.
  * @author @douglaspands
  * @since 2017-10-29
  */
