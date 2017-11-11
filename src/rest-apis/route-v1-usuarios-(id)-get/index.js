@@ -12,8 +12,10 @@ module.exports.route = {
     route: '/v1/usuarios/:id'
 };
 /**
- * Registro da rota.
- * @param {object} server Objeto do framework http.
+ * Controller da rota..
+ * @param {object} req Objeto que contem parametros de entrada da api.
+ * @param {object} res Objeto com modulos de envio de dados.
+ * @param {object} context Objeto de contexto para apis.
  * @return {void}
  */
 module.exports.controller = (req, res, context) => {
