@@ -28,7 +28,7 @@ function response(res, log) {
             if (log) log.push('response', ret);
         } else {
             ret.status = 500;
-            ret.body = { code: 'send error', message: 'Erro no retorno da API!' };
+            ret.body = { code: 'send error', message: 'Parametros passado para envio da mensagem invalido!' };
             if (log) log.push('response error', ret);
         }
     }
@@ -51,14 +51,15 @@ function response(res, log) {
             }
         } else {
             ret.status = 500;
-            ret.body = { code: 'send error', message: 'Erro no retorno da API!' };
+            ret.body = { code: 'send error', message: 'Parametros passado para envio da mensagem invalido!' };
             res.status(ret.status).send(ret.body);
             if (log) log.push('response error', ret);
         }
     }
     return {
         send,
-        sendFile
+        sendFile,
+        express: res
     }
 }
 module.exports = response;
