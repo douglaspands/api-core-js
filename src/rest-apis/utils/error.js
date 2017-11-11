@@ -13,7 +13,7 @@ const _ = require('lodash');
  */
 function errorSend(statusCode, message) {
     let retorno = {};
-    retorno.code = _.isNumber(statusCode)
+    retorno.status = _.isNumber(statusCode)
         ? statusCode
         : 500;
     retorno.message = message;
@@ -27,7 +27,7 @@ function errorSend(statusCode, message) {
  */
 function errorCreate(code, message) {
     let retorno = {};
-    retorno.code = (_.includes(['string', 'number'], typeof code)) ? code : '';
+    retorno.status = (_.includes(['string', 'number'], typeof code)) ? code : '';
     retorno.message = message;
     return retorno;
 }

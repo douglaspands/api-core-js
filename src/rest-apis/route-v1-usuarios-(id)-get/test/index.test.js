@@ -31,7 +31,7 @@ describe('# ./index.js', () => {
             switch (modulo) {
                 case 'processor':
                     return (arg1, arg2, callback) => {
-                        callback({ code: 500, message: { code: 'erro', message: 'erro teste'} });
+                        callback({ status: 500, message: { code: 'erro', message: 'erro teste'} });
                     }
                 default:
                     return null;

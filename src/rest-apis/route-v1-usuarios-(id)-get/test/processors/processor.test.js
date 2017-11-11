@@ -25,7 +25,7 @@ describe('# ./processors/processor.js', () => {
         };
         let controller = context.processor('processor');
         controller(req, context, (erro, resultado) => {
-            assert.equal(erro.code, 400, '1');
+            assert.equal(erro.status, 400, '1');
             done();
         })
     });
