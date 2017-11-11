@@ -106,9 +106,9 @@ module.exports = (dir) => {
      * @param {function} callback Função que será executada apos iniciar o servidor.
      * @return {object} Retorno resultado do inicio do servidor. 
      */
-    function start(port, callback) {
-        let porta = (_.isNumber(port))? port : 3000;
-        return server.listen(porta, callback);
+    function start(callback) {
+        const porta = process.env.PORT || config.PORTA || 3000;
+        return server.listen(porta, (callback)? callback(porta) : null);
     }
     /**
      * Objeto de retorno.
