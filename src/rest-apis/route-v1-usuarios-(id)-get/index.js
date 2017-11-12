@@ -49,7 +49,7 @@ module.exports.controller = (req, res, context) => {
 
     processor(req, context, (erro, resultado) => {
         if (erro) {
-            res.send(erro.status, erro.message);
+            res.send(erro);
         } else {
             if (_.isEmpty(resultado)) {
                 res.send(message.noContent());
