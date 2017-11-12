@@ -73,14 +73,25 @@ function response(res, log) {
             if (log) log.push('response error', 'Só é possivel executar uma vez o modulo \'response\'!');
         }
     }
+    /**
+     * Verifica se o coando 'send' já foi executado.
+     * @return {boolean} Retorna 'true' se já foi executado.
+     */
     function verifySendExecute() {
         return onlyOnce;
+    }
+    /**
+     * Retorna objeto de response nativo do express.js.
+     * @return {object} Retorna objeto de response nativo do express.js
+     */
+    function express() {
+        return res;
     }
     return {
         send,
         sendFile,
         verifySendExecute,
-        express: res
-    }
+        express
+    };
 }
 module.exports = response;

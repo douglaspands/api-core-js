@@ -35,7 +35,7 @@ describe('# ./modules/form.js', function () {
             }
         };
         let errors = form(req, context);
-        assert.equal(_.size(errors.message), 1, '1');
+        assert.equal(_.size(errors), 1, '1');
         done();
     });
 });

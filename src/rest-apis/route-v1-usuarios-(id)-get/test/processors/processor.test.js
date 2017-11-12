@@ -17,19 +17,6 @@ describe('# ./processors/processor.js', () => {
         context = new Context(path.join(__dirname, '../..'));
     });
 
-    it(++i + ' - Validação com erro', (done) => {
-        let req = {
-            params: {
-                id: 'AAAAA'
-            }
-        };
-        let controller = context.processor('processor');
-        controller(req, context, (erro, resultado) => {
-            assert.equal(erro.status, 400, '1');
-            done();
-        })
-    });
-
     it(++i + ' - Execução com sucesso', (done) => {
         let req = {
             params: {
@@ -39,16 +26,18 @@ describe('# ./processors/processor.js', () => {
         context.model = (nome) => {
             switch (nome) {
                 case 'usuario':
-                    return {
-                        find: (arg, callback) => {
-                            callback(null, {
-                                id: '00001',
-                                nome: 'João da Silva',
-                                idade: 23,
-                                sexo: 'masculino'
-                            });
-                        }
-                    };
+                    return () => {
+                        return {
+                            find: (arg, callback) => {
+                                callback(null, {
+                                    id: '00001',
+                                    nome: 'João da Silva',
+                                    idade: 23,
+                                    sexo: 'masculino'
+                                });
+                            }
+                        };
+                    }
                 default:
                     return null;
             }
@@ -73,13 +62,15 @@ describe('# ./processors/processor.js', () => {
         context.model = (nome) => {
             switch (nome) {
                 case 'usuario':
-                    return {
-                        find: (arg, callback) => {
-                            callback({
-                                code: 204
-                            });
-                        }
-                    };
+                    return () => {
+                        return {
+                            find: (arg, callback) => {
+                                callback({
+                                    code: 204
+                                });
+                            }
+                        };
+                    }
                 default:
                     return null;
             }

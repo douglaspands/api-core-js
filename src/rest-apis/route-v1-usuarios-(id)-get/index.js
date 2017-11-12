@@ -8,9 +8,11 @@
  * Registro da Rota
  * @return {object} Retorna o metodo e a uri da rota.
  */
-module.exports.route = {
-    method: 'get',
-    uri: '/v1/usuarios/:id'
+module.exports.route = () => {
+    return {
+        method: 'get',
+        uri: '/v1/usuarios/:id'
+    }
 };
 /**
  * Modulo para validar os parametros de entrada.
@@ -22,16 +24,18 @@ module.exports.route = {
 module.exports.validator = (req, res, context) => {
 
     // Modulos
-    const _ = context.require('lodash');    
- 
+    const _ = context.require('lodash');
+
     const form = context.module('form');
     const message = context.message();
-    
+
     // Validar parametros de entrada
-    const errorForm = form(req, context);
-    if (!_.isEmpty(errorForm)) {
-        res.send(message.badRequest(errorForm));
+    const errorList = form(req, context);
+    if (!_.isEmpty(errorList)) {
+        res.send(message.badRequest(errorList));
     }
+    
+    return errorList;
 
 }
 /**
