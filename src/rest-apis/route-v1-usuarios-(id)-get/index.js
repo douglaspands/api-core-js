@@ -5,11 +5,12 @@
  */
 'use strict';
 /**
- * Registro da Rota 
+ * Registro da Rota
+ * @return {object} Retorna o metodo e a uri da rota.
  */
 module.exports.route = {
-    method: 'get',
-    route: '/v1/usuarios/:id'
+        method: 'get',
+        uri: '/v1/usuarios/:id'
 };
 /**
  * Controller da rota..

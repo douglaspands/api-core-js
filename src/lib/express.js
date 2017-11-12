@@ -7,11 +7,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const _ = require('lodash');
-const fs = require('fs');
 const path = require('path');
 const Log = require('./log');
 const Context = require('./context');
 const Response = require('./response');
+const utils = require('./utils');
 const config = require('../config/server');
 /**
  * @param {string} dir diretorio do servidor.
@@ -31,7 +31,7 @@ module.exports = (dir) => {
         server.use(express.static(path.join(__dirname, 'public')));
         server.use(bodyParser.urlencoded({ extended: false }));
         server.use(bodyParser.json());
-        return server; 
+        return server;
     }
     /**
      * Executa iteração para cada rota.
@@ -43,7 +43,7 @@ module.exports = (dir) => {
             if (o.route && o.route.path) {
                 let route = {
                     path: o.route.path,
-                    method: (Object.keys(o.route.methods)[0]).toUpperCase()
+                    method: Object.keys(o.route.methods)[0]
                 };
                 if (typeof callback === 'function') callback(route);
                 routes.push(route);
@@ -55,55 +55,82 @@ module.exports = (dir) => {
      * Procura arquivo index.js no segundo nivel de diretorios.
      * @return {void}
      */
-    function scanRoutes() {
-        const folder = path.join(diretorioServidor, config.PASTA_APIS);
-        (fs.readdirSync(folder)).forEach(route => {
-            if ((/^(route-)(.)+$/g).test(route)) {
-                const folderRoute = path.join(folder, route);
-                const controller = path.join(folder, route, 'index.js');
-                if (fs.existsSync(controller)) {
-                    const api = require(controller);
-                    const method = (_.get(api, 'route.method', '')).toLowerCase();
-                    const uri = (_.get(api, 'route.route', '')).toLowerCase();
-                    try {
-                        server[method](uri, (req, res) => {
-                            const log = new Log();
-                            const context = new Context(folderRoute, log);
-                            const response = new Response(res, log);
-                            log.push('Request', {
-                                method: method,
-                                uri: req.path,
-                                folderRoute: folderRoute,
-                                headers: req.headers,
-                                params: req.params,
-                                query: req.query,
-                                body: req.body
-                            });
-                            try {
-                                api.controller(req, response, context);
-                            } catch (error) {
-                                response.send(500, {
-                                    code: 'Erro interno',
-                                    message: 'Favor contatar o administrador do sistema!'
-                                });
-                                log.push('error', {
-                                    code: error.code,
-                                    message: error.message,
-                                    stack: error.stack
-                                });
-                            }
-                            // Geração de log no console.
-                            log.display();
+    function registerRoutes() {
+
+        const listaRotas = utils.scanRoutes(path.join(diretorioServidor, config.PASTA_APIS));
+
+        _.forEach(listaRotas, (rota) => {
+
+            const api = require(rota);
+            let method, uri; 
+
+            if (_.get(api, 'route', null) && (_.isPlainObject(api.route) || _.isFunction(api.route))) {
+
+                if (_.isFunction(api.route)) {
+                    method = (_.get(api.route(), 'method', '')).toLowerCase();
+                    uri = (_.get(api.route(), 'uri', '') ? api.route().uri: _.get(api.route(), 'route', '')).toLowerCase();
+                } else {
+                    method = (_.get(api.route, 'method', '')).toLowerCase();
+                    uri = (_.get(api.route, 'uri', '') ? api.route.uri: _.get(api.route, 'route', '')).toLowerCase();
+                }
+
+                try {
+                    server[method](uri, (req, res) => {
+                        const log = new Log();
+                        const context = new Context(rota, log);
+                        const response = new Response(res, log);
+                        
+                        log.push('request', {
+                            method: method,
+                            uri: req.path,
+                            folder: rota,
+                            headers: req.headers,
+                            params: req.params,
+                            query: req.query,
+                            body: req.body
                         });
-                    } catch (err) {
-                        console.log(err);
-                    }
+                        
+                        const listaFuncoes = _.without(Object.keys(api), 'route');
+
+                        if (_.size(listaFuncoes) < 1) {
+                            response.send(501, {
+                                code: 'Not Implemented',
+                                message: 'Favor contatar o administrador do sistema!'
+                            });
+                        } else {
+                            _.forEach(listaFuncoes, (fn) => {
+                                if (response.verifySendExecute()) {
+                                    return false;
+                                } else {
+                                    try {
+                                        api[fn](req, response, context);
+                                    } catch (error) {
+                                        response.send(500, {
+                                            code: 'Erro interno',
+                                            message: 'Favor contatar o administrador do sistema!'
+                                        });
+                                        log.push('error', {
+                                            code: error.code,
+                                            message: error.message,
+                                            stack: error.stack
+                                        });
+                                    }    
+                                }
+                            });    
+                        }
+                        // Geração de log no console.
+                        log.display();
+                    });
+                } catch (err) {
+                    console.log(err);
                 }
             }
         });
+
         server.use((req, res, next) => {
             res.status(404).send('Rota não encontrada!');
-        });        
+        });
+
     }
     /**
      * Iniciando o servidor.
@@ -113,7 +140,7 @@ module.exports = (dir) => {
      */
     function start(callback) {
         const porta = process.env.PORT || config.PORTA || 3000;
-        return server.listen(porta, (callback)? callback(porta) : null);
+        return server.listen(porta, (callback) ? callback(porta) : null);
     }
     /**
      * Objeto de retorno.
@@ -122,6 +149,6 @@ module.exports = (dir) => {
         start,
         create,
         forEachRoute,
-        scanRoutes
+        registerRoutes
     }
 }

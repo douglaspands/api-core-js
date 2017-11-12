@@ -6,9 +6,8 @@
 'use strict';
 const server = require('./lib/express')(__dirname);
 
-const app = server.create();
-server.scanRoutes();
-
+server.create();
+server.registerRoutes();
 server.start((port) => {
 	console.log('Servidor disponivel na url: %s%s', 'http://localhost:', port);
 	server.forEachRoute(route => {

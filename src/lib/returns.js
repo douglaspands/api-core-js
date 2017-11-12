@@ -58,3 +58,18 @@ function status200(body, optional) {
     }
     return new Response(200, retorno);
 }
+/**
+ * Prepara retorno do com status 400.
+ * @param {array} body Mensagem de retorno
+ * @return {Response} Retorna resposta.  
+ */
+function status400(body) {
+    let retorno = {
+        code = 'validation error',
+        message = []
+    };
+    if (_.isArray(body) && !_.isEmpty(body)) {
+        retorno.message = body;
+    }
+    return new Response(400, retorno);
+}
