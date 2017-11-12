@@ -20,7 +20,7 @@ function validator (req, context) {
         listaErros.push(error.form('id', req.params.id, 'Campo preenchido com caracteres não numericos.'));
     }
 
-    return error.validator(listaErros);
+    return listaErros;
 
 }
 module.exports = validator;

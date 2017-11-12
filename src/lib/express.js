@@ -79,6 +79,7 @@ module.exports = (dir) => {
                         const log = new Log();
                         const context = new Context(rota, log);
                         const response = new Response(res, log);
+                        const message = context.message();
                         
                         log.push('request', {
                             method: method,
@@ -93,10 +94,7 @@ module.exports = (dir) => {
                         const listaFuncoes = _.without(Object.keys(api), 'route');
 
                         if (_.size(listaFuncoes) < 1) {
-                            response.send(501, {
-                                code: 'Not Implemented',
-                                message: 'Favor contatar o administrador do sistema!'
-                            });
+                            response.send(message.notImplemented('Favor contatar o administrador do sistema!'));
                         } else {
                             _.forEach(listaFuncoes, (fn) => {
                                 if (response.verifySendExecute()) {
@@ -105,10 +103,7 @@ module.exports = (dir) => {
                                     try {
                                         api[fn](req, response, context);
                                     } catch (error) {
-                                        response.send(500, {
-                                            code: 'Erro interno',
-                                            message: 'Favor contatar o administrador do sistema!'
-                                        });
+                                        response.send(message.internalError('Favor contatar o administrador do sistema!'));
                                         log.push('error', {
                                             code: error.code,
                                             message: error.message,

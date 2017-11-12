@@ -22,16 +22,22 @@ function response(res, log) {
      */
     function send(status, retorno = {}) {
         if (!onlyOnce) {
-            let ret = {};
-            if (_.isNumber(status) && _.gte(status, 200) && _.lt(status, 600) && _.isObjectLike(retorno)) {
-                ret.status = status;
-                ret.body = retorno;
+            if (arguments['0'].constructor.name === 'Response') {
+                let ret = arguments['0'];
                 res.status(ret.status).send(ret.body);
                 if (log) log.push('response', ret);
             } else {
-                ret.status = 500;
-                ret.body = { code: 'send error', message: 'Parametros passado para envio da mensagem invalido!' };
-                if (log) log.push('response error', ret);
+                let ret = {};
+                if (_.isNumber(status) && _.gte(status, 200) && _.lt(status, 600) && _.isObjectLike(retorno)) {
+                    ret.status = status;
+                    ret.body = retorno;
+                    res.status(ret.status).send(ret.body);
+                    if (log) log.push('response', ret);
+                } else {
+                    ret.status = 500;
+                    ret.body = { code: 'send error', message: 'Parametros passado para envio da mensagem invalido!' };
+                    if (log) log.push('response error', ret);
+                }
             }
             onlyOnce = true;
         } else {

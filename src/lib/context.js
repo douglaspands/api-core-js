@@ -131,13 +131,17 @@ function Context(folder, log) {
         let tipo = 'domains';
         return getModule(modulo, tipo);
     }
+    function getMessages() {
+        return require('./messages');
+    }
     return {
         module: getLocalModule,
         processor: getProcessor,
         util: getUtil,
         model: getModel,
         domain: getDomain,
-        require: getRequire
+        require: getRequire,
+        message: getMessages
     }
 }
 module.exports = Context;
