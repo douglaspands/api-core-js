@@ -118,7 +118,7 @@ function status422(message) {
         message: ''
     };
     if (_.isString(message) && !_.isEmpty(message)) {
-        retorno.message = body;
+        retorno.message = message;
     }
     return new Response(422, retorno);
 }

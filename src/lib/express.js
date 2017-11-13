@@ -10,6 +10,7 @@ const _ = require('lodash');
 const path = require('path');
 const Log = require('./log');
 const Context = require('./context');
+const Request = require('./request');
 const Response = require('./response');
 const utils = require('./utils');
 const config = require('../config/server');
@@ -76,20 +77,15 @@ module.exports = (dir) => {
 
                 try {
                     server[method](uri, (req, res) => {
+                        
                         const log = new Log();
                         const context = new Context(rota, log);
+                        
+                        req.routeDirectory = rota;
+                        const request = new Request(req, log);
+                        
                         const response = new Response(res, log);
                         const message = context.message();
-
-                        log.push('request', {
-                            method: method,
-                            uri: req.path,
-                            folder: rota,
-                            headers: req.headers,
-                            params: req.params,
-                            query: req.query,
-                            body: req.body
-                        });
 
                         const listaFuncoes = _.without(Object.keys(api), 'route');
 
@@ -101,23 +97,19 @@ module.exports = (dir) => {
                                     return false;
                                 } else {
                                     try {
-                                        api[fn](req, response, context);
+                                        api[fn](request, response, context);
                                     } catch (error) {
                                         response.send(message.internalError('Favor contatar o administrador do sistema!'));
-                                        log.push('error', {
-                                            code: error.code,
-                                            message: error.message,
-                                            stack: error.stack
-                                        });
+                                        log.pushError(error);
                                     }
                                 }
                             });
                         }
-                        // Geração de log no console.
-                        log.display();
+                        // Registra log no servidor dedicado.
+                        log.sendLog();
                     });
                 } catch (err) {
-                    console.log(err);
+                    console.error(err);
                 }
             }
         });

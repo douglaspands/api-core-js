@@ -35,6 +35,21 @@ function Log() {
         registros.push(registro);
     }
     /**
+     * Inclui log de erro.
+     * @param {object} error. 
+     * @return {void} 
+     */
+    function pushError(error) {
+        let registro = {
+            index: _.size(registros) + 1,
+            timestamp: moment().format('YYYY.MM.DD_HH:MM:Sss'),
+            code: _.get(error, 'code', ''),
+            message: _.get(error, 'message', ''),
+            stack: _.get(error, 'stack', '')
+        };
+        registros.push(registro);
+    }
+    /**
      * Obter a Log Completa.
      * @return {array} Retorna lista com todas as logs incluidas.
      */
@@ -42,18 +57,23 @@ function Log() {
         return registros;
     }
     /**
-     * Console da Log Completa.
-     * @return {array} Retorna lista com todas as logs incluidas.
+     * Envia a log para o servidor dedicado.
+     * @return {void}
      */
-    function display() {
+    function sendLog() {
+        /**
+         * Função de envio não implementada.
+         * Será mostrado apenas no console inicialmente.
+         */
         console.log('==========================');
         console.log(JSON.stringify(registros, null, 4));
         console.log('==========================');
     }
     return {
         push,
+        pushError,
         getAll,
-        display
+        sendLog
     }
 }
 /**
