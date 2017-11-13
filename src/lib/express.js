@@ -77,13 +77,13 @@ module.exports = (dir) => {
 
                 try {
                     server[method](uri, (req, res) => {
-                        
+
                         const log = new Log();
                         const context = new Context(rota, log);
-                        
+
                         req.routeDirectory = rota;
                         const request = new Request(req, log);
-                        
+
                         const response = new Response(res, log);
                         const message = context.message();
 
@@ -123,8 +123,8 @@ module.exports = (dir) => {
             const response = new Response(res, log);
             const message = context.message();
             response.send(message.notFound(`Route not found: ${req.url} [${req.method}]`));
-            // Geração de log no console.
-            log.display();
+            // Registra log no servidor dedicado.
+            log.sendLog();
         });
 
     }
