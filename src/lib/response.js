@@ -74,6 +74,16 @@ function response(res, log) {
         }
     }
     /**
+     * Opção de incluir paramtros no header.
+     * @param {object} header Objeto com parametros que serão incluidos no header.
+     * @return {void}
+     */
+    function setHeader(header) {
+        if (_.isPlainObject(header) && !_.isEmpty(header)) {
+            res.set(header);
+        }
+    }
+    /**
      * Verifica se o coando 'send' já foi executado.
      * @return {boolean} Retorna 'true' se já foi executado.
      */
@@ -90,6 +100,7 @@ function response(res, log) {
     return {
         send,
         sendFile,
+        setHeader,
         verifySendExecute,
         express
     };
