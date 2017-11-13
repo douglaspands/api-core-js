@@ -24,10 +24,10 @@ const _ = require('lodash');
  * @return {Response} Retorna objeto de resposta.
  */
 function Response(statusCode, body) {
-    this.status = statusCode || null;
+    this.status = statusCode || 500;
     if (!body || !_.includes(['object', 'string'], typeof body) || _.isEmpty(body)) {
-        this.body = {};
-    } else if (_.get(body, 'data', null)) {
+        this.body = '';
+    } else if (_.get(body, 'data', null) || _.isString(body)) {
         this.body = body;
     } else {
         this.body = {
@@ -96,6 +96,18 @@ function status400(body) {
     return new Response(400, retorno);
 }
 /**
+ * Prepara retorno do com status 404.
+ * @param {string} message Mensagem de retorno
+ * @return {Response} Retorna resposta.  
+ */
+function status404(message) {
+    let retorno = 'Route not found!';
+    if (_.isString(message) && !_.isEmpty(message)) {
+        retorno = message;
+    }
+    return new Response(404, retorno);
+}
+/**
  * Prepara retorno do com status 422.
  * @param {string} message Mensagem de retorno
  * @return {Response} Retorna resposta.  
@@ -160,6 +172,7 @@ module.exports = {
     created: status201,
     noContent: status204,
     badRequest: status400,
+    notFound: status404,
     semanticError: status422,
     internalError: status500,
     notImplemented: status501,

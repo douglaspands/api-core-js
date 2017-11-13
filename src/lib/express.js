@@ -62,16 +62,16 @@ module.exports = (dir) => {
         _.forEach(listaRotas, (rota) => {
 
             const api = require(rota);
-            let method, uri; 
+            let method, uri;
 
             if (_.get(api, 'route', null) && (_.isPlainObject(api.route) || _.isFunction(api.route))) {
 
                 if (_.isFunction(api.route)) {
                     method = (_.get(api.route(), 'method', '')).toLowerCase();
-                    uri = (_.get(api.route(), 'uri', '') ? api.route().uri: _.get(api.route(), 'route', '')).toLowerCase();
+                    uri = (_.get(api.route(), 'uri', '') ? api.route().uri : _.get(api.route(), 'route', '')).toLowerCase();
                 } else {
                     method = (_.get(api.route, 'method', '')).toLowerCase();
-                    uri = (_.get(api.route, 'uri', '') ? api.route.uri: _.get(api.route, 'route', '')).toLowerCase();
+                    uri = (_.get(api.route, 'uri', '') ? api.route.uri : _.get(api.route, 'route', '')).toLowerCase();
                 }
 
                 try {
@@ -80,7 +80,7 @@ module.exports = (dir) => {
                         const context = new Context(rota, log);
                         const response = new Response(res, log);
                         const message = context.message();
-                        
+
                         log.push('request', {
                             method: method,
                             uri: req.path,
@@ -90,7 +90,7 @@ module.exports = (dir) => {
                             query: req.query,
                             body: req.body
                         });
-                        
+
                         const listaFuncoes = _.without(Object.keys(api), 'route');
 
                         if (_.size(listaFuncoes) < 1) {
@@ -109,9 +109,9 @@ module.exports = (dir) => {
                                             message: error.message,
                                             stack: error.stack
                                         });
-                                    }    
+                                    }
                                 }
-                            });    
+                            });
                         }
                         // Geração de log no console.
                         log.display();
@@ -122,8 +122,17 @@ module.exports = (dir) => {
             }
         });
 
+        /**
+         * Tratamento de statusCode 404
+         */
         server.use((req, res, next) => {
-            res.status(404).send('Rota não encontrada!');
+            const log = new Log();
+            const context = new Context(__dirname, log);
+            const response = new Response(res, log);
+            const message = context.message();
+            response.send(message.notFound(`Route not found: ${req.url} [${req.method}]`));
+            // Geração de log no console.
+            log.display();
         });
 
     }
