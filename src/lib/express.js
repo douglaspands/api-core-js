@@ -79,7 +79,7 @@ module.exports = (dir) => {
                     server[method](uri, (req, res) => {
 
                         const log = new Log();
-                        const context = new Context(rota, log);
+                        const context = new Context(rota, log, req);
 
                         req.routeDirectory = rota;
                         const request = new Request(req, log);
@@ -139,12 +139,24 @@ module.exports = (dir) => {
         return server.listen(porta, (callback) ? callback(porta) : null);
     }
     /**
+     * Incluindo variaveis no servidor.
+     * @param {string} nomeVariavel Nome da variavel.
+     * @param {any} valor Valor que será armazendo da variavel.
+     * @return {void} 
+     */
+    function set(nomeVariavel, valor) {
+        if (_.isString(nomeVariavel) && !_.isEmpty(nomeVariavel)) {
+            server.set(nomeVariavel, valor);
+        }
+    }
+    /**
      * Objeto de retorno.
      */
     return {
         start,
         create,
         forEachRoute,
-        registerRoutes
+        registerRoutes,
+        set
     }
 }

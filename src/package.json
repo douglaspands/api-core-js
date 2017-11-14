@@ -1,6 +1,6 @@
 {
   "name": "core-rest-spa-js",
-  "version": "0.12.3",
+  "version": "0.13.1",
   "description": "Motor de API-REST com SPA em Node.js.",
   "main": "app.js",
   "scripts": {
@@ -21,6 +21,7 @@
   "homepage": "https://github.com/douglaspands/core-rest-spa-js#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "compression": "^1.7.1",
     "express": "^4.16.2",
     "lodash": "^4.17.4",
     "moment": "^2.19.1"

@@ -9,12 +9,15 @@ const fs = require('fs');
 const path = require('path');
 /**
  * Construtor do Context.
- * @param {string} diretorio Diretorio da api
+ * @param {string} folder Diretorio da api.
+ * @param {object} log Modulo de geração de logs (opcional).
+ * @param {object} req Objeto de request do Express (opcional).
  * @return {object} Retorna objeto de funções.
  */
-function Context(folder, log) {
+function Context(folder, log, req) {
     let indice = 0;
     let diretorio = '';
+    let variaveis = _.get(req, 'app', {});
     if (_.isString(folder) && fs.existsSync(folder) && fs.statSync(folder).isDirectory()) {
         diretorio = folder;
     } else {
@@ -145,6 +148,13 @@ function Context(folder, log) {
     function getValidator() {
         return require('./validator')();
     }
+    /**
+     * Obter variaveis do servidor.
+     * @return {object} Retorna objeto com as variaveis do servidor.
+     */
+    function getVariables() {
+        return variaveis;
+    }
     return {
         module: getLocalModule,
         processor: getProcessor,
@@ -153,7 +163,8 @@ function Context(folder, log) {
         domain: getDomain,
         require: getRequire,
         message: getMessages,
-        verify: getValidator
+        verify: getValidator,
+        vars: getVariables
     }
 }
 module.exports = Context;
