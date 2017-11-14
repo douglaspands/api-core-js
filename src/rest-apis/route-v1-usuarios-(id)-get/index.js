@@ -25,7 +25,6 @@ module.exports.validator = (req, res, context) => {
 
     // Modulos
     const _ = context.require('lodash');
-    const message = context.message();
     const verify = context.verify();
 
     verify.check('id', req.params.id, 'Campo preenchido com caracteres não numericos.')
