@@ -5,7 +5,7 @@
  */
 'use strict';
 const _ = require('lodash');
-const message = require('./message');
+const message = require('./messages');
 
 /**
  * @typedef {object} ErrorForm Mensagem de erro de campo na validação.
@@ -25,8 +25,8 @@ function ErrorForm(nomeCampo, valor, mensagemErro) {
         ? nomeCampo
         : '';
     this.value = valor;
-    this.message = _.isString(mensagem)
-        ? mensagem
+    this.message = _.isString(mensagemErro)
+        ? mensagemErro
         : '';
 }
 /**
@@ -51,7 +51,7 @@ function validator() {
         }
         return {
             isValid(callback) {
-                let retorno = (callback(campo) || false);
+                let retorno = callback(campo);
                 if (!retorno) {
                     listaErros.push(new ErrorForm(nome, campo, mensagemErro))
                 }
@@ -73,11 +73,23 @@ function validator() {
         return listaErros;
     }
     /**
+     * Retorna 'Response' '400' com a lista de erros.
+     * @return {object} Lista de erros.
+     */
+    function messageBadRequest() {
+        return message.badRequest(listaErros);
+    }
+    /**
      * Funções de retorno.
      */
     return {
         check,
         containErrors,
-        getErrors
+        getErrors,
+        messageBadRequest
     };
 }
+/**
+ * Modulos exportados.
+ */
+module.exports = validator;

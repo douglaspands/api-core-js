@@ -25,17 +25,16 @@ module.exports.validator = (req, res, context) => {
 
     // Modulos
     const _ = context.require('lodash');
-
-    const form = context.module('form');
     const message = context.message();
+    const verify = context.verify();
 
-    // Validar parametros de entrada
-    const errorList = form(req, context);
-    if (!_.isEmpty(errorList)) {
-        res.send(message.badRequest(errorList));
+    verify.check('id', req.params.id, 'Campo preenchido com caracteres não numericos.')
+        .isValid((id) => _.isString(id) && (/^[0-9]+$/g).test(id));
+
+    if (verify.containErrors()) {
+        res.send(verify.messageBadRequest());
     }
-    
-    return errorList;
+    return verify.getErrors();
 
 }
 /**

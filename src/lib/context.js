@@ -131,8 +131,19 @@ function Context(folder, log) {
         let tipo = 'domains';
         return getModule(modulo, tipo);
     }
+    /**
+     * Obter tratamento de mensagens de erro.
+     * @return {object} Modulo de montagem de mensagens.
+     */
     function getMessages() {
         return require('./messages');
+    }
+    /**
+     * Obter tratamento de mensagens de erro.
+     * @return {object} Modulo de montagem de mensagens.
+     */
+    function getValidator() {
+        return require('./validator')();
     }
     return {
         module: getLocalModule,
@@ -141,7 +152,8 @@ function Context(folder, log) {
         model: getModel,
         domain: getDomain,
         require: getRequire,
-        message: getMessages
+        message: getMessages,
+        verify: getValidator
     }
 }
 module.exports = Context;
