@@ -6,6 +6,7 @@
 'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
+const compression = require('compression');
 const _ = require('lodash');
 const path = require('path');
 const Log = require('./log');
@@ -29,6 +30,7 @@ module.exports = (dir) => {
      */
     function create() {
         server = express();
+        server.use(compression());
         server.use(express.static(path.join(__dirname, '..', 'public')));
         server.use(bodyParser.urlencoded({ extended: false }));
         server.use(bodyParser.json());
