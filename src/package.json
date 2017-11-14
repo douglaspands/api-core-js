@@ -1,6 +1,6 @@
 {
   "name": "core-rest-spa-js",
-  "version": "0.11.0",
+  "version": "0.12.2",
   "description": "Motor de API-REST com SPA em Node.js.",
   "main": "app.js",
   "scripts": {

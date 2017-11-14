@@ -6,12 +6,15 @@
 'use strict';
 const moment = require('moment');
 const _ = require('lodash');
+const fs = require('fs');
+const path = require('path');
 /**
  * Função de geração de Log.
  * @return {object} Retorna objeto com funções.
  */
 function Log() {
     let registros = [];
+    let firstLog, folderRoute;
     /**
      * Inclui Log.
      * @param {string} code Codigo da log. 
@@ -19,9 +22,15 @@ function Log() {
      * @return {void} 
      */
     function push(code, log) {
+        let timestamp = moment().format('YYYY.MM.DD_HH:MM:Sss');
+        if (_.isEmpty(registros)) {
+            firstLog = timestamp.replace(/[.:]/g,'');
+            let div = (log.routeDirectory.indexOf('/') > -1) ? '/' : '\\\\';
+            folderRoute = (log.routeDirectory.split(div)).pop();
+        }
         let registro = {
             index: _.size(registros) + 1,
-            timestamp: moment().format('YYYY.MM.DD_HH:MM:Sss'),
+            timestamp: timestamp,
         };
         if (_.isString(code) && !_.isEmpty(code)) registro.code = code;
         switch (true) {
@@ -65,9 +74,12 @@ function Log() {
          * Função de envio não implementada.
          * Será mostrado apenas no console inicialmente.
          */
-        console.log('==========================');
+        let fileWrite = path.join(__dirname, '..', 'logs', (firstLog + '-' + folderRoute + '.log'));
+        fs.writeFile(fileWrite, JSON.stringify(registros, null, 4), 'utf8', () => {});
+        // 
+        console.log('============================================================================');
         console.log(JSON.stringify(registros, null, 4));
-        console.log('==========================');
+        //
     }
     return {
         push,
