@@ -10,6 +10,7 @@ Utilizando praticas de TDD (usando Mocha) e BDD (usando Cucumber).
 - [x] Cobertura de testes (Mocha e NYC)
 - [ ] Testes integrados (Cucumber)
 - [ ] Single Page Application executando
+- [ ] Documentação (Open API Especification)
 - [ ] Usar banco de dados
 
 ## Requisitos
