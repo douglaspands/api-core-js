@@ -3,10 +3,10 @@ Motor de REST-API com Single-Page-Application em Node.js.
 Utilizando praticas de TDD (usando Mocha) e BDD (usando Cucumber).
 
 ## Status
-- [x] Motor de REST-APIs
+- [x] Motor de REST-APIs disponivel
 - [x] Servidor de arquivos estaticos
 - [x] Geração de LOG
-- [x] REST-API Exemplo
+- [x] REST-API exemplo
 - [x] Cobertura de testes (Mocha e NYC)
 - [ ] Testes integrados (Cucumber)
 - [ ] Single Page Application executando
