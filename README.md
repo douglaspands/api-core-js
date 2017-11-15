@@ -9,8 +9,8 @@ Utilizando praticas de TDD (usando Mocha) e BDD (usando Cucumber).
 - [x] REST-API exemplo
 - [x] Cobertura de testes (Mocha e NYC)
 - [ ] Testes integrados (Cucumber)
-- [ ] Single Page Application executando
 - [ ] Documentação (Open API Especification)
+- [ ] Single Page Application executando
 - [ ] Usar banco de dados
 
 ## Requisitos
