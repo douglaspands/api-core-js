@@ -5,6 +5,6 @@
  */
 'use strict';
 // Nome da pasta de apis.
-module.exports.PASTA_APIS = 'rest-apis';
+module.exports.ROTAS = 'routes';
 // Porta do servidor.
 module.exports.PORTA = 3000;

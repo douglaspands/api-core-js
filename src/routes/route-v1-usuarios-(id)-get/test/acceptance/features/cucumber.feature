@@ -20,6 +20,7 @@ Feature: A rota GET /v1/usuarios/:id tem como consultar um usuario através do i
     When Quando o pathParameter id for 2
     Then Então o statusCode será 204
 
+  @sucesso
   Scenario: Consultar um usuario com o id valido 
     When Quando o pathParameter id for 1
     Then Então o statusCode será 200

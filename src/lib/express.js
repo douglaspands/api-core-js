@@ -60,7 +60,7 @@ module.exports = (dir) => {
      */
     function registerRoutes() {
 
-        const listaRotas = utils.scanRoutes(path.join(diretorioServidor, config.PASTA_APIS));
+        const listaRotas = utils.scanRoutes(path.join(diretorioServidor, config.ROTAS));
 
         _.forEach(listaRotas, (rota) => {
 

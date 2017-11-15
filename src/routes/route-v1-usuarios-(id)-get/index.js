@@ -11,7 +11,7 @@
 module.exports.route = () => {
     return {
         method: 'get',
-        uri: '/v1/usuarios/:id'
+        uri: '/api/v1/usuarios/:id'
     }
 };
 /**
