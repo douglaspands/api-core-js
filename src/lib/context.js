@@ -17,7 +17,7 @@ const path = require('path');
 function Context(folder, log, req) {
     let indice = 0;
     let diretorio = '';
-    let variaveis = _.get(req, 'app', {});
+    let varServer = _.get(req, 'app', {});
     if (_.isString(folder) && fs.existsSync(folder) && fs.statSync(folder).isDirectory()) {
         diretorio = folder;
     } else {
@@ -150,10 +150,15 @@ function Context(folder, log, req) {
     }
     /**
      * Obter variaveis do servidor.
-     * @return {object} Retorna objeto com as variaveis do servidor.
+     * @param {string} key Nome da varivel que se quer obter;
+     * @return {object} Retorna objeto ou variavel do servidor.
      */
-    function getVariables() {
-        return variaveis;
+    function getServer(key) {
+        if (_.isString(key) && !_.isEmpty(key) && _.has(varServer, key)) {
+            return varServer[key];
+        } else {
+            return varServer;
+        }
     }
     return {
         module: getLocalModule,
@@ -164,7 +169,7 @@ function Context(folder, log, req) {
         require: getRequire,
         message: getMessages,
         verify: getValidator,
-        vars: getVariables
+        get: getServer
     }
 }
 module.exports = Context;

@@ -15,6 +15,7 @@ const path = require('path');
 function Log() {
     let registros = [];
     let firstLog, folderRoute;
+    let folderLog = '';
     /**
      * Inclui Log.
      * @param {string} code Codigo da log. 
@@ -24,7 +25,7 @@ function Log() {
     function push(code, log) {
         let timestamp = moment().format('YYYY.MM.DD_HH:MM:Sss');
         if (_.isEmpty(registros)) {
-            firstLog = timestamp.replace(/[.:]/g,'');
+            firstLog = timestamp.replace(/[.:]/g, '');
             let div = (log.routeDirectory.indexOf('/') > -1) ? '/' : '\\\\';
             folderRoute = (log.routeDirectory.split(div)).pop();
         }
@@ -74,8 +75,16 @@ function Log() {
          * Função de envio não implementada.
          * Será mostrado apenas no console inicialmente.
          */
-        let fileWrite = path.join(__dirname, '..', 'logs', (firstLog + '-' + folderRoute + '.log'));
-        fs.writeFile(fileWrite, JSON.stringify(registros, null, 4), 'utf8', () => {});
+        if (!folderLog) {
+            folderLog = path.join(__dirname, '..', 'logs');
+            if (!fs.existsSync(folderLog)) {
+                fs.mkdirSync(folderLog);
+            }
+        }
+        let fileWrite = path.join(folderLog, (firstLog + '-' + folderRoute + '.log'));
+        fs.writeFile(fileWrite, JSON.stringify(registros, null, 4), 'utf8', (err) => {
+            if (err) console.log('ERROR: Erro na gravação do arquivo de log!\n', err);
+        });
         // 
         console.log('============================================================================');
         console.log(JSON.stringify(registros, null, 4));
