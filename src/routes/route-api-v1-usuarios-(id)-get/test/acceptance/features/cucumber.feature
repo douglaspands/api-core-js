@@ -2,7 +2,7 @@ Feature: A rota GET /v1/usuarios/:id tem como consultar um usuario através do i
 
   Background:
     Given Dado a URL do servidor http://localhost:3000
-    And E o metodo GET e a rota v1/usuarios/:id
+    And E o metodo GET e a rota api/v1/usuarios/:id
 
   Scenario: Consultar um usuario com o id invalida
     When Quando o pathParameter id for A
@@ -28,4 +28,3 @@ Feature: A rota GET /v1/usuarios/:id tem como consultar um usuario através do i
     And E o campo nome será João da Silva
     And E o campo idade será 23
     And E o campo sexo será masculino
-

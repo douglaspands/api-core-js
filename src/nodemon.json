@@ -1,0 +1,10 @@
+{
+    "ignore": [
+        "package.json",
+        ".git",
+        "node_modules/**/node_modules",
+        "test/**",
+        "*.test.js",
+        ".nyc_output/**"
+      ]
+}
