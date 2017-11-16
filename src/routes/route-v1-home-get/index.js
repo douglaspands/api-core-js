@@ -9,7 +9,5 @@ module.exports.route = {
     route: '/'
 }
 module.exports.controller = (req, res, context) => {
-        const path = context.require('path');
-        let index = path.join(__dirname, '../../views/index.html');
-        res.sendFile(200, index);
+    res.sendView(200, 'index');
 };

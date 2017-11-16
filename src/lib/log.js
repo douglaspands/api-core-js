@@ -26,7 +26,7 @@ function Log() {
         let timestamp = moment().format('YYYY.MM.DD_HH:MM:Sss');
         if (_.isEmpty(registros)) {
             firstLog = timestamp.replace(/[.:]/g, '');
-            let div = (log.routeDirectory.indexOf('/') > -1) ? '/' : '\\\\';
+            let div = (log.routeDirectory.indexOf('/') >= 0) ? '/' : '\\';
             folderRoute = (log.routeDirectory.split(div)).pop();
         }
         let registro = {

@@ -6,6 +6,7 @@
 'use strict';
 // Modulo Lodash
 const _ = require('lodash');
+const path = require('path');
 /**
  * Response da api.
  * @param {object} res Modulo de envio de mensagem do Express.
@@ -45,9 +46,9 @@ function response(res, log) {
         }
     }
     /**
-     * Envia arquivo html da api.
+     * Envia arquivo.
      * @param {number} status Status code da api.
-     * @param {string} filePath Arquivo html que será retornado.
+     * @param {string} filePath caminho do arquivo que será retornado.
      * @return {void}
      */
     function sendFile(status, filePath) {
@@ -58,6 +59,35 @@ function response(res, log) {
                 ret.filePath = filePath;
                 try {
                     res.status(ret.status).sendFile(ret.filePath);
+                    if (log) log.push('response', ret);
+                } catch (error) {
+                    if (log) log.push('response error', error);
+                }
+            } else {
+                ret.status = 500;
+                ret.body = { code: 'send error', message: 'Parametros passado para envio da mensagem invalido!' };
+                res.status(ret.status).send(ret.body);
+                if (log) log.push('response error', ret);
+            }
+            onlyOnce = true;
+        } else {
+            if (log) log.push('response error', 'Só é possivel executar uma vez o modulo \'response\'!');
+        }
+    }
+    /**
+     * Envia arquivo view da api.
+     * @param {number} status Status code da api.
+     * @param {string} file Arquivo html que será retornado.
+     * @return {void}
+     */
+    function sendView(status, file) {
+        if (!onlyOnce) {
+            let ret = {};
+            if (_.isNumber(status) && _.gte(status, 200) && _.lt(status, 600) && _.isString(file) && !_.isEmpty(file)) {
+                ret.status = status;
+                ret.file = path.join(__dirname, '..', 'views', (file + '.html'));
+                try {
+                    res.status(ret.status).sendFile(ret.file);
                     if (log) log.push('response', ret);
                 } catch (error) {
                     if (log) log.push('response error', error);
@@ -100,6 +130,7 @@ function response(res, log) {
     return {
         send,
         sendFile,
+        sendView,
         setHeader,
         verifySendExecute,
         express
