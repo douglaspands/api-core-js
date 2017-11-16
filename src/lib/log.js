@@ -30,7 +30,7 @@ function Log() {
             folderRoute = (log.routeDirectory.split(div)).pop();
         }
         let registro = {
-            index: _.size(registros) + 1,
+            order: _.size(registros) + 1,
             timestamp: timestamp,
         };
         if (_.isString(code) && !_.isEmpty(code)) registro.code = code;
@@ -51,7 +51,7 @@ function Log() {
      */
     function pushError(error) {
         let registro = {
-            index: _.size(registros) + 1,
+            order: _.size(registros) + 1,
             timestamp: moment().format('YYYY.MM.DD_HH:MM:Sss'),
             code: _.get(error, 'code', ''),
             message: _.get(error, 'message', ''),
