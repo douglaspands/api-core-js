@@ -97,7 +97,7 @@ module.exports = (dir, logModule) => {
 
                         const listaFuncoes = _.without(Object.keys(api), 'route');
 
-                        if (_.size(listaFuncoes) < 1) {
+                        if (_.isEmpty(listaFuncoes)) {
                             response.send(message.notImplemented('Favor contatar o administrador do sistema!'));
                         } else {
                             _.forEach(listaFuncoes, (fn) => {
@@ -117,7 +117,7 @@ module.exports = (dir, logModule) => {
                         log.sendLog();
                     });
                 } catch (err) {
-                    console.error(err);
+                    logger.error('error', err);
                 } finally {
                     rotasRegistradas.push(`${uri} [${method}]`);
                 }
