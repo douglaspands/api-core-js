@@ -9,21 +9,21 @@ const moment = require('moment');
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
+const pkg = require('../package');
 
 // Formatos e configurações da Log
 const timestampFormat = 'YYYY-MM-DDTHH.mm.ss.SSS';
+const nameFile = (pkg.name + '_v' + pkg.version + '_' + moment().format(timestampFormat) + '.log');
 const fileName = {
-    filename: path.join(__dirname, '..', 'logs', ('log_' + moment().format(timestampFormat) + '.log'))
+    filename: path.join(__dirname, '..', 'logs', nameFile)
 };
-const consoleLog = new winston.transports.Console({ level: 'error' });
-const fileLog = new winston.transports.File(fileName);
 
 // Configurações de Log
 const logger = winston.createLogger({
     format: winston.format.prettyPrint(),
     transports: [
-        consoleLog,
-        fileLog
+        new winston.transports.Console({ level: 'error' }),
+        new winston.transports.File(fileName)
     ]
 });
 
@@ -33,6 +33,7 @@ const logger = winston.createLogger({
  */
 function Log() {
     let registros = [];
+    let ocorreuErro = false;
     /**
      * Inclui Log.
      * @param {string} code Codigo da log. 
@@ -72,7 +73,7 @@ function Log() {
             stack: _.get(error, 'stack', '')
         };
         registros.push(registro);
-        logger.error(registros);
+        ocorreuErro = true;
     }
     /**
      * Obter a Log Completa.
@@ -86,7 +87,29 @@ function Log() {
      * @return {void}
      */
     function sendLog() {
-        logger.info(registros);
+        if (ocorreuErro) {
+            let req = registros[0];
+            if (req.code === 'request') {
+                let message = {
+                    method: req.method,
+                    path: req.path,
+                    uri: req.uri,
+                    timestamp: req.timestamp
+                };
+                logger.error(message, registros);
+            } else {
+                logger.error(registros);
+            }
+        } else {
+            let req = registros[0];
+            let message = {
+                method: req.method,
+                path: req.path,
+                uri: req.uri,
+                timestamp: req.timestamp
+            };
+            logger.info(message, registros);
+        }
     }
     return {
         push,
@@ -98,4 +121,7 @@ function Log() {
 /**
  * Modulos exportados.
  */
-module.exports = Log;
+module.exports = {
+    Log,
+    logger
+};

@@ -4,7 +4,8 @@
  * @since 2017-10-29
  */
 'use strict';
-const server = require('./lib/express')(__dirname);
+const logModule = require('./lib/log');
+const server = require('./lib/express')(__dirname, logModule);
 
 server.create();
 server.registerRoutes();

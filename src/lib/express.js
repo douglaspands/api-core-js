@@ -10,7 +10,6 @@ const compression = require('compression');
 const morgan = require('morgan');
 const _ = require('lodash');
 const path = require('path');
-const Log = require('./log');
 const Context = require('./context');
 const Request = require('./request');
 const Response = require('./response');
@@ -20,7 +19,10 @@ const config = require('../config/server');
  * @param {string} dir diretorio do servidor.
  * @return {utilsExpress} Retorna funções.
  */
-module.exports = (dir) => {
+module.exports = (dir, logModule) => {
+
+    const Log = logModule.Log;
+    const logger = logModule.logger;
 
     let server;
     let diretorioServidor = dir;
@@ -36,6 +38,7 @@ module.exports = (dir) => {
         server.use(express.static(path.join(__dirname, '..', 'public')));
         server.use(bodyParser.urlencoded({ extended: false }));
         server.use(bodyParser.json());
+        logger.info('Servidor configurado');
         return server;
     }
     /**
@@ -62,6 +65,7 @@ module.exports = (dir) => {
      */
     function registerRoutes() {
 
+        let rotasRegistradas = [];
         const listaRotas = utils.scanRoutes(path.join(diretorioServidor, config.ROTAS));
 
         _.forEach(listaRotas, (rota) => {
@@ -103,8 +107,8 @@ module.exports = (dir) => {
                                     try {
                                         api[fn](request, response, context);
                                     } catch (error) {
-                                        response.send(message.internalError('Favor contatar o administrador do sistema!'));
                                         log.pushError(error);
+                                        response.send(message.internalError('Favor contatar o administrador do sistema!'));
                                     }
                                 }
                             });
@@ -114,6 +118,8 @@ module.exports = (dir) => {
                     });
                 } catch (err) {
                     console.error(err);
+                } finally {
+                    rotasRegistradas.push(`${uri} [${method}]`);
                 }
             }
         });
@@ -132,6 +138,11 @@ module.exports = (dir) => {
             log.sendLog();
         });
 
+        /**
+         * Gerando log das rotas registradas
+         */
+        logger.info('Rotas registradas', rotasRegistradas);
+
     }
     /**
      * Iniciando o servidor.
@@ -142,6 +153,7 @@ module.exports = (dir) => {
     function start(callback) {
         const porta = process.env.PORT || config.PORTA || 3000;
         let retorno = server.listen(porta, (callback) ? callback(porta) : null);
+        logger.info(`Servidor iniciado na porta: ${porta}`);
         console.log('');
         return retorno;
     }
@@ -154,6 +166,7 @@ module.exports = (dir) => {
     function set(nomeVariavel, valor) {
         if (_.isString(nomeVariavel) && !_.isEmpty(nomeVariavel)) {
             server.set(nomeVariavel, valor);
+            logger.info(`Criado no servidor a variavel: ${nomeVariavel}`);
         }
     }
     /**

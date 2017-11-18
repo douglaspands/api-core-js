@@ -20,6 +20,7 @@ function Request(req, log) {
     if (log) {
         log.push('request', {
             method: _.get(req, 'method', ''),
+            path: _.get(req, 'path', ''),
             uri: _.get(req, 'url', ''),
             routeDirectory: _.get(req, 'routeDirectory', ''),
             headers: this.headers,
