@@ -12,8 +12,8 @@ const path = require('path');
 const pkg = require('../package');
 
 // Formatos e configurações da Log
-const timestampFormat = 'YYYY-MM-DDTHH.mm.ss.SSS';
-const nameFile = (pkg.name + '_v' + pkg.version + '_' + moment().format(timestampFormat) + '.log');
+const formatTimestamp = require('../config/formats').TIMESTAMP;
+const nameFile = (pkg.name + '_v' + pkg.version + '_' + moment().format(formatTimestamp) + '.log');
 const fileName = {
     filename: path.join(__dirname, '..', 'logs', nameFile)
 };
@@ -43,7 +43,7 @@ function Log() {
     function push(code, log) {
         let registro = {
             order: _.size(registros) + 1,
-            timestamp: moment().format(timestampFormat),
+            timestamp: moment().format(formatTimestamp),
         };
         if (_.isString(code) && !_.isEmpty(code)) registro.code = code;
         switch (true) {
@@ -67,7 +67,7 @@ function Log() {
     function pushError(error) {
         let registro = {
             order: _.size(registros) + 1,
-            timestamp: moment().format(timestampFormat),
+            timestamp: moment().format(formatTimestamp),
             code: _.get(error, 'code', ''),
             message: _.get(error, 'message', ''),
             stack: _.get(error, 'stack', '')

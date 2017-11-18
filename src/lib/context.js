@@ -62,12 +62,10 @@ function Context(folder, log, req) {
             ]
             switch (true) {
                 case fs.existsSync(files[0]):
-                    // mod = require(files[0].replace(/(.js|.json)/g, ''));
                     mod = require(files[0]);
                     logger(('require ' + tipo), files[0]);
                     break;
                 case fs.existsSync(files[1]):
-                    // mod = require(files[1].replace(/(.js|.json)/g, ''));
                     mod = require(files[1]);
                     logger(('require ' + tipo), files[1]);
                     break;

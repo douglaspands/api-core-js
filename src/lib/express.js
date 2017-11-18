@@ -133,7 +133,7 @@ module.exports = (dir, logModule) => {
             const request = new Request(req, log);
             const response = new Response(res, log);
             const message = context.message();
-            response.send(message.notFound(`Route not found: ${req.url} [${req.method}]`));
+            response.send(message.notFound(`Rota não encontrada: ${req.url} [${req.method}]`));
             // Registra log no servidor dedicado.
             log.sendLog();
         });
