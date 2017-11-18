@@ -7,6 +7,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const compression = require('compression');
+const morgan = require('morgan');
 const _ = require('lodash');
 const path = require('path');
 const Log = require('./log');
@@ -30,6 +31,7 @@ module.exports = (dir) => {
      */
     function create() {
         server = express();
+        server.use(morgan('dev'));
         server.use(compression());
         server.use(express.static(path.join(__dirname, '..', 'public')));
         server.use(bodyParser.urlencoded({ extended: false }));
@@ -122,6 +124,7 @@ module.exports = (dir) => {
         server.use((req, res, next) => {
             const log = new Log();
             const context = new Context(__dirname, log);
+            const request = new Request(req, log);
             const response = new Response(res, log);
             const message = context.message();
             response.send(message.notFound(`Route not found: ${req.url} [${req.method}]`));
@@ -138,7 +141,9 @@ module.exports = (dir) => {
      */
     function start(callback) {
         const porta = process.env.PORT || config.PORTA || 3000;
-        return server.listen(porta, (callback) ? callback(porta) : null);
+        let retorno = server.listen(porta, (callback) ? callback(porta) : null);
+        console.log('');
+        return retorno;
     }
     /**
      * Incluindo variaveis no servidor.

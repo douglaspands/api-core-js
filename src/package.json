@@ -1,6 +1,6 @@
 {
   "name": "core-rest-spa-js",
-  "version": "0.16.2",
+  "version": "0.17.0",
   "description": "Motor de API-REST com SPA em Node.js.",
   "main": "app.js",
   "scripts": {
@@ -24,7 +24,9 @@
     "compression": "^1.7.1",
     "express": "^4.16.2",
     "lodash": "^4.17.4",
-    "moment": "^2.19.1"
+    "moment": "^2.19.1",
+    "morgan": "^1.9.0",
+    "winston": "^3.0.0-rc1"
   },
   "devDependencies": {
     "nodemon": "^1.12.1"

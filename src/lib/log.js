@@ -1,21 +1,38 @@
 /**
- * @file Modulo de log.
+ * @file Modulo de log utilizando o Winston.
  * @author @douglaspands
- * @since 2017-11-08
+ * @since 2017-11-19
  */
 'use strict';
+const winston = require('winston');
 const moment = require('moment');
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
+
+// Formatos e configurações da Log
+const timestampFormat = 'YYYY-MM-DDTHH.mm.ss.SSS';
+const fileName = {
+    filename: path.join(__dirname, '..', 'logs', ('log_' + moment().format(timestampFormat) + '.log'))
+};
+const consoleLog = new winston.transports.Console({ level: 'error' });
+const fileLog = new winston.transports.File(fileName);
+
+// Configurações de Log
+const logger = winston.createLogger({
+    format: winston.format.prettyPrint(),
+    transports: [
+        consoleLog,
+        fileLog
+    ]
+});
+
 /**
  * Função de geração de Log.
  * @return {object} Retorna objeto com funções.
  */
 function Log() {
     let registros = [];
-    let firstLog, folderRoute;
-    let folderLog = '';
     /**
      * Inclui Log.
      * @param {string} code Codigo da log. 
@@ -23,19 +40,16 @@ function Log() {
      * @return {void} 
      */
     function push(code, log) {
-        let timestamp = moment().format('YYYY.MM.DD_HH:MM:Sss');
-        if (_.isEmpty(registros)) {
-            firstLog = timestamp.replace(/[.:]/g, '');
-            let div = (log.routeDirectory.indexOf('/') >= 0) ? '/' : '\\';
-            folderRoute = (log.routeDirectory.split(div)).pop();
-        }
         let registro = {
             order: _.size(registros) + 1,
-            timestamp: timestamp,
+            timestamp: moment().format(timestampFormat),
         };
         if (_.isString(code) && !_.isEmpty(code)) registro.code = code;
         switch (true) {
             case (_.isPlainObject(log)):
+                registro = _.merge(registro, log);
+                break;
+            case (log.constructor.name === 'Response'):
                 registro = _.merge(registro, log);
                 break;
             default:
@@ -52,12 +66,13 @@ function Log() {
     function pushError(error) {
         let registro = {
             order: _.size(registros) + 1,
-            timestamp: moment().format('YYYY.MM.DD_HH:MM:Sss'),
+            timestamp: moment().format(timestampFormat),
             code: _.get(error, 'code', ''),
             message: _.get(error, 'message', ''),
             stack: _.get(error, 'stack', '')
         };
         registros.push(registro);
+        logger.error(registros);
     }
     /**
      * Obter a Log Completa.
@@ -71,24 +86,7 @@ function Log() {
      * @return {void}
      */
     function sendLog() {
-        /**
-         * Função de envio não implementada.
-         * Será mostrado apenas no console inicialmente.
-         */
-        if (!folderLog) {
-            folderLog = path.join(__dirname, '..', 'logs');
-            if (!fs.existsSync(folderLog)) {
-                fs.mkdirSync(folderLog);
-            }
-        }
-        let fileWrite = path.join(folderLog, (firstLog + '-' + folderRoute + '.log'));
-        fs.writeFile(fileWrite, JSON.stringify(registros, null, 4), 'utf8', (err) => {
-            if (err) console.log('ERROR: Erro na gravação do arquivo de log!\n', err);
-        });
-        // 
-        console.log('============================================================================');
-        console.log(JSON.stringify(registros, null, 4));
-        //
+        logger.info(registros);
     }
     return {
         push,
