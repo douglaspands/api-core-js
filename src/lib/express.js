@@ -66,7 +66,7 @@ module.exports = (dir, logModule) => {
     function registerRoutes() {
 
         let rotasRegistradas = [];
-        const listaRotas = utils.scanRoutes(path.join(diretorioServidor, config.ROTAS));
+        const listaRotas = utils.scanRoutes(path.join(diretorioServidor, config.DIR_ROTAS));
 
         _.forEach(listaRotas, (rota) => {
 
@@ -170,6 +170,17 @@ module.exports = (dir, logModule) => {
         }
     }
     /**
+     * Incluindo funções no servidor.
+     * @param {any} args Parametros.
+     * @return {void} 
+     */
+    function use(args) {
+        if (args) {
+            server.use.apply(this, arguments);
+            logger.info('Adicionado função no servidor', arguments);
+        }
+    }
+    /**
      * Objeto de retorno.
      */
     return {
@@ -177,6 +188,7 @@ module.exports = (dir, logModule) => {
         create,
         forEachRoute,
         registerRoutes,
-        set
+        set,
+        use
     }
 }

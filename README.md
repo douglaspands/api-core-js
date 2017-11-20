@@ -1,17 +1,17 @@
 # Motor de REST-API com SPA em Node.js (Em Desenvolvimento)
-Motor de REST-API com Single-Page-Application em Node.js.  
+Motor de API RESTful com MongoDb e Single-Page-Application em Node.js.  
 Utilizando praticas de TDD (usando Mocha) e BDD (usando Cucumber).
 
 ## Status
 - [x] Motor de REST-APIs disponivel
 - [x] Servidor de arquivos estaticos
 - [x] Geração de LOG
-- [x] REST-API exemplo
+- [x] API RESTful exemplo (parcial - Não incluido a consulta ao banco de dados)
 - [x] Cobertura de testes (Mocha e NYC)
 - [ ] Testes integrados (Cucumber)
+- [x] Acesso ao banco de dados
 - [ ] Documentação (Open API Especification)
 - [ ] Single Page Application executando
-- [ ] Usar banco de dados
 
 ## Requisitos
 * Node.js versão >= 8.9 (LTS).
