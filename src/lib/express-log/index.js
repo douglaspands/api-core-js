@@ -44,7 +44,8 @@ module.exports = (app) => {
 
     // Criando modulo de log para o express
     const expressLogger = expressWinston.logger({
-        winstonInstance: logger
+        winstonInstance: logger,
+        msg: '\'x-correlation-id\': \'{{req.id}}\''
     });
 
     // Criando modulo de log de erro para o express

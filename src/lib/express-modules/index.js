@@ -6,6 +6,7 @@
 'use strict';
 const compression = require('compression');
 const cors = require('cors');
+var addRequestId = require('express-request-id');
 
 module.exports = (app) => {
 
@@ -13,5 +14,7 @@ module.exports = (app) => {
     app.use(compression());
     // Permite requisições de origens diferentes
     app.use(cors());
+    // Adicionar x-request-id
+    app.use(addRequestId());
 
 };
