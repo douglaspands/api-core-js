@@ -11,8 +11,8 @@
 module.exports.route = () => {
 
     return {
-        method: 'get',
-        uri: '/v1/funcionarios'
+        method: 'put',
+        uri: '/v1/funcionarios/:id'
     };
 
 };
@@ -23,17 +23,19 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ query }, res, _, { getModule }) => {
+module.exports.controller = async ({ params, body }, res, _, { getModule }) => {
 
     const modelFuncionario = getModule('models/funcionario', true);
     const validarEntrada = getModule('modules/form', true);
 
-    const errors = validarEntrada(query);
+    let input = body;
+    input._id = params.id;
+    const errors = validarEntrada(input);
 
     if (errors) return res.status(400).send(errors);
 
     try {
-        const ret = await modelFuncionario.pesquisarFuncionarios(query);
+        const ret = await modelFuncionario.atualizarFuncionario(input._id, body);
         res.status(200).send({ data: ret });
     } catch (error) {
         res.status(204).send({});
