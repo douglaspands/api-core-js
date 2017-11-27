@@ -1,5 +1,5 @@
 /**
- * @file Cobertura de testes do /models/usuario.js
+ * @file Cobertura de testes do /models/funcionario.js
  * @author douglaspands
  * @since 2017-11-24
  */
@@ -12,7 +12,7 @@ const Context = require('../../../../lib/context-app-test');
 const pathApp = path.join(__dirname, '../..');
 
 
-describe('# ./models/usuario.js', () => {
+describe('# ./models/funcionario.js', () => {
 
     let i = 0, context;
 
@@ -22,34 +22,36 @@ describe('# ./models/usuario.js', () => {
 
     });
 
-    it(`${++i} - ObterUsuario() - Execução com sucesso`, async () => {
+    it(`${++i} - ObterFuncionario() - Execução com sucesso`, async () => {
 
         context.setMock('utils/mongodb-crud', {
             find: () => new Promise((resolve) => {
                 resolve({
                     nome: 'Joao',
+                    empresa: 'CPMGFHJKL'
                 });
             })
         });
 
-        const { obterUsuario } = require('../../models/usuario')(context);
+        const { obterFuncionario } = require('../../models/funcionario')(context);
 
         const req = {
             _id: '123456789012345678901234'
         };
 
         try {
-            var result = await obterUsuario(req._id);
+            var result = await obterFuncionario(req._id);
         } catch (error) {
             console.error(error);
         }
 
         assert.equal(result.nome, 'Joao');
+        assert.equal(result.empresa, 'CPMGFHJKL');
 
 
     });
 
-    it(`${++i} - ObterUsuario() - Execução com erro`, async () => {
+    it(`${++i} - ObterFuncionario() - Execução com erro`, async () => {
 
         context.setMock('utils/mongodb-crud', {
             find: () => new Promise((_, reject) => {
@@ -57,14 +59,14 @@ describe('# ./models/usuario.js', () => {
             })
         });
 
-        const { obterUsuario } = require('../../models/usuario')(context);
+        const { obterFuncionario } = require('../../models/funcionario')(context);
 
         const req = {
             _id: '123456789012345678901234'
         };
 
         try {
-            var result = await obterUsuario(req._id);
+            var result = await obterFuncionario(req._id);
         } catch (error) {
             var result = error;
         }
@@ -73,7 +75,7 @@ describe('# ./models/usuario.js', () => {
 
     });
 
-    it(`${++i} - incluirUsuario() - Execução com sucesso`, async () => {
+    it(`${++i} - incluirFuncionario() - Execução com sucesso`, async () => {
 
         context.setMock('utils/mongodb-crud', {
             insert: () => new Promise((resolve) => {
@@ -81,21 +83,23 @@ describe('# ./models/usuario.js', () => {
                     ops: [{
                         _id: '123456789012345678901234',
                         nome: 'Joao',
+                        empresa: 'CPMGFHJKL'
                     }]
                 });
             })
         });
 
-        const { incluirUsuario } = require('../../models/usuario')(context);
+        const { incluirFuncionario } = require('../../models/funcionario')(context);
 
         const req = {
             input: {
                 nome: 'Joao',
+                empresa: 'CPMGFHJKL'
             }
         };
 
         try {
-            var result = await incluirUsuario(req.input);
+            var result = await incluirFuncionario(req.input);
         } catch (error) {
             console.error(error);
         }
@@ -103,10 +107,11 @@ describe('# ./models/usuario.js', () => {
 
         assert.equal(result._id, '123456789012345678901234');
         assert.equal(result.nome, 'Joao');
+        assert.equal(result.empresa, 'CPMGFHJKL');
 
     });
 
-    it(`${++i} - incluirUsuario() - Execução com erro`, async () => {
+    it(`${++i} - incluirFuncionario() - Execução com erro`, async () => {
 
         context.setMock('utils/mongodb-crud', {
             insert: () => new Promise((_, reject) => {
@@ -114,16 +119,17 @@ describe('# ./models/usuario.js', () => {
             })
         });
 
-        const { incluirUsuario } = require('../../models/usuario')(context);
+        const { incluirFuncionario } = require('../../models/funcionario')(context);
 
         const req = {
             input: {
                 nome: 'Joao',
+                empresa: 'CPMGFHJKL'
             }
         };
 
         try {
-            var result = await incluirUsuario(req.input);
+            var result = await incluirFuncionario(req.input);
         } catch (error) {
             var result = error;
         }
@@ -132,39 +138,43 @@ describe('# ./models/usuario.js', () => {
 
     });
 
-    it(`${++i} - pesquisarUsuarios() - Execução com sucesso`, async () => {
+    it(`${++i} - pesquisarFuncionarios() - Execução com sucesso`, async () => {
 
         context.setMock('utils/mongodb-crud', {
             scan: () => new Promise((resolve) => {
                 resolve([{
                     _id: '123456789012345678901234',
                     nome: 'Joao',
+                    empresa: 'CPMGFHJKL'
                 },
                 {
                     _id: '12345678901234567890abcd',
                     nome: 'Fabio',
+                    empresa: 'JHGFRT'
                 }])
             })
         });
 
-        const { pesquisarUsuarios } = require('../../models/usuario')(context);
+        const { pesquisarFuncionarios } = require('../../models/funcionario')(context);
 
         const req = {};
 
         try {
-            var result = await pesquisarUsuarios(req);
+            var result = await pesquisarFuncionarios(req);
         } catch (error) {
             console.error(error);
         }
 
         assert.equal(result[0]._id, '123456789012345678901234');
         assert.equal(result[0].nome, 'Joao');
+        assert.equal(result[0].empresa, 'CPMGFHJKL');
         assert.equal(result[1]._id, '12345678901234567890abcd');
         assert.equal(result[1].nome, 'Fabio');
+        assert.equal(result[1].empresa, 'JHGFRT');
 
     });
 
-    it(`${++i} - pesquisarUsuarios() - Execução com erro`, async () => {
+    it(`${++i} - pesquisarFuncionarios() - Execução com erro`, async () => {
 
         context.setMock('utils/mongodb-crud', {
             scan: () => new Promise((_, reject) => {
@@ -172,12 +182,12 @@ describe('# ./models/usuario.js', () => {
             })
         });
 
-        const { pesquisarUsuarios } = require('../../models/usuario')(context);
+        const { pesquisarFuncionarios } = require('../../models/funcionario')(context);
 
         const req = {};
 
         try {
-            var result = await pesquisarUsuarios(req);
+            var result = await pesquisarFuncionarios(req);
         } catch (error) {
             var result = error;
         }
@@ -186,7 +196,7 @@ describe('# ./models/usuario.js', () => {
 
     });
 
-    it(`${++i} - removerUsuario() - Execução com sucesso`, async () => {
+    it(`${++i} - removerFuncionario() - Execução com sucesso`, async () => {
 
         context.setMock('utils/mongodb-crud', {
             remove: () => new Promise((resolve) => {
@@ -194,14 +204,14 @@ describe('# ./models/usuario.js', () => {
             })
         });
 
-        const { removerUsuario } = require('../../models/usuario')(context);
+        const { removerFuncionario } = require('../../models/funcionario')(context);
 
         const req = {
             _id: '123456789012345678901234'
         };
 
         try {
-            var result = await removerUsuario(req._id);
+            var result = await removerFuncionario(req._id);
         } catch (error) {
             console.error(error);
         }
@@ -210,7 +220,7 @@ describe('# ./models/usuario.js', () => {
 
     });
 
-    it(`${++i} - removerUsuario() - Execução com erro`, async () => {
+    it(`${++i} - removerFuncionario() - Execução com erro`, async () => {
 
         context.setMock('utils/mongodb-crud', {
             remove: () => new Promise((_, reject) => {
@@ -218,14 +228,14 @@ describe('# ./models/usuario.js', () => {
             })
         });
 
-        const { removerUsuario } = require('../../models/usuario')(context);
+        const { removerFuncionario } = require('../../models/funcionario')(context);
 
         const req = {
             _id: '123456789012345678901234'
         };
 
         try {
-            var result = await removerUsuario(req._id);
+            var result = await removerFuncionario(req._id);
         } catch (error) {
             var result = error;
         }
@@ -234,7 +244,7 @@ describe('# ./models/usuario.js', () => {
 
     });
 
-    it(`${++i} - atualizarUsuario() - Execução com sucesso`, async () => {
+    it(`${++i} - atualizarFuncionario() - Execução com sucesso`, async () => {
 
         context.setMock('utils/mongodb-crud', {
             update: () => new Promise((resolve) => {
@@ -242,15 +252,15 @@ describe('# ./models/usuario.js', () => {
             })
         });
 
-        const { atualizarUsuario } = require('../../models/usuario')(context);
+        const { atualizarFuncionario } = require('../../models/funcionario')(context);
 
         const req = {
             _id: '123456789012345678901234',
-            sobrenome: 'Silva'
+            empresa: 'JHGFRT'
         };
 
         try {
-            var result = await atualizarUsuario(req._id, { empresa: req.sobrenome });
+            var result = await atualizarFuncionario(req._id, { empresa: req.empresa });
         } catch (error) {
             console.error(error);
         }
@@ -259,7 +269,7 @@ describe('# ./models/usuario.js', () => {
 
     });
 
-    it(`${++i} - atualizarUsuario() - Execução com erro`, async () => {
+    it(`${++i} - atualizarFuncionario() - Execução com erro`, async () => {
 
         context.setMock('utils/mongodb-crud', {
             update: () => new Promise((_, reject) => {
@@ -267,15 +277,15 @@ describe('# ./models/usuario.js', () => {
             })
         });
 
-        const { atualizarUsuario } = require('../../models/usuario')(context);
+        const { atualizarFuncionario } = require('../../models/funcionario')(context);
 
         const req = {
             _id: '123456789012345678901234',
-            sobrenome: 'Silva'
+            empresa: 'JHGFRT'
         };
 
         try {
-            var result = await atualizarUsuario(req._id, { empresa: req.sobrenome });
+            var result = await atualizarFuncionario(req._id, { empresa: req.empresa });
         } catch (error) {
             var result = error;
         }

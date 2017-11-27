@@ -1,7 +1,7 @@
 {
-  "name": "graphql-funcionarios",
+  "name": "rest-v1-funcionarios-get",
   "version": "1.0.0",
-  "description": "GraphQL Service com CRUD de funcionarios",
+  "description": "REST-API listar funcionarios",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -11,13 +11,12 @@
     "test-cover": "nyc --reporter=html --all mocha test/*.test.js test/**/*.test.js"
   },
   "keywords": [
-    "graphql",
+    "rest",
     "funcionarios"
   ],
   "author": "douglaspands",
   "license": "ISC",
   "dependencies": {
-    "graphql": "^0.11.7",
     "winston": "^2.4.0",
     "lodash": "^4.17.4",
     "moment": "^2.19.2"

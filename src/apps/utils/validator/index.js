@@ -7,7 +7,6 @@
 'use strict';
 const _ = require('lodash');
 const moment = require('moment');
-const { GraphQLError } = require('graphql');
 const constant = require('./constants');
 const ext = require('./extends');
 
@@ -27,9 +26,9 @@ function inspection(objeto) {
      * @property {string} mensagem 
      */
     function InspectFail(campo, valor, mensagemErro) {
-        this.campo = campo;
-        this.valor = valor;
-        this.mensagem = mensagemErro;
+        this.field = campo;
+        this.value = valor;
+        this.message = mensagemErro;
     }
 
     /**
@@ -332,6 +331,7 @@ function inspection(objeto) {
      */
     function checkReportForGraphQL() {
         if (listaErros.length > 0) {
+            const { GraphQLError } = require('graphql');
             throw new GraphQLError(listaErros);
         }
     }
@@ -345,12 +345,28 @@ function inspection(objeto) {
     }
 
     /**
+     * Retorna objeto de erro.
+     * @return {object} Retorna objeto de erro.
+     */
+    function checkReportForREST() {
+        if (listaErros.length > 0) {
+            return {
+                code: 'validation error',
+                message: listaErros
+            };
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Funções retornadas.
      */
     return {
         checkField: CheckField,
         getListErrors,
-        checkReportForGraphQL
+        checkReportForGraphQL,
+        checkReportForREST
     }
 }
 

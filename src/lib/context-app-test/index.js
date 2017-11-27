@@ -7,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
+const winston = require('winston');
 
 function Context(pathApp) {
 
@@ -18,6 +19,17 @@ function Context(pathApp) {
      * Obter conexão com o MongoDB
      */
     this.db = undefined;
+
+    /**
+     * Geração de log (winston)
+     */
+    this.logger = new (winston.Logger)({
+        transports: [
+            new winston.transports.Console({
+                colorize: true
+            })
+        ]
+    });
 
     /**
      * Obter modulos locais.

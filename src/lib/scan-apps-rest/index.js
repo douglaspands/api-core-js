@@ -39,10 +39,8 @@ module.exports = server => {
                 try {
                     const context = new Context(dirAPI, server);
                     const listHandlers = _.reduce((_.without(Object.keys(api), 'route')), (handlers, fn) => {
-                        handlers.push(() => {
-                            let args = Array.prototype.slice.call(arguments);
-                            args.push(context);
-                            api[fn].apply(this, args);
+                        handlers.push((req, res, next) => {
+                            api[fn](req, res, next, context);
                         });
                         return handlers;
                     }, []);

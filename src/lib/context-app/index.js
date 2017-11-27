@@ -11,11 +11,17 @@ function Context(pathApp, server) {
 
     const _pathApp = pathApp;
     const _db = server.get('mongodb');
+    const _logger = server.get('logger');
 
     /**
      * Obter conexão com o MongoDB
      */
     this.db = _db;
+
+    /**
+     * Modulo de log (winston)
+     */
+    this.logger = _logger;
 
     /**
      * Obter modulos locais.
