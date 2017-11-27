@@ -1,0 +1,27 @@
+input incluirFuncionario {
+    nome: String
+    sobrenome: String
+    cidade: String
+    estado: String
+    telefone: String
+    empresa: String
+}
+type Funcionario {
+    _id: ID!
+    nome: String
+    sobrenome: String
+    cidade: String
+    estado: String
+    telefone: String
+    empresa: String
+}
+type Query {
+    obterFuncionario(_id: ID!): Funcionario
+    listarFuncionarios: [Funcionario]
+    pesquisarFuncionarios(nome: String, sobrenome: String, cidade: String, estado: String, telefone: String, empresa: String): [Funcionario]
+}
+type Mutation {
+    criarFuncionario(input: incluirFuncionario): Funcionario
+    atualizarFuncionario(_id: ID!, nome: String, sobrenome: String, cidade: String, estado: String, telefone: String, empresa: String): String
+    removerFuncionario(_id: ID!): String
+}

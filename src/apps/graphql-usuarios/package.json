@@ -1,0 +1,28 @@
+{
+  "name": "graphql-usuarios",
+  "version": "1.0.0",
+  "description": "GraphQL Service com CRUD de usuarios",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha --full-trace test/*.test.js test/**/*.test.js",
+    "test-cover": "nyc --reporter=html --all mocha test/*.test.js test/**/*.test.js"
+  },
+  "keywords": [
+    "graphql",
+    "usuarios"
+  ],
+  "author": "douglaspands",
+  "license": "ISC",
+  "dependencies": {
+    "graphql": "^0.11.7",
+    "lodash": "^4.17.4",
+    "moment": "^2.19.2"
+  },
+  "devDependencies": {
+    "mocha": "^4.0.1",
+    "nyc": "^11.3.0"
+  }
+}
