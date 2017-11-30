@@ -15,6 +15,16 @@ module.exports = (app) => {
 
     const _db = app.get('mongodb');
 
+    const logger = winston.createLogger({
+        level: 'info',
+        format: winston.format.json(),
+        transports: [
+            new winston.transports.Console({
+                format: winston.format.simple()
+            })
+        ]
+    });
+
     app.set('logger', logger);
 
     return logger;
