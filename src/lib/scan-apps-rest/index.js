@@ -36,15 +36,22 @@ module.exports = server => {
 
             if (_.includes(fs.readdirSync(dirAPI), 'index.js')) {
                 const api = require(dirAPI);
+                let route;
+                const context = new Context(dirAPI, server);
                 try {
-                    const context = new Context(dirAPI, server);
                     const listHandlers = _.reduce((_.without(Object.keys(api), 'route')), (handlers, fn) => {
-                        handlers.push((req, res, next) => {
-                            api[fn](req, res, next, context);
-                        });
+                        function createHandler() {
+                            function handler() {
+                                let args = Array.prototype.slice.call(arguments);
+                                args.push(context);
+                                api[fn].apply(this, args);
+                            }
+                            return handler;
+                        }
+                        handlers.push(new createHandler());
                         return handlers;
                     }, []);
-                    const route = api.route();
+                    route = api.route();
                     server[route.method](route.uri, listHandlers);
                     rest.push(route);
                 } catch (error) {
