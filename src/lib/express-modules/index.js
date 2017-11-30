@@ -14,7 +14,5 @@ module.exports = (app) => {
     app.use(compression());
     // Permite requisições de origens diferentes
     app.use(cors());
-    // Adicionar x-request-id
-    app.use(addRequestId());
 
 };
