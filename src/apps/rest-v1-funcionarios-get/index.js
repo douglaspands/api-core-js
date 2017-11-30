@@ -23,20 +23,20 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ query }, res, _, { getModule }) => {
+module.exports.controller = async ({ query }, res, next, { getModule }) => {
 
+    const _ = require('lodash');
     const modelFuncionario = getModule('models/funcionario', true);
-    const validarEntrada = getModule('modules/form', true);
-
-    const errors = validarEntrada(query);
-
-    if (errors) return res.status(400).send(errors);
 
     try {
         const ret = await modelFuncionario.pesquisarFuncionarios(query);
-        res.status(200).send({ data: ret });
+        if (_.isEmpty(ret)) {
+            res.status(204).send();
+        } else {
+            res.status(200).send({ data: ret });
+        }
     } catch (error) {
-        res.status(204).send({});
+        res.status(500).send(error);
     }
 
 };
