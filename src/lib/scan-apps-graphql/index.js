@@ -4,14 +4,12 @@
  * @since 2017-11-22
  */
 'use strict';
-
+const graphqlHTTP = require('express-graphql');
 const { buildSchema } = require('graphql');
 const { mergeTypes } = require('merge-graphql-schemas');
 const fs = require('fs');
 const path = require('path');
-const { graphqlSchemaIsValid } = require('./utils');
 const Context = require('../context-app');
-
 
 // Diretorio das APIs em GraphQL
 const folderApp = 'apps';
@@ -23,13 +21,15 @@ const prefix = 'graphql';
 /**
  * Mapear script GraphQL
  * @param {object} server Modulo do Express
- * @return {object} Retorna funções root e os graphql schemas unificados 
+ * @return {array} 
  */
-module.exports = server => {
+module.exports = (server) => {
+
+    const logger = server.get('logger');
+    const { graphqlSchemaIsValid, duplicateFunctions } = require('./utils')(logger);
 
     const root = {};
     const schemas = [];
-    const errors = [];
 
     (fs.readdirSync(dirApps)).forEach((pasta) => {
 
@@ -50,19 +50,29 @@ module.exports = server => {
             });
 
             if (findIndex && findGraphQL) {
+                const regex = new RegExp('(.+)(?=([/\\\\]' + folderApp + '))', 'g');
                 try {
                     const resolverFunction = require(findIndex)(new Context(dirAPI, server));
                     const stringSchema = fs.readFileSync(findGraphQL, 'utf8');
-                    if (graphqlSchemaIsValid(stringSchema)) {
-                        schemas.push(stringSchema);
+                    if (graphqlSchemaIsValid(stringSchema) && !duplicateFunctions(root, resolverFunction)) {
                         Object.assign(root, resolverFunction);
+                        schemas.push(stringSchema);
+                    } else {
+                        const errorFormat = {
+                            functionResolved: findIndex.replace(regex, '.'),
+                            graphqlSchema: findGraphQL.replace(regex, '.')
+                        };
+                        logger.error(`[graphql-api] function.: ${errorFormat.functionResolved}`);
+                        logger.error(`[graphql-api] schema...: ${errorFormat.graphqlSchema}`);
                     }
                 } catch (error) {
-                    const regex = new RegExp('(.+)(?=([/\\\\]' + folderApp + '))', 'g');
-                    errors.push({
+                    const errorFormat = {
                         functionResolved: findIndex.replace(regex, '.'),
                         graphqlSchema: findGraphQL.replace(regex, '.')
-                    });
+                    };
+                    logger.error(`[graphql-error] ${error}`);
+                    logger.error(`[graphql-error] function.: ${errorFormat.functionResolved}`);
+                    logger.error(`[graphql-error] schema...: ${errorFormat.graphqlSchema}`);
                 }
             }
 
@@ -70,18 +80,30 @@ module.exports = server => {
 
     });
 
-    if (errors.length > 0) {
-        console.log('Erro no registro da API GraphQL:');
-        errors.forEach(error => {
-            console.log(`-> Function Resolved.: ${error.functionResolved}`);
-            console.log(`-> GraphQL Schema....: ${error.graphqlSchema}`);
-        })
+    const data = {};
+    data.root = root;
+
+    try {
+
+        data.schema = buildSchema(mergeTypes(schemas));
+        server.use('/graphql', graphqlHTTP({
+            schema: data.schema,
+            rootValue: data.root,
+            // pretty: true,
+            graphiql: (process.env.NODE_ENV !== 'production')
+        }));
+        logger.info('GraphqlHTTP ativado com sucesso!');
+
+    } catch (error) {
+
+        logger.error(`[mergeSchemas] ${error}`);
+        logger.error('GraphqlHTTP não pode ser ativo!');
+        data.root = [];
+
+    } finally {
+
+        return Object.keys(data.root);
+
     }
-
-    return {
-        root: root,
-        schema: buildSchema(mergeTypes(schemas))
-    };
-
 }
 

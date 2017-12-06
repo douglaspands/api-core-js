@@ -21,7 +21,7 @@ module.exports = (logger) => {
         MongoClient.connect(URI, (err, db) => {
 
             if (err) {
-                if (logger) logger.error(`${err}`);
+                if (logger) logger.error(err);
                 if (callback) callback(err);
             } else {
                 if (logger) logger.info('MongoDB ativado com sucesso!');

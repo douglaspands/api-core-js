@@ -13,13 +13,14 @@ async.auto({
   logger: (callback) => {
     // Configurando de log no Express
     const logger = require('./lib/express-log')(app);
+    app.set('logger', logger)
     callback(null, logger);
   },
-  modules: (callback) => {
+  modules: ['logger', (_, callback) => {
     // Incluindo middlewares do express.js
     require('./lib/express-modules')(app);
     callback();
-  },
+  }],
   mongodb: ['logger', ({ logger }, callback) => {
     // Monta conexão do MongoDB
     const mongoConnect = require('./lib/mongodb-connect')(logger);
@@ -30,15 +31,9 @@ async.auto({
   }],
   graphql: ['logger', 'mongodb', (_, callback) => {
     // Obtem todas as APIs GraphQL
-    const graphqlHTTP = require('express-graphql');
-    const { schema, root } = require('./lib/scan-apps-graphql')(app);
-    app.use('/graphql', graphqlHTTP({
-      schema: schema,
-      rootValue: root,
-      // pretty: true,
-      graphiql: (process.env.NODE_ENV !== 'production')
-    }));
-    callback(null, Object.keys(root));
+    const scanAppsGraphQL = require('./lib/scan-apps-graphql');
+    const services = scanAppsGraphQL(app);
+    callback(null, services);
   }],
   rest: ['logger', 'mongodb', (_, callback) => {
     // Obtem todas as APIs REST
@@ -47,12 +42,10 @@ async.auto({
   }]
 }, (_, { logger, rest, graphql }) => {
   // Iniciar servidor
-  const port = 3000;
+  const port = process.env.PORT || 3000;
   app.listen(port, () => {
-    let log = [];
-    log.push(`Executando o API Server no localhost:${port}`);
-    graphql.forEach(service => log.push(`-> GraphQL Service "${service}" registrado`));
-    rest.forEach(route => log.push(`-> REST API [${route.method.toUpperCase()}] ${route.uri} registrado`));
-    logger.info(log), console.log(log.join('\n'));
+    logger.info(`Executando o "core-api-js" na url: http://localhost:${port} (${(process.env.NODE_ENV || 'develop')})`);
+    graphql.forEach(service => logger.info(`GraphQL Service "${service}" registrado`));
+    rest.forEach(route => logger.info(`REST API [${route.method.toUpperCase()}] ${route.uri} registrado`));
   });
 });

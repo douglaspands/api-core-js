@@ -1,10 +1,12 @@
 /**
  * @file Modulo de configurações de Log no Express
  * @author douglaspands
- * @since 2017-11-24
+ * @since 2017-12-06
  */
 'use strict';
 const winston = require('winston');
+const { createLogger, format, transports } = winston;
+const { combine, timestamp, colorize, label, printf } = format;
 
 /**
  * Função que disponibiliza o modulo de log pra cadastro no express.js
@@ -13,19 +15,18 @@ const winston = require('winston');
  */
 module.exports = (app) => {
 
-    const _db = app.get('mongodb');
-
-    const logger = winston.createLogger({
-        level: 'info',
-        format: winston.format.json(),
+    const logger = createLogger({
         transports: [
-            new winston.transports.Console({
-                format: winston.format.simple()
+            new transports.Console({
+                format: combine(
+                    colorize(),
+                    label({ label: 'core-api-js' }),
+                    timestamp(),
+                    printf(info => `${info.timestamp} [${info.level}] ${info.message}`)
+                )
             })
         ]
     });
-
-    app.set('logger', logger);
 
     return logger;
 
