@@ -7,24 +7,31 @@
 const { MongoClient } = require('mongodb');
 
 // URI do MongoDB
-const URI = 'mongodb://localhost:27017/core-graphql-js';
+const URI = 'mongodb://localhost:27017/core-api-js';
 
 /**
  * Obter conexão com o MongoDB
- * @param {function} callback Callback de retorno.
- * @return {void} 
+ * @param {function} logger Objeto de logger do Winston.
+ * @return {function} Retorna a função de conexão. 
  */
-module.exports = (callback) => {
+module.exports = (logger) => {
 
-    MongoClient.connect(URI, (err, db) => {
+    function mongoConnect(callback) {
 
-        if (err) {
-            console.log(`${err}`);
-            callback(err);
-        } else {
-            callback(null, db);
-        }
+        MongoClient.connect(URI, (err, db) => {
 
-    });
+            if (err) {
+                if (logger) logger.error(`${err}`);
+                if (callback) callback(err);
+            } else {
+                if (logger) logger.info('MongoDB ativado com sucesso!');
+                if (callback) callback(null, db);
+            }
+
+        });
+
+    }
+
+    return mongoConnect;
 
 }

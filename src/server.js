@@ -10,29 +10,25 @@ const async = require('async');
 const app = express();
 
 async.auto({
-  mongodb: (callback) => {
-    // Monta conexão do MongoDB
-    const mongoConnect = require('./lib/mongodb-connect');
-    mongoConnect((err, db) => {
-      if (!err) {
-        app.set('mongodb', db);
-      }
-      callback(null, db);
-    });
+  logger: (callback) => {
+    // Configurando de log no Express
+    const logger = require('./lib/express-log')(app);
+    callback(null, logger);
   },
   modules: (callback) => {
     // Incluindo middlewares do express.js
-    const expressModules = require('./lib/express-modules');
-    expressModules(app);
+    require('./lib/express-modules')(app);
     callback();
   },
-  logger: ['modules', 'mongodb', (_, callback) => {
-    // Configurando de log no Express
-    const expressLog = require('./lib/express-log');
-    const logger = expressLog(app);
-    callback(null, logger);
+  mongodb: ['logger', ({ logger }, callback) => {
+    // Monta conexão do MongoDB
+    const mongoConnect = require('./lib/mongodb-connect')(logger);
+    mongoConnect((err, db) => {
+      if (!err) app.set('mongodb', db);
+      callback(null, db);
+    });
   }],
-  graphql: ['logger', (_, callback) => {
+  graphql: ['logger', 'mongodb', (_, callback) => {
     // Obtem todas as APIs GraphQL
     const graphqlHTTP = require('express-graphql');
     const { schema, root } = require('./lib/scan-apps-graphql')(app);
@@ -44,7 +40,7 @@ async.auto({
     }));
     callback(null, Object.keys(root));
   }],
-  rest: ['logger', (_, callback) => {
+  rest: ['logger', 'mongodb', (_, callback) => {
     // Obtem todas as APIs REST
     const routes = require('./lib/scan-apps-rest')(app);
     callback(null, routes);
