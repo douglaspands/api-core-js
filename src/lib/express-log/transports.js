@@ -4,6 +4,8 @@
  * @since 2017-12-07
  */
 'use strict';
+const moment = require('moment');
+const formatDate = 'YYYY-MM-DD HH.mm.ss.SSS';
 
 module.exports = (winston) => {
 
@@ -21,7 +23,13 @@ module.exports = (winston) => {
                 colorize(),
                 label({ label: 'server' }),
                 timestamp(),
-                printf(info => `[${info.level}] ${info.timestamp} ${(info.source || info.label)} - ${info.message}`)
+                printf(info => {
+                    if (info.request) {
+                        return `[${info.level}] ${moment().format(formatDate)}\n${JSON.stringify(info.request, null, 4)}`;
+                    } else {
+                        return `[${info.level}] ${moment().format(formatDate)} ${(info.source || info.label)} - ${info.message}`;
+                    }
+                })
             )
         });
 

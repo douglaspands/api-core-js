@@ -31,9 +31,10 @@ module.exports = (app) => {
      * @param {function} next Next (express)
      */
     function expressLogger(req, res, next) {
+
         const correlationId = uuid();
         res.setHeader('X-Correlation-Id', correlationId);
-        
+
         // Capturando send 
         const end = res.end;
         res.end = (chunk, encoding, callback) => {
@@ -41,24 +42,26 @@ module.exports = (app) => {
             res.end = end;
             res.end(chunk, encoding, callback);
 
-            //
-            const responseBody = chunk.toString();
-            console.log('===================');
-            console.log(req.params);
-            console.log(req.query);
-            console.log(req.body);
-            console.log('===================');
-
             let dataLog = {
-                //request: req,
+                'x-correlation-id': correlationId,
+                request: {
+                    method: req.method,
+                    url: req.originalUrl,
+                    headers: req.headers,
+                    params: req.params,
+                    query: req.query,
+                    body: req.body
+                },
                 response: {
-                    header: res._headers,
-                    body: JSON.parse(responseBody)
+                    headers: res._headers,
+                    body: JSON.parse(chunk.toString())
                 }
             }
 
-            console.log(JSON.stringify(dataLog, null, 4));
-
+            logger.log({
+                level: 'info',
+                request: dataLog
+            });
 
         };
 
