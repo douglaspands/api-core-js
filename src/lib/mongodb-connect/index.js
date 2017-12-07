@@ -7,7 +7,7 @@
 const { MongoClient } = require('mongodb');
 
 // Node do modulo
-const nomeModulo = 'scan-apps-graphql';
+const nomeModulo = 'mongodb-connect';
 
 // URI do MongoDB
 const URI = 'mongodb://localhost:27017/core-api-js';

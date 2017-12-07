@@ -22,6 +22,7 @@ function Context(pathApp) {
     const _logger = createLogger({
         transports: [
             new transports.Console({
+                level: 'silly',
                 format: combine(
                     colorize(),
                     label({ label: 'server' }),
@@ -52,7 +53,7 @@ function Context(pathApp) {
     /**
      * Nome do modulo
      */
-    this.moduleName = _moduleName;    
+    this.moduleName = _moduleName;
 
     /**
      * Obter conexão com o MongoDB
@@ -62,11 +63,28 @@ function Context(pathApp) {
     /**
      * Modulo de log (winston)
      */
-    this.logger = (level, message) => _logger.log({
-        level: (_.includes(['error', 'warn', 'info', 'verbose', 'debug', 'silly'], level)) ? level : 'error',
-        source: _moduleName,
-        message: (typeof message === 'string') ? message : 'N/A'
-    });
+    this.logger = function (level, message) {
+
+        const listLevels = {
+            error: 0,
+            warn: 1,
+            info: 2,
+            verbose: 3,
+            debug: 4,
+            silly: 5
+        };
+        const _level = (_.includes(Object.keys(listLevels), level)) ? level : 'silly';
+        const _envLog = (_.includes(Object.keys(listLevels), process.env.LOG)) ? listLevels[process.env.LOG] : -1;
+
+        if ((listLevels[_level] <= _envLog) || (process.env.NODE_ENV !== 'production')) {
+            _logger.log({
+                level: _level,
+                source: _moduleName,
+                message: (typeof message === 'string') ? message : 'N/A'
+            });
+        }
+
+    };
 
     /**
      * Obter modulos locais.

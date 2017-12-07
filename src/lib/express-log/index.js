@@ -44,9 +44,9 @@ module.exports = (app) => {
 
             let dataLog = {
                 'x-correlation-id': correlationId,
+                method: req.method,
+                url: req.originalUrl,
                 request: {
-                    method: req.method,
-                    url: req.originalUrl,
                     headers: req.headers,
                     params: req.params,
                     query: req.query,
@@ -54,7 +54,7 @@ module.exports = (app) => {
                 },
                 response: {
                     headers: res._headers,
-                    body: JSON.parse(chunk.toString())
+                    body: (chunk) ? JSON.parse(chunk.toString()) : {}
                 }
             }
 

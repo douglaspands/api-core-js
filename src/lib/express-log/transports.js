@@ -19,13 +19,14 @@ module.exports = (winston) => {
     function customConsole() {
 
         return new transports.Console({
+            level: 'silly',
             format: combine(
                 colorize(),
                 label({ label: 'server' }),
                 timestamp(),
                 printf(info => {
                     if (info.request) {
-                        return `[${info.level}] ${moment().format(formatDate)}\n${JSON.stringify(info.request, null, 4)}`;
+                        return `[${info.level}] ${moment().format(formatDate)} express-log -\n${JSON.stringify(info.request, null, 4)}`;
                     } else {
                         return `[${info.level}] ${moment().format(formatDate)} ${(info.source || info.label)} - ${info.message}`;
                     }

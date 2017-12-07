@@ -23,7 +23,9 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ params }, res, _, { getModule }) => {
+module.exports.controller = async ({ params }, res, _, { getModule, logger }) => {
+
+    logger('debug', 'Inicio da rota REST GET /v1/funcionarios');
 
     const modelFuncionario = getModule('models/funcionario', true);
     const validarEntrada = getModule('modules/form', true);
