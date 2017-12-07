@@ -12,7 +12,7 @@ const winston = require('winston');
 function Context(pathApp) {
 
     const _pathApp = pathApp;
-    const nomeModulo = (path => {
+    const _moduleName = (path => {
         let div = '/';
         if (path.indexOf(div) < 0) div = '\\\\';
         let nome = path.split(div);
@@ -41,13 +41,18 @@ function Context(pathApp) {
         message = (typeof message === 'string') ? message : 'N/A';
         _logger.log({
             level: 'error',
-            source: nomeModulo,
+            source: _moduleName,
             message: message
         });
     }
 
     // Lista de mocks
     const listMocks = [];
+
+    /**
+     * Nome do modulo
+     */
+    this.moduleName = _moduleName;    
 
     /**
      * Obter conexão com o MongoDB
