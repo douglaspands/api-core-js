@@ -7,11 +7,36 @@
 const fs = require('fs');
 const path = require('path');
 
-function Context(pathApp, server) {
+/**
+ * Class de contexto da API
+ * @param {string} pathApp Diretorio da API
+ * @param {object} app servidor Express 
+ */
+function Context(pathApp, app) {
 
     const _pathApp = pathApp;
-    const _db = server.get('mongodb');
-    const _logger = server.get('logger');
+    const nomeModulo = (path => {
+        let div = '/';
+        if (path.indexOf(div) < 0) div = '\\\\';
+        let nome = path.split(div);
+        return nome[nome.length - 1];
+    })(_pathApp);
+    const _db = app.get('mongodb');
+    const _logger = app.get('logger');
+
+    /**
+     * Função pra geração de mensagens de erro
+     * @param {string} message mensagem de erro
+     * @return {void} 
+     */
+    function logError(message) {
+        message = (typeof message === 'string') ? message : 'N/A';
+        _logger.log({
+            level: 'error',
+            source: nomeModulo,
+            message: message
+        });
+    }
 
     /**
      * Obter conexão com o MongoDB
@@ -38,16 +63,24 @@ function Context(pathApp, server) {
         const _self = (typeof self === 'boolean') ? self : false;
         const _name = name;
 
+        let _mod;
         try {
-            const _mod = require(path.join(_pathApp, _name));
-            return (_self && _mod) ? _mod(this) : _mod;
-        } catch (errA) {
+            _mod = require(path.join(_pathApp, _name));
             try {
-                const _mod = require(path.join(_pathApp, '..', _name));
-                return (_self && _mod) ? _mod(this) : _mod;
-            } catch (errB) {
-                console.log(errA, '\n', errB);
-                return undefined;
+                _mod = (_self && _mod && typeof _mod === 'function') ? _mod(this) : _mod;
+            } catch (err1) {
+                logError(err1);
+            }
+        } catch (err2) {
+            try {
+                _mod = require(path.join(_pathApp, '..', _name));
+                try {
+                    _mod = (_self && _mod && typeof _mod === 'function') ? _mod(this) : _mod;
+                } catch (err3) {
+                    logError(err3);
+                }
+            } catch (err4) {
+                logError(`Modulo "${_name}" não foi encontrado!`);
             }
         }
 

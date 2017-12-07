@@ -4,6 +4,7 @@
  * @since 2017-12-06
  */
 'use strict';
+const _ = require('lodash');
 const winston = require('winston');
 const { createLogger, format, transports } = winston;
 const { combine, timestamp, colorize, label, printf } = format;
@@ -20,9 +21,9 @@ module.exports = (app) => {
             new transports.Console({
                 format: combine(
                     colorize(),
-                    label({ label: 'core-api-js' }),
+                    label({ label: 'server' }),
                     timestamp(),
-                    printf(info => `${info.timestamp} [${info.level}] ${info.message}`)
+                    printf(info => `[${info.level}] ${info.timestamp} ${(info.source || info.label)} - ${info.message}`)
                 )
             })
         ]

@@ -10,7 +10,10 @@ const path = require('path');
 const _ = require('lodash');
 const Context = require('../context-app');
 
-// Diretorio das APIs em GraphQL
+// Node do modulo
+const nomeModulo = 'scan-apps-rest';
+
+// Diretorio das APIs em REST
 const folderApp = 'apps';
 const dirApps = path.join(__dirname, '../..', folderApp);
 
@@ -19,13 +22,34 @@ const prefix = 'rest';
 
 /**
  * Mapear script GraphQL
- * @param {object} server Modulo do Express
- * @return {array} Lista de rotas.
+ * @param {object} app Modulo do Express
+ * @return {Promise.<Array>} Lista de rotas.
  */
-module.exports = server => {
+module.exports = app => {
+
+    const logger = app.get('logger');
+
+    /**
+     * Função pra geração de mensagens de erro
+     * @param {object} errorFormat mensagem de erro
+     * @return {void} 
+     */
+    function logError(errorFormat) {
+        logger.log({
+            level: 'error',
+            source: nomeModulo,
+            message: `folder.: ${errorFormat.dir}`
+        });
+        logger.log({
+            level: 'error',
+            source: nomeModulo,
+            message: `route..: ${errorFormat.route}`
+        });
+    }
+
+    const router = require('express').Router();
 
     const rest = [];
-    const errors = [];
 
     (fs.readdirSync(dirApps)).forEach((pasta) => {
 
@@ -37,7 +61,7 @@ module.exports = server => {
             if (_.includes(fs.readdirSync(dirAPI), 'index.js')) {
                 const api = require(dirAPI);
                 let route;
-                const context = new Context(dirAPI, server);
+                const context = new Context(dirAPI, app);
                 try {
                     const listHandlers = _.reduce((_.without(Object.keys(api), 'route')), (handlers, fn) => {
                         function createHandler() {
@@ -52,28 +76,28 @@ module.exports = server => {
                         return handlers;
                     }, []);
                     route = api.route();
-                    server[route.method](route.uri, listHandlers);
+                    router[route.method](route.uri, listHandlers);
                     rest.push(route);
                 } catch (error) {
-                    errors.push({
+                    const errorFormat = {
                         dir: dirAPI,
                         route: route
-                    })
+                    };
+                    logger.log({
+                        level: 'error',
+                        source: nomeModulo,
+                        message: error
+                    });
+                    logError(errorFormat);
                 }
-
             }
         }
     });
 
-    if (errors.length > 0) {
-        console.log('Erro no registro da API REST:');
-        errors.forEach(error => {
-            console.log(`-> Diretorio da REST API.: ${error.dir}`);
-            console.log(`-> Rota.: [${_.get(error, 'route.method', '')}] ${_.get(error, 'route.uri', '')}`);
-        })
-    }
+    // Registrar todas as rotas
+    app.use('/', router);
 
-    return rest;
+    return new Promise(resolve => resolve(rest));
 
 }
 

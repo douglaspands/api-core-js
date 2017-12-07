@@ -12,24 +12,52 @@ const winston = require('winston');
 function Context(pathApp) {
 
     const _pathApp = pathApp;
+    const nomeModulo = (path => {
+        let div = '/';
+        if (path.indexOf(div) < 0) div = '\\\\';
+        let nome = path.split(div);
+        return nome[nome.length - 1];
+    })(_pathApp);
+    const _db = undefined;
+    const _logger = createLogger({
+        transports: [
+            new transports.Console({
+                format: combine(
+                    colorize(),
+                    label({ label: 'server' }),
+                    timestamp(),
+                    printf(info => `[${info.level}] ${info.timestamp} ${(info.source || info.label)} - ${info.message}`)
+                )
+            })
+        ]
+    });
 
+    /**
+     * Função pra geração de mensagens de erro
+     * @param {string} message mensagem de erro
+     * @return {void} 
+     */
+    function logError(message) {
+        message = (typeof message === 'string') ? message : 'N/A';
+        _logger.log({
+            level: 'error',
+            source: nomeModulo,
+            message: message
+        });
+    }
+
+    // Lista de mocks
     const listMocks = [];
 
     /**
      * Obter conexão com o MongoDB
      */
-    this.db = undefined;
+    this.db = _db;
 
     /**
-     * Geração de log (winston)
+     * Modulo de log (winston)
      */
-    this.logger = new (winston.Logger)({
-        transports: [
-            new winston.transports.Console({
-                colorize: true
-            })
-        ]
-    });
+    this.logger = _logger;
 
     /**
      * Obter modulos locais.
@@ -53,16 +81,24 @@ function Context(pathApp) {
         if (mock) return mock.mod;
         //--
 
+        let _mod;
         try {
-            const _mod = require(path.join(_pathApp, _name));
-            return (_self && _mod) ? _mod(this) : _mod;
-        } catch (errA) {
+            _mod = require(path.join(_pathApp, _name));
             try {
-                const _mod = require(path.join(_pathApp, '..', _name));
-                return (_self && _mod) ? _mod(this) : _mod;
-            } catch (errB) {
-                console.log(errA, '\n', errB);
-                return undefined;
+                _mod = (_self && _mod && typeof _mod === 'function') ? _mod(this) : _mod;
+            } catch (err1) {
+                logError(err1);
+            }
+        } catch (err2) {
+            try {
+                _mod = require(path.join(_pathApp, '..', _name));
+                try {
+                    _mod = (_self && _mod && typeof _mod === 'function') ? _mod(this) : _mod;
+                } catch (err3) {
+                    logError(err3);
+                }
+            } catch (err4) {
+                logError(`Modulo "${_name}" não foi encontrado!`);
             }
         }
 
@@ -82,6 +118,20 @@ function Context(pathApp) {
                 name: name,
                 mod: mod
             })
+            _logger.log({
+                level: 'debug',
+                source: nomeModulo,
+                message: `Foi incluido o mock do modulo "${name}" com sucesso!`
+            });
+
+        } else {
+
+            _logger.log({
+                level: 'debug',
+                source: nomeModulo,
+                message: `Não foi possivel incluir o mock do modulo "${name}"!`
+            });
+
         }
 
     }

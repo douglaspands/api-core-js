@@ -6,6 +6,8 @@
 'use strict'
 const _ = require('lodash');
 const { buildSchema } = require('graphql');
+// Node do modulo
+const nomeModulo = 'scan-apps-graphql';
 
 /**
  * Modulo de validação de log
@@ -23,7 +25,11 @@ module.exports = (logger) => {
             buildSchema(source);
             return true;
         } catch (error) {
-            if (logger) logger.error(`[buildSchema] ${error}`);
+            logger.log({
+                level: 'warn',
+                source: nomeModulo,
+                message: `buildSchema.: ${error}`
+            });
             return false;
         }
     }
@@ -39,7 +45,11 @@ module.exports = (logger) => {
         let duplicate = false;
         rfn.forEach((fn) => {
             if (_.includes(r, fn)) {
-                logger.error(`[duplicateFunctions] Função "${fn}" já existe no root do GraphQL`);
+                logger.log({
+                    level: 'warn',
+                    source: nomeModulo,
+                    message: `Função "${fn}" já existe no root do GraphQL`
+                });
                 duplicate = true;
             }
         })

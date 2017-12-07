@@ -6,32 +6,36 @@
 'use strict';
 const { MongoClient } = require('mongodb');
 
+// Node do modulo
+const nomeModulo = 'scan-apps-graphql';
+
 // URI do MongoDB
 const URI = 'mongodb://localhost:27017/core-api-js';
 
 /**
  * Obter conexão com o MongoDB
- * @param {function} logger Objeto de logger do Winston.
- * @return {function} Retorna a função de conexão. 
+ * @param {function} app Servidor Express.
+ * @return {Promise} Retorna uma promessa resolve. 
  */
-module.exports = (logger) => {
-
-    function mongoConnect(callback) {
-
+module.exports = (app) => {
+    const logger = app.get('logger');
+    return new Promise(resolve => {
         MongoClient.connect(URI, (err, db) => {
-
             if (err) {
-                if (logger) logger.error(err);
-                if (callback) callback(err);
+                logger.log({
+                    level: 'error',
+                    source: nomeModulo,
+                    message: err
+                });
             } else {
-                if (logger) logger.info('MongoDB ativado com sucesso!');
-                if (callback) callback(null, db);
+                app.set('mongodb', db);
+                logger.log({
+                    level: 'info',
+                    source: nomeModulo,
+                    message: 'MongoDB ativado com sucesso!'
+                });
             }
-
+            return resolve();
         });
-
-    }
-
-    return mongoConnect;
-
-}
+    });
+};

@@ -1,0 +1,10 @@
+type Query {
+    obterErros(_id: ID!): Erros
+    listarErross: [Erros]
+    pesquisarErross(nome: String, sobrenome: String, cidade: String, estado: String, telefone: String, empresa: String): [Erros]
+}
+type Mutation {
+    criarErros(input: incluirErros): Erros
+    atualizarErros(_id: ID!, nome: String, sobrenome: String, cidade: String, estado: String, telefone: String, empresa: String): String
+    removerErros(_id: ID!): String
+}
