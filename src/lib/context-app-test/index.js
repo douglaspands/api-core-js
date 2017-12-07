@@ -62,7 +62,11 @@ function Context(pathApp) {
     /**
      * Modulo de log (winston)
      */
-    this.logger = _logger;
+    this.logger = (level, message) => _logger.log({
+        level: (_.includes(['error', 'warn', 'info', 'verbose', 'debug', 'silly'], level)) ? level : 'error',
+        source: _moduleName,
+        message: (typeof message === 'string') ? message : 'N/A'
+    });
 
     /**
      * Obter modulos locais.
