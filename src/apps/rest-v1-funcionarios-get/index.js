@@ -27,13 +27,19 @@ module.exports.controller = async ({ query }, res, next, { getModule }) => {
 
     const _ = require('lodash');
     const modelFuncionario = getModule('models/funcionario', true);
+    const fields = getModule('utils/fields');
+    const queryFields = (query['fields']) ? query['fields'] : '';
+    delete query.fields;
 
     try {
         const ret = await modelFuncionario.pesquisarFuncionarios(query);
         if (_.isEmpty(ret)) {
             res.status(204).send();
         } else {
-            res.status(200).send({ data: ret });
+            const _ret = (queryFields && _.isArray(ret))
+                ? _.map(ret, o => fields(o, queryFields))
+                : ret;
+            res.status(200).send({ data: _ret });
         }
     } catch (error) {
         res.status(500).send(error);

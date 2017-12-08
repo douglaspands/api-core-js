@@ -198,6 +198,8 @@ function inspection(objeto) {
 
         /**
          * Função para verificar o tamanho.
+         * @param {number} min Tamanho minimo
+         * @param {number} max Tamanho maximo
          * @return {void}
          */
         this.isLength = (min, max) => {
@@ -205,7 +207,7 @@ function inspection(objeto) {
             if (!flgValidation) return this;
 
             let _min = (_.isNumber(min)) ? min : 0;
-            let _max = (_.isNumber(max)) ? max : Number.MAX_SAFE_INTEGER;
+            let _max = (_.isNumber(max)) ? max : _min;
 
             let ret = (_.size(elemento) >= _min && _.size(elemento) <= _max);
             if (!ret && !flgErro) {
