@@ -18,9 +18,9 @@
   "license": "ISC",
   "dependencies": {
     "graphql": "^0.11.7",
-    "winston": "^2.4.0",
     "lodash": "^4.17.4",
-    "moment": "^2.19.2"
+    "moment": "^2.19.3",
+    "winston": "^3.0.0-rc1"
   },
   "devDependencies": {
     "mocha": "^4.0.1",
