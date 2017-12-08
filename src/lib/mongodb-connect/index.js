@@ -10,7 +10,8 @@ const { MongoClient } = require('mongodb');
 const nomeModulo = 'mongodb-connect';
 
 // URI do MongoDB
-const URI = 'mongodb://localhost:27017/core-api-js';
+const URI = 'mongodb://localhost:27017';
+const db = 'core-api-js';
 
 /**
  * Obter conexão com o MongoDB
@@ -18,9 +19,12 @@ const URI = 'mongodb://localhost:27017/core-api-js';
  * @return {Promise} Retorna uma promessa resolve. 
  */
 module.exports = (app) => {
+
     const logger = app.get('logger');
+
     return new Promise(resolve => {
-        MongoClient.connect(URI, (err, db) => {
+
+        MongoClient.connect(URI, (err, client) => {
             if (err) {
                 logger.log({
                     level: 'error',
@@ -28,7 +32,7 @@ module.exports = (app) => {
                     message: err
                 });
             } else {
-                app.set('mongodb', db);
+                app.set('mongodb', client.db(db));
                 logger.log({
                     level: 'info',
                     source: nomeModulo,
@@ -37,5 +41,6 @@ module.exports = (app) => {
             }
             return resolve();
         });
+
     });
 };

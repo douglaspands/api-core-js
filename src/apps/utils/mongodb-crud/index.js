@@ -10,6 +10,7 @@ const { ObjectID } = require('mongodb');
 module.exports = ({ get }) => {
 
     const db = get('mongodb');
+    const logger = get('logger');
 
     /**
      * Vaidar ID.
@@ -41,7 +42,14 @@ module.exports = ({ get }) => {
                 .find(query)
                 .toArray()
                 .then(data => resolve(data))
-                .catch(err => reject(err));
+                .catch(err => {
+                    logger.log({
+                        level: 'error',
+                        source: 'utils/mongodb-crud',
+                        message: err
+                    });
+                    reject(err);
+                });
 
         });
 
@@ -62,6 +70,11 @@ module.exports = ({ get }) => {
             if (isValidID(_id)) {
                 query['_id'] = ObjectID(_id);
             } else {
+                logger.log({
+                    level: 'error',
+                    source: 'utils/mongodb-crud',
+                    message: '[find] Campo _id invalido!'
+                });
                 reject({});
             }
 
@@ -69,7 +82,14 @@ module.exports = ({ get }) => {
                 .find(query)
                 .toArray()
                 .then(data => resolve(data[0]))
-                .catch(err => reject(err));
+                .catch(err => {
+                    logger.log({
+                        level: 'error',
+                        source: 'utils/mongodb-crud',
+                        message: `[find] ${err}`
+                    });
+                    reject(err);
+                });
 
         });
 
@@ -90,13 +110,25 @@ module.exports = ({ get }) => {
             if (isValidID(_id)) {
                 query['_id'] = ObjectID(_id);
             } else {
+                logger.log({
+                    level: 'error',
+                    source: 'utils/mongodb-crud',
+                    message: '[remove] Campo _id invalido!'
+                });
                 reject({});
             }
 
             db.collection(collection)
                 .deleteOne(query)
                 .then(data => resolve(`Foi/Foram removido(s) ${data.deletedCount} registro(s)!`))
-                .catch(err => reject(err));
+                .catch(err => {
+                    logger.log({
+                        level: 'error',
+                        source: 'utils/mongodb-crud',
+                        message: `[remove] ${err}`
+                    });
+                    reject(err);
+                });
 
         });
 
@@ -115,13 +147,25 @@ module.exports = ({ get }) => {
             if (typeof body === 'object') {
                 if (body._id) delete body._id;
             } else {
+                logger.log({
+                    level: 'error',
+                    source: 'utils/mongodb-crud',
+                    message: '[insert] Objeto de inclusão invalido!'
+                });
                 reject({});
             }
 
             db.collection(collection)
                 .insertOne(body)
                 .then(data => resolve(data))
-                .catch(err => reject(err));
+                .catch(err => {
+                    logger.log({
+                        level: 'error',
+                        source: 'utils/mongodb-crud',
+                        message: `[insert] ${err}`
+                    });
+                    reject(err);
+                });
 
         });
 
@@ -143,6 +187,11 @@ module.exports = ({ get }) => {
             if (isValidID(_id)) {
                 query['_id'] = ObjectID(_id);
             } else {
+                logger.log({
+                    level: 'error',
+                    source: 'utils/mongodb-crud',
+                    message: '[update] Campo _id invalido!'
+                });
                 reject({});
             }
 
@@ -150,13 +199,25 @@ module.exports = ({ get }) => {
                 if (set._id) delete set._id;
                 update['$set'] = set;
             } else {
+                logger.log({
+                    level: 'error',
+                    source: 'utils/mongodb-crud',
+                    message: '[update] Objeto de atualização invalido!'
+                });
                 reject({});
             }
 
             db.collection(collection)
                 .updateOne(query, update)
                 .then(data => resolve(`Foi/Foram atualizado(s) ${data.matchedCount} registro(s)!`))
-                .catch(err => reject(err));
+                .catch(err => {
+                    logger.log({
+                        level: 'error',
+                        source: 'utils/mongodb-crud',
+                        message: `[update] ${err}`
+                    });
+                    reject(err);
+                });
 
         });
 

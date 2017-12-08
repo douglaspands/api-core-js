@@ -97,6 +97,12 @@ module.exports = app => {
     // Registrar todas as rotas
     app.use('/', router);
 
+    logger.log({
+        level: 'info',
+        source: nomeModulo,
+        message: 'RestServer ativado com sucesso!'
+    });
+
     return new Promise(resolve => resolve(rest));
 
 }
