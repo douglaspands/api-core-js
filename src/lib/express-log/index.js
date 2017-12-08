@@ -73,6 +73,9 @@ module.exports = (app) => {
 
         next();
     }
+    
+    // Armazenando logger no servidor
+    app.set('logger', logger)
 
     // Incluindo gerador de log pelo Express
     app.use(expressLogger);
