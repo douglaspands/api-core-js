@@ -13,7 +13,6 @@ async.auto({
   logger: (callback) => {
     // Configurando de log no Express
     const logger = require('./lib/express-log')(app);
-    app.set('logger', logger)
     callback(null, logger);
   },
   modules: ['logger', (_, callback) => {
