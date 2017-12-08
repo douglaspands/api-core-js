@@ -8,9 +8,6 @@ const winston = require('winston');
 const { createLogger } = winston;
 const uuid = require('uuid/v1');
 
-// transports customizados
-const transports = require('./transports')(winston);
-
 /**
  * Função que disponibiliza o modulo de log pra cadastro no express.js
  * @param {object} app express().
@@ -18,9 +15,13 @@ const transports = require('./transports')(winston);
  */
 module.exports = (app) => {
 
+    // transports customizados
+    const transports = require('./transports')(winston, app);
+
     const logger = createLogger({
         transports: [
-            transports.customConsole()
+            transports.customConsole(),
+            transports.customFile()
         ]
     });
 
@@ -33,6 +34,8 @@ module.exports = (app) => {
     function expressLogger(req, res, next) {
 
         const correlationId = uuid();
+        app.set('id', correlationId);
+
         res.setHeader('X-Correlation-Id', correlationId);
 
         // Capturando send 
@@ -60,8 +63,11 @@ module.exports = (app) => {
 
             logger.log({
                 level: 'info',
+                source: 'express-log',
                 request: dataLog
             });
+
+            app.set('id', '');
 
         };
 
