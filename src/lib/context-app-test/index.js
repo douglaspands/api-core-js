@@ -56,9 +56,16 @@ function Context(pathApp) {
     this.moduleName = _moduleName;
 
     /**
-     * Obter conexão com o MongoDB
+     * Obter variaveis do servidor
+     * @param {string} name Nome da variavel do servidor
+     * @return {object} Retornar o valor da variavel obtida.
      */
-    this.db = _db;
+    this.get = function (name) {
+
+        logError(`Variavel ${name} não foi encontrado!`);
+        return undefined;
+
+    };
 
     /**
      * Modulo de log (winston)

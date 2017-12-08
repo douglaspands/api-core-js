@@ -22,7 +22,6 @@ function Context(pathApp, app) {
         let nome = path.split(div);
         return nome[nome.length - 1];
     })(_pathApp);
-    const _db = app.get('mongodb');
     const _logger = app.get('logger');
 
     /**
@@ -31,12 +30,15 @@ function Context(pathApp, app) {
      * @return {void} 
      */
     function logError(message) {
+
         message = (typeof message === 'string') ? message : 'N/A';
+
         _logger.log({
             level: 'error',
             source: _moduleName,
             message: message
         });
+
     }
 
     /**
@@ -45,9 +47,20 @@ function Context(pathApp, app) {
     this.moduleName = _moduleName;
 
     /**
-     * Obter conexão com o MongoDB
+     * Obter variaveis do servidor
+     * @param {string} name Nome da variavel do servidor
+     * @return {object} Retornar o valor da variavel obtida.
      */
-    this.db = _db;
+    this.get = function (name) {
+
+        try {
+            return app.get(name);
+        } catch (error) {
+            logError(error);
+            return undefined;
+        }
+
+    };
 
     /**
      * Modulo de log (winston)
@@ -62,6 +75,7 @@ function Context(pathApp, app) {
             debug: 4,
             silly: 5
         };
+
         const _level = (_.includes(Object.keys(listLevels), level)) ? level : 'silly';
         const _envLog = (_.includes(Object.keys(listLevels), process.env.LOG)) ? listLevels[process.env.LOG] : -1;
 
@@ -118,4 +132,3 @@ function Context(pathApp, app) {
 }
 
 module.exports = Context;
-
