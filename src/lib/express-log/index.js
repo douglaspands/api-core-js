@@ -1,62 +1,81 @@
 /**
  * @file Modulo de configurações de Log no Express
  * @author douglaspands
- * @since 2017-11-24
+ * @since 2017-12-06
  */
 'use strict';
-
 const winston = require('winston');
-const expressWinston = require('express-winston');
+const { createLogger } = winston;
+const uuid = require('uuid/v1');
 
 /**
  * Função que disponibiliza o modulo de log pra cadastro no express.js
- * @param {function} app express().
+ * @param {object} app express().
  * @return {function} Retorna o modulo "logger" do winston.
  */
 module.exports = (app) => {
 
-    const _db = app.get('mongodb');
+    // transports customizados
+    const transports = require('./transports')(winston, app);
 
-    expressWinston.requestWhitelist.push('body');
-    expressWinston.responseWhitelist.push('body');
+    const logger = createLogger({
+        transports: [
+            transports.customConsole(),
+            transports.customFile()
+        ]
+    });
 
-    let transports = [];
+    /**
+     * Função de geração de log no express.
+     * @param {object} req Request (express) 
+     * @param {object} res Response (express)
+     * @param {function} next Next (express)
+     */
+    function expressLogger(req, res, next) {
 
-    if (_db) {
-        require('winston-mongodb').MongoDB;
-        transports.push(new winston.transports.MongoDB({
-            db: _db
-        }));
-        transports.push(new winston.transports.Console({
-            level: 'error',
-            colorize: true
-        }));
-    } else {
-        transports.push(new winston.transports.Console({
-            colorize: true
-        }));
+        const correlationId = uuid();
+        app.set('id', correlationId);
+
+        res.setHeader('X-Correlation-Id', correlationId);
+
+        // Capturando send 
+        const end = res.end;
+        res.end = (chunk, encoding, callback) => {
+
+            res.end = end;
+            res.end(chunk, encoding, callback);
+
+            let dataLog = {
+                'x-correlation-id': correlationId,
+                method: req.method,
+                url: req.originalUrl,
+                request: {
+                    headers: req.headers,
+                    params: req.params,
+                    query: req.query,
+                    body: req.body
+                },
+                response: {
+                    headers: res._headers,
+                    body: (chunk) ? JSON.parse(chunk.toString()) : {}
+                }
+            }
+
+            logger.log({
+                level: 'info',
+                source: 'express-log',
+                request: dataLog
+            });
+
+            app.set('id', '');
+
+        };
+
+        next();
     }
 
-    // Criando modulo de log geral
-    const logger = new (winston.Logger)({
-        transports: transports
-    });
-
-    // Criando modulo de log para o express
-    const expressLogger = expressWinston.logger({
-        winstonInstance: logger,
-        msg: '\'x-correlation-id\': \'{{req.id}}\''
-    });
-
-    // Criando modulo de log de erro para o express
-    const expressLoggerError = expressWinston.errorLogger({
-        winstonInstance: logger
-    });
-
+    // Incluindo gerador de log pelo Express
     app.use(expressLogger);
-    app.use(expressLoggerError);
-
-    app.set('logger', logger);
 
     return logger;
 

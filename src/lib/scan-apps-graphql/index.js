@@ -4,14 +4,15 @@
  * @since 2017-11-22
  */
 'use strict';
-
+const graphqlHTTP = require('express-graphql');
 const { buildSchema } = require('graphql');
 const { mergeTypes } = require('merge-graphql-schemas');
 const fs = require('fs');
 const path = require('path');
-const { graphqlSchemaIsValid } = require('./utils');
 const Context = require('../context-app');
 
+// Node do modulo
+const nomeModulo = 'scan-apps-graphql';
 
 // Diretorio das APIs em GraphQL
 const folderApp = 'apps';
@@ -22,14 +23,35 @@ const prefix = 'graphql';
 
 /**
  * Mapear script GraphQL
- * @param {object} server Modulo do Express
- * @return {object} Retorna funções root e os graphql schemas unificados 
+ * @param {object} app Modulo do Express
+ * @return {array} 
  */
-module.exports = server => {
+module.exports = (app) => {
+
+    const logger = app.get('logger');
+
+    /**
+     * Função pra geração de mensagens de erro
+     * @param {object} errorFormat mensagem de erro
+     * @return {void} 
+     */
+    function logError(errorFormat) {
+        logger.log({
+            level: 'error',
+            source: nomeModulo,
+            message: `function.: ${errorFormat.functionResolved}`
+        });
+        logger.log({
+            level: 'error',
+            source: nomeModulo,
+            message: `schema...: ${errorFormat.graphqlSchema}`
+        });
+    }
+
+    const { graphqlSchemaIsValid, duplicateFunctions } = require('./utils')(logger);
 
     const root = {};
     const schemas = [];
-    const errors = [];
 
     (fs.readdirSync(dirApps)).forEach((pasta) => {
 
@@ -50,19 +72,31 @@ module.exports = server => {
             });
 
             if (findIndex && findGraphQL) {
+                const regex = new RegExp('(.+)(?=([/\\\\]' + folderApp + '))', 'g');
                 try {
-                    const resolverFunction = require(findIndex)(new Context(dirAPI, server));
+                    const resolverFunction = require(findIndex)(new Context(dirAPI, app));
                     const stringSchema = fs.readFileSync(findGraphQL, 'utf8');
-                    if (graphqlSchemaIsValid(stringSchema)) {
-                        schemas.push(stringSchema);
+                    if (graphqlSchemaIsValid(stringSchema) && !duplicateFunctions(root, resolverFunction)) {
                         Object.assign(root, resolverFunction);
+                        schemas.push(stringSchema);
+                    } else {
+                        const errorFormat = {
+                            functionResolved: findIndex.replace(regex, '.'),
+                            graphqlSchema: findGraphQL.replace(regex, '.')
+                        };
+                        logError(errorFormat);
                     }
                 } catch (error) {
-                    const regex = new RegExp('(.+)(?=([/\\\\]' + folderApp + '))', 'g');
-                    errors.push({
+                    const errorFormat = {
                         functionResolved: findIndex.replace(regex, '.'),
                         graphqlSchema: findGraphQL.replace(regex, '.')
+                    };
+                    logger.log({
+                        level: 'error',
+                        source: nomeModulo,
+                        message: error
                     });
+                    logError(errorFormat);
                 }
             }
 
@@ -70,18 +104,45 @@ module.exports = server => {
 
     });
 
-    if (errors.length > 0) {
-        console.log('Erro no registro da API GraphQL:');
-        errors.forEach(error => {
-            console.log(`-> Function Resolved.: ${error.functionResolved}`);
-            console.log(`-> GraphQL Schema....: ${error.graphqlSchema}`);
-        })
-    }
-
-    return {
-        root: root,
-        schema: buildSchema(mergeTypes(schemas))
+    const data = {
+        root: root
     };
+
+    return new Promise(resolve => {
+
+        try {
+
+            data.schema = buildSchema(mergeTypes(schemas));
+            app.use('/graphql', graphqlHTTP({
+                schema: data.schema,
+                rootValue: data.root,
+                // pretty: true,
+                graphiql: (process.env.NODE_ENV !== 'production')
+            }));
+            logger.log({
+                level: 'info',
+                source: nomeModulo,
+                message: 'GraphqlHTTP ativado com sucesso!'
+            });
+            resolve(Object.keys(data.root));
+
+        } catch (error) {
+
+            logger.log({
+                level: 'error',
+                source: nomeModulo,
+                message: error
+            });
+            logger.log({
+                level: 'error',
+                source: nomeModulo,
+                message: 'GraphqlHTTP não pode ser ativo!'
+            });
+            resolve([]);
+
+        }
+
+    });
 
 }
 

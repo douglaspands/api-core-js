@@ -12,24 +12,86 @@ const winston = require('winston');
 function Context(pathApp) {
 
     const _pathApp = pathApp;
-
-    const listMocks = [];
-
-    /**
-     * Obter conexão com o MongoDB
-     */
-    this.db = undefined;
-
-    /**
-     * Geração de log (winston)
-     */
-    this.logger = new (winston.Logger)({
+    const _moduleName = (path => {
+        let div = '/';
+        if (path.indexOf(div) < 0) div = '\\\\';
+        let nome = path.split(div);
+        return nome[nome.length - 1];
+    })(_pathApp);
+    const _db = undefined;
+    const _logger = createLogger({
         transports: [
-            new winston.transports.Console({
-                colorize: true
+            new transports.Console({
+                level: 'silly',
+                format: combine(
+                    colorize(),
+                    label({ label: 'server' }),
+                    timestamp(),
+                    printf(info => `[${info.level}] ${info.timestamp} ${(info.source || info.label)} - ${info.message}`)
+                )
             })
         ]
     });
+
+    /**
+     * Função pra geração de mensagens de erro
+     * @param {string} message mensagem de erro
+     * @return {void} 
+     */
+    function logError(message) {
+        message = (typeof message === 'string') ? message : 'N/A';
+        _logger.log({
+            level: 'error',
+            source: _moduleName,
+            message: message
+        });
+    }
+
+    // Lista de mocks
+    const listMocks = [];
+
+    /**
+     * Nome do modulo
+     */
+    this.moduleName = _moduleName;
+
+    /**
+     * Obter variaveis do servidor
+     * @param {string} name Nome da variavel do servidor
+     * @return {object} Retornar o valor da variavel obtida.
+     */
+    this.get = function (name) {
+
+        logError(`Variavel ${name} não foi encontrado!`);
+        return undefined;
+
+    };
+
+    /**
+     * Modulo de log (winston)
+     */
+    this.logger = function (level, message) {
+
+        const listLevels = {
+            error: 0,
+            warn: 1,
+            info: 2,
+            verbose: 3,
+            debug: 4,
+            silly: 5
+        };
+        const _level = (_.includes(Object.keys(listLevels), level)) ? level : 'silly';
+        const _envLog = (_.includes(Object.keys(listLevels), process.env.LOG)) ? listLevels[process.env.LOG] : -1;
+
+        if ((listLevels[_level] <= _envLog) || (process.env.NODE_ENV !== 'production')) {
+            _logger.log({
+                level: _level,
+                source: _moduleName,
+                message: (typeof message === 'string') ? message : 'N/A'
+            });
+        }
+
+    };
 
     /**
      * Obter modulos locais.
@@ -53,16 +115,24 @@ function Context(pathApp) {
         if (mock) return mock.mod;
         //--
 
+        let _mod;
         try {
-            const _mod = require(path.join(_pathApp, _name));
-            return (_self && _mod) ? _mod(this) : _mod;
-        } catch (errA) {
+            _mod = require(path.join(_pathApp, _name));
             try {
-                const _mod = require(path.join(_pathApp, '..', _name));
-                return (_self && _mod) ? _mod(this) : _mod;
-            } catch (errB) {
-                console.log(errA, '\n', errB);
-                return undefined;
+                _mod = (_self && _mod && typeof _mod === 'function') ? _mod(this) : _mod;
+            } catch (err1) {
+                logError(err1);
+            }
+        } catch (err2) {
+            try {
+                _mod = require(path.join(_pathApp, '..', _name));
+                try {
+                    _mod = (_self && _mod && typeof _mod === 'function') ? _mod(this) : _mod;
+                } catch (err3) {
+                    logError(err3);
+                }
+            } catch (err4) {
+                logError(`Modulo "${_name}" não foi encontrado!`);
             }
         }
 
@@ -82,6 +152,20 @@ function Context(pathApp) {
                 name: name,
                 mod: mod
             })
+            _logger.log({
+                level: 'debug',
+                source: nomeModulo,
+                message: `Foi incluido o mock do modulo "${name}" com sucesso!`
+            });
+
+        } else {
+
+            _logger.log({
+                level: 'debug',
+                source: nomeModulo,
+                message: `Não foi possivel incluir o mock do modulo "${name}"!`
+            });
+
         }
 
     }

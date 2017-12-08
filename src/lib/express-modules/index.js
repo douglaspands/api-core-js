@@ -5,16 +5,17 @@
  */
 'use strict';
 const compression = require('compression');
-const cors = require('cors');
-var addRequestId = require('express-request-id');
+var bodyParser = require('body-parser')
 
 module.exports = (app) => {
 
     // Inclusão de compressão de dados
     app.use(compression());
-    // Permite requisições de origens diferentes
-    app.use(cors());
-    // Adicionar x-request-id
-    app.use(addRequestId());
+
+    // parse application/x-www-form-urlencoded
+    app.use(bodyParser.urlencoded({ extended: false }))
+
+    // parse application/json
+    app.use(bodyParser.json())
 
 };
