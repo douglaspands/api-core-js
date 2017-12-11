@@ -19,15 +19,15 @@ function Context(pathApp) {
         return nome[nome.length - 1];
     })(_pathApp);
     const _db = undefined;
-    const _logger = createLogger({
+    const _logger = winston.createLogger({
         transports: [
-            new transports.Console({
+            new winston.transports.Console({
                 level: 'silly',
-                format: combine(
-                    colorize(),
-                    label({ label: 'server' }),
-                    timestamp(),
-                    printf(info => `[${info.level}] ${info.timestamp} ${(info.source || info.label)} - ${info.message}`)
+                format: winston.format.combine(
+                    winston.format.colorize(),
+                    winston.format.label({ label: 'server' }),
+                    winston.format.timestamp(),
+                    winston.format.printf(info => `[${info.level}] ${info.timestamp} ${(info.source || info.label)} - ${info.message}`)
                 )
             })
         ]
@@ -154,7 +154,7 @@ function Context(pathApp) {
             })
             _logger.log({
                 level: 'debug',
-                source: nomeModulo,
+                source: _moduleName,
                 message: `Foi incluido o mock do modulo "${name}" com sucesso!`
             });
 
@@ -162,7 +162,7 @@ function Context(pathApp) {
 
             _logger.log({
                 level: 'debug',
-                source: nomeModulo,
+                source: _moduleName,
                 message: `Não foi possivel incluir o mock do modulo "${name}"!`
             });
 
