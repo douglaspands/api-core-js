@@ -14,11 +14,11 @@ const Context = require('../context-app');
 const nomeModulo = 'scan-apps-rest';
 
 // Diretorio das APIs em REST
-const folderApp = 'apps';
+const folderApp = 'api';
 const dirApps = path.join(__dirname, '../..', folderApp);
 
 // Sufixo da pasta com o codigo fonte da API
-const prefix = 'rest';
+const prefix = 'api/rest';
 
 /**
  * Mapear script GraphQL

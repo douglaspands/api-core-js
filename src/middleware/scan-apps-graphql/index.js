@@ -15,7 +15,7 @@ const Context = require('../context-app');
 const nomeModulo = 'scan-apps-graphql';
 
 // Diretorio das APIs em GraphQL
-const folderApp = 'apps';
+const folderApp = 'api/graphql';
 const dirApps = path.join(__dirname, '../..', folderApp);
 
 // Sufixo da pasta com o codigo fonte da API
