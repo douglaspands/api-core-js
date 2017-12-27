@@ -4,31 +4,26 @@
  * @since 2017-11-22
  */
 'use strict';
+const fs = require('fs');
+const path = require('path');
 const graphqlHTTP = require('express-graphql');
 const { buildSchema } = require('graphql');
 const { mergeTypes } = require('merge-graphql-schemas');
-const fs = require('fs');
-const path = require('path');
+const { prefix, nome_modulo, folder_app } = require('config');
+const dirApps = path.join(__dirname, '../..', folder_app);
+
 const Context = require('../context-app');
-
-// Node do modulo
-const nomeModulo = 'scan-apps-graphql';
-
-// Diretorio das APIs em GraphQL
-const folderApp = 'api/graphql';
-const dirApps = path.join(__dirname, '../..', folderApp);
-
-// Sufixo da pasta com o codigo fonte da API
-const prefix = 'graphql';
 
 /**
  * Mapear script GraphQL
  * @param {object} app Modulo do Express
  * @return {array} 
  */
-module.exports = (app) => {
+module.exports = async (app) => {
 
+    const regex = new RegExp('(.+)(?=([/\\\\]' + folder_app + '))', 'g');
     const logger = app.get('logger');
+    const { graphqlSchemaIsValid, duplicateFunctions } = require('./utils')(logger);
 
     /**
      * Função pra geração de mensagens de erro
@@ -38,17 +33,15 @@ module.exports = (app) => {
     function logError(errorFormat) {
         logger.log({
             level: 'error',
-            source: nomeModulo,
+            source: nome_modulo,
             message: `function.: ${errorFormat.functionResolved}`
         });
         logger.log({
             level: 'error',
-            source: nomeModulo,
+            source: nome_modulo,
             message: `schema...: ${errorFormat.graphqlSchema}`
         });
     }
-
-    const { graphqlSchemaIsValid, duplicateFunctions } = require('./utils')(logger);
 
     const root = {};
     const schemas = [];
@@ -72,7 +65,7 @@ module.exports = (app) => {
             });
 
             if (findIndex && findGraphQL) {
-                const regex = new RegExp('(.+)(?=([/\\\\]' + folderApp + '))', 'g');
+
                 try {
                     const resolverFunction = require(findIndex)(new Context(dirAPI, app));
                     const stringSchema = fs.readFileSync(findGraphQL, 'utf8');
@@ -93,7 +86,7 @@ module.exports = (app) => {
                     };
                     logger.log({
                         level: 'error',
-                        source: nomeModulo,
+                        source: nome_modulo,
                         message: error
                     });
                     logError(errorFormat);
@@ -104,45 +97,41 @@ module.exports = (app) => {
 
     });
 
-    const data = {
-        root: root
-    };
+    try {
 
-    return new Promise(resolve => {
+        const data = {
+            root: root,
+            schema: buildSchema(mergeTypes(schemas))
+        };
 
-        try {
+        app.use('/graphql', graphqlHTTP({
+            schema: data.schema,
+            rootValue: data.root,
+            // pretty: true,
+            graphiql: (process.env.NODE_ENV !== 'production')
+        }));
+        logger.log({
+            level: 'info',
+            source: nome_modulo,
+            message: 'GraphqlHTTP ativado com sucesso!'
+        });
+        return Object.keys(data.root);
 
-            data.schema = buildSchema(mergeTypes(schemas));
-            app.use('/graphql', graphqlHTTP({
-                schema: data.schema,
-                rootValue: data.root,
-                // pretty: true,
-                graphiql: (process.env.NODE_ENV !== 'production')
-            }));
-            logger.log({
-                level: 'info',
-                source: nomeModulo,
-                message: 'GraphqlHTTP ativado com sucesso!'
-            });
-            resolve(Object.keys(data.root));
+    } catch (error) {
 
-        } catch (error) {
+        logger.log({
+            level: 'error',
+            source: nome_modulo,
+            message: error
+        });
+        logger.log({
+            level: 'error',
+            source: nome_modulo,
+            message: 'GraphqlHTTP não pode ser ativo!'
+        });
+        return [];
 
-            logger.log({
-                level: 'error',
-                source: nomeModulo,
-                message: error
-            });
-            logger.log({
-                level: 'error',
-                source: nomeModulo,
-                message: 'GraphqlHTTP não pode ser ativo!'
-            });
-            resolve([]);
-
-        }
-
-    });
+    }
 
 }
 

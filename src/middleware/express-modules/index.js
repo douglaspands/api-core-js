@@ -7,7 +7,7 @@
 const compression = require('compression');
 var bodyParser = require('body-parser')
 
-module.exports = (app) => {
+module.exports = async app => {
 
     // Inclusão de compressão de dados
     app.use(compression());
@@ -17,5 +17,7 @@ module.exports = (app) => {
 
     // parse application/json
     app.use(bodyParser.json())
+
+    return {};
 
 };

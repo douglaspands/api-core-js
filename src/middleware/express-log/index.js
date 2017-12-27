@@ -13,7 +13,7 @@ const uuid = require('uuid/v1');
  * @param {object} app express().
  * @return {function} Retorna o modulo "logger" do winston.
  */
-module.exports = (app) => {
+module.exports = async app => {
 
     // transports customizados
     const transports = require('./transports')(winston, app);

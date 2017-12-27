@@ -1,31 +1,24 @@
 /**
  * @file Modulo para scanear APIs REST.
  * @author douglaspands
- * @since 2017-11-24
+ * @since 2017-12-26
  */
 'use strict';
 
 const fs = require('fs');
 const path = require('path');
+const router = require('express').Router();
 const _ = require('lodash');
+const { prefix, nome_modulo, folder_app } = require('config');
 const Context = require('../context-app');
-
-// Node do modulo
-const nomeModulo = 'scan-apps-rest';
-
-// Diretorio das APIs em REST
-const folderApp = 'api';
-const dirApps = path.join(__dirname, '../..', folderApp);
-
-// Sufixo da pasta com o codigo fonte da API
-const prefix = 'api/rest';
+const dirApps = path.join(__dirname, '../..', folder_app);
 
 /**
- * Mapear script GraphQL
+ * Rotas Rest
  * @param {object} app Modulo do Express
  * @return {Promise.<Array>} Lista de rotas.
  */
-module.exports = app => {
+module.exports = async app => {
 
     const logger = app.get('logger');
 
@@ -37,17 +30,15 @@ module.exports = app => {
     function logError(errorFormat) {
         logger.log({
             level: 'error',
-            source: nomeModulo,
+            source: nome_modulo,
             message: `folder.: ${errorFormat.dir}`
         });
         logger.log({
             level: 'error',
-            source: nomeModulo,
+            source: nome_modulo,
             message: `route..: ${errorFormat.route}`
         });
     }
-
-    const router = require('express').Router();
 
     const rest = [];
 
@@ -85,7 +76,7 @@ module.exports = app => {
                     };
                     logger.log({
                         level: 'error',
-                        source: nomeModulo,
+                        source: nome_modulo,
                         message: error
                     });
                     logError(errorFormat);
@@ -99,11 +90,11 @@ module.exports = app => {
 
     logger.log({
         level: 'info',
-        source: nomeModulo,
+        source: nome_modulo,
         message: 'RestServer ativado com sucesso!'
     });
 
-    return new Promise(resolve => resolve(rest));
+    return rest;
 
 }
 

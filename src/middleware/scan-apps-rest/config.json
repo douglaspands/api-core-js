@@ -1,0 +1,5 @@
+{
+    "nome_modulo": "scan-apps-rest",
+    "folder_app": "main/api/rest",
+    "prefix": "rest"
+}

@@ -5,7 +5,7 @@
  */
 'use strict';
 const app = require('express')();
-(async function (app) {
+(async () => {
   return {
     logger: await require('./middleware/express-log')(app),
     modules: await require('./middleware/express-modules')(app),
@@ -13,7 +13,7 @@ const app = require('express')();
     graphql: await require('./middleware/scan-apps-graphql')(app),
     rest: await require('./middleware/scan-apps-rest')(app)
   };
-})(app).then(({ logger, rest, graphql }) => {
+})().then(({ logger, rest, graphql }) => {
   const port = process.env.PORT || 3000;
   app.listen(port, () => {
     logger.info(`Executando o "core-api-js" na url: http://localhost:${port} (${(process.env.NODE_ENV || 'develop')})`);

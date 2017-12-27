@@ -1,0 +1,5 @@
+{
+    "nome_modulo": "mongodb-connect",
+    "uri": "mongodb://localhost:27017",
+    "database": "core-api-js"
+}

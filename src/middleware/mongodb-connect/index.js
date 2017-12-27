@@ -5,42 +5,31 @@
  */
 'use strict';
 const { MongoClient } = require('mongodb');
-
-// Node do modulo
-const nomeModulo = 'mongodb-connect';
-
-// URI do MongoDB
-const URI = 'mongodb://localhost:27017';
-const db = 'core-api-js';
+const { nome_modulo, uri, database } = require('./config');
 
 /**
  * Obter conexão com o MongoDB
  * @param {function} app Servidor Express.
  * @return {Promise} Retorna uma promessa resolve. 
  */
-module.exports = (app) => {
-
+module.exports = async (app) => {
     const logger = app.get('logger');
-
-    return new Promise(resolve => {
-
-        MongoClient.connect(URI, (err, client) => {
-            if (err) {
-                logger.log({
-                    level: 'error',
-                    source: nomeModulo,
-                    message: err
-                });
-            } else {
-                app.set('mongodb', client.db(db));
-                logger.log({
-                    level: 'info',
-                    source: nomeModulo,
-                    message: 'MongoDB ativado com sucesso!'
-                });
-            }
-            return resolve();
+    try {
+        const client = await MongoClient.connect(URI);
+        const db = client.db(database);
+        app.set('mongodb', db);
+        logger.log({
+            level: 'info',
+            source: nome_modulo,
+            message: 'MongoDB ativado com sucesso!'
         });
-
-    });
+        return db;
+    } catch (error) {
+        logger.log({
+            level: 'error',
+            source: nome_modulo,
+            message: error
+        });
+        return null;
+    }
 };
