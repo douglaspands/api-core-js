@@ -1,5 +1,5 @@
 /**
- * @file Registrando rotas no Express
+ * @file Registrando rotas no Express atraves de notações
  * @author @douglaspands
  * @since 2017-12-28
  */
