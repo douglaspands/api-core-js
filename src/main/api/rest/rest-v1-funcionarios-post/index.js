@@ -5,6 +5,11 @@
  */
 'use strict';
 /**
+ * @controller rest
+ * @verb post
+ * @uri /v1/funcionarios
+ */
+/**
  * Registro da rota
  * @return {object} metodo e uri da rota. 
  */

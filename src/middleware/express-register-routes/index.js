@@ -8,7 +8,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const path = require('path');
 const config = require('./config');
-const Context = require('../context-app');
+const Context = require('../context-api');
 const searchFiles = require('../search-files');
 const searchController = require('../search-controllers');
 
@@ -26,25 +26,28 @@ const registerRoutes = async app => {
     const registerRoutesRest = restList => {
         restList.forEach(route => {
             const api = require(route.file);
-            const context = new Context(path.join(route.file, '..'), app);
-            const listHandlers = (Object.keys(api)).reduce((handlers, fn) => {
-                function createHandler() {
+            const context = new Context(route.file, app);
+            let functionsList = [];
+            if (typeof api === 'function') functionsList = [api];
+            else if (typeof api === 'object') functionsList = (Object.keys(api)).map(fn => api[fn]);
+            const handlersList = functionsList.reduce((handlers, fn) => {
+                function createHandler(fn) {
                     function handler() {
                         let args = Array.prototype.slice.call(arguments);
                         args.push(context);
-                        api[fn].apply(this, args);
+                        fn.apply(this, args);
                     }
                     return handler;
                 }
-                handlers.push(new createHandler());
+                if (typeof fn === 'function') handlers.push(new createHandler(fn));
                 return handlers;
             }, []);
             try {
-                router[route.verb](route.uri, listHandlers);
+                router[route.verb](route.uri, handlersList);
             } catch (error) {
                 logger.error({
                     source: config.source,
-                    message: error
+                    message: error.stack
                 });
             }
         });
@@ -58,7 +61,7 @@ const registerRoutes = async app => {
         let schemas = [];
         graphqlList.forEach(route => {
             try {
-                const resolverFunction = require(route.file)(new Context(path.join(route.file, '..'), app));
+                const resolverFunction = require(route.file)(new Context(route.file, app));
                 const stringSchema = fs.readFileSync(route.graphql, 'utf8');
                 if (graphqlSchemaIsValid(stringSchema) && !duplicateFunctions(root, resolverFunction)) {
                     Object.assign(root, resolverFunction);

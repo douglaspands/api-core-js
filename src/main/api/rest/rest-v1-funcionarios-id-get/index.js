@@ -5,17 +5,10 @@
  */
 'use strict';
 /**
- * Registro da rota
- * @return {object} metodo e uri da rota. 
+ * @controller rest
+ * @verb get
+ * @uri /v1/funcionarios/:id
  */
-module.exports.route = () => {
-
-    return {
-        method: 'get',
-        uri: '/v1/funcionarios/:id'
-    };
-
-};
 /**
  * Controller
  * @param {object} req Request da API

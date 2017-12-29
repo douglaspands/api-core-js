@@ -16,7 +16,7 @@
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ query }, res, next, { getModule }) => {
+const controller = async ({ query }, res, next, { getModule }) => {
 
     const _ = require('lodash');
     const modelFuncionario = getModule('models/funcionario', true);
@@ -39,3 +39,5 @@ module.exports.controller = async ({ query }, res, next, { getModule }) => {
     }
 
 };
+
+module.exports = constructor;

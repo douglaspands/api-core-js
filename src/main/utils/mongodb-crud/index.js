@@ -7,10 +7,10 @@
 
 const { ObjectID } = require('mongodb');
 
-module.exports = ({ get }) => {
+module.exports = ({ getServer }) => {
 
-    const db = get('mongodb');
-    const logger = get('logger');
+    const db = getServer('mongodb');
+    const logger = getServer('logger');
 
     /**
      * Vaidar ID.
