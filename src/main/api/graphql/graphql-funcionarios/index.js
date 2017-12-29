@@ -15,6 +15,10 @@
  * - removerFuncionario: Remover funcionarios
  * - pesquisarFuncionarios: Pesquisar funcionario atraves de qualquer parametro do recurso 
  */
+/**
+ * @controller graphql
+ * @graphql funcionarios.gql
+ */
 module.exports = ({ getModule }) => {
 
     const modelFuncionario = getModule('models/funcionario', true);

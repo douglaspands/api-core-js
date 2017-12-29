@@ -25,7 +25,7 @@ module.exports = (winston, app) => {
      * Customização da geração de log pelo console
      * @return {object} Objeto de transport do Winston. 
      */
-    function customConsole() {
+    const customConsole = () => {
 
         return new transports.Console({
             level: 'silly',
@@ -49,9 +49,10 @@ module.exports = (winston, app) => {
      * Customização da geração de log pelo arquivo
      * @return {object} Objeto de transport do Winston. 
      */
-    function customFile() {
+    const customFile = () => {
 
-        const logFolder = path.join(__dirname, '../../logs');
+        const root = app.get('root');
+        const logFolder = path.join(root, 'logs');
 
         if (!fs.existsSync(logFolder) || !fs.lstatSync(logFolder).isDirectory()) {
             fs.mkdirSync(logFolder);

@@ -1,0 +1,9 @@
+{
+    "file_type": "^(.+).js$",
+    "annotations": [
+        "@controller",
+        "@verb",
+        "@uri",
+        "@graphql"
+    ]
+}
