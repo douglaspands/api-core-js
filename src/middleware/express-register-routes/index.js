@@ -20,6 +20,8 @@ const { mergeTypes } = require('merge-graphql-schemas');
 const registerRoutes = async app => {
 
     const logger = app.get('logger');
+    const { graphqlSchemaIsValid, duplicateFunctions } = require('./utils')(logger);
+
     const files = searchFiles(path.join(app.get('root'), config.directory));
     const routes = searchController(files);
 
@@ -42,8 +44,7 @@ const registerRoutes = async app => {
         try {
             router[route.verb](route.uri, listHandlers);
         } catch (error) {
-            logger.log({
-                level: 'error',
+            logger.error({
                 source: config.source,
                 message: error
             });
@@ -53,7 +54,6 @@ const registerRoutes = async app => {
 
     let root = {};
     let schemas = [];
-    const { graphqlSchemaIsValid, duplicateFunctions } = require('./utils')(logger);
     const graphqlList = routes.filter(route => route.controller === 'graphql');
     graphqlList.forEach(route => {
         try {
@@ -63,43 +63,40 @@ const registerRoutes = async app => {
                 Object.assign(root, resolverFunction);
                 schemas.push(stringSchema);
             } else {
-                logger.log({
-                    level: 'error',
+                logger.error({
                     source: config.source,
                     message: `function.: ${route.file}`
                 });
-                logger.log({
-                    level: 'error',
+                logger.error({
                     source: config.source,
                     message: `schema...: ${route.graphql}`
                 });
             }
         } catch (error) {
-            logger.log({
-                level: 'error',
+            logger.error({
                 source: config.source,
                 message: error.stack
             });
         }
     });
     if (!_.isEmpty(root) && schemas.length > 0) {
+        let graphqlServer = null;
         try {
             const schemaMerge = mergeTypes(schemas);
             const schemaBin = buildSchema(schemaMerge);
-            const GraphQLServer = graphqlHTTP({
+            graphqlServer = graphqlHTTP({
                 schema: schemaBin,
                 rootValue: root,
                 graphiql: (process.env.NODE_ENV !== 'production')
             });
-            app.use('/graphql', GraphQLServer);
         } catch (error) {
-            logger.log({
-                level: 'error',
+            logger.error({
                 source: config.source,
                 message: error.stack
             });
             root = {};
         }
+        if (graphqlServer) app.use('/graphql', graphqlServer);
     }
 
     return {
