@@ -8,7 +8,6 @@ const fs = require('fs');
 const _ = require('lodash');
 const path = require('path');
 const config = require('./config');
-const Context = require('../context-api');
 const searchFiles = require('../search-files');
 const searchController = require('../search-controllers');
 
@@ -16,6 +15,8 @@ const router = require('express').Router();
 const { buildSchema } = require('graphql');
 const graphqlHTTP = require('express-graphql');
 const { mergeTypes } = require('merge-graphql-schemas');
+
+const Context = require('../../lib/context-api');
 
 const registerRoutes = async app => {
 

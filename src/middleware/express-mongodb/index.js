@@ -14,24 +14,24 @@ const { source, uri, database } = require('./config');
  */
 const mongoConnect = async app => {
     const logger = app.get('logger');
+    let db = null;
     try {
         const client = await MongoClient.connect(uri);
-        const db = client.db(database);
+        db = client.db(database);
         app.set('mongodb', db);
         logger.log({
             level: 'info',
             source: source,
             message: 'MongoDB ativado com sucesso!'
         });
-        return db;
     } catch (error) {
         logger.log({
             level: 'error',
             source: source,
             message: error
         });
-        return null;
     }
+    return db;
 }
 
 module.exports = mongoConnect;

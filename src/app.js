@@ -18,7 +18,7 @@ const logger = require('./middleware/express-log')(app);
   // Incluindo middleware do Express
   require('./middleware/express-modules')(app);
   // Inicializando banco de dados
-  const db = await require('./middleware/mongodb-connect')(app);
+  await require('./middleware/express-mongodb')(app);
   // Registrando APIs
   const routes = await require('./middleware/express-register-routes')(app);
   return routes;
@@ -31,9 +31,9 @@ const logger = require('./middleware/express-log')(app);
     rest.forEach(route => logger.info(`REST registrado....: ${route.uri} [${route.verb}]`));
     // Lista todas as APIs GraphQL encontradas
     graphql.forEach(service => logger.info(`GraphQL registrado.: ${service}`));
+    // Criando health-check
+    require('./middleware/express-health-check')(app, rest, graphql, server);
   });
-  // Criando health-check
-  require('./middleware/health-check')(app, rest, graphql, server);
 }).catch(error => {
   logger.error(error.stack);
   process.exit(1);

@@ -9,10 +9,11 @@ const os = require('os');
 
 function healthCheck(app, rest, graphql, server) {
 
-    app.use('/health', (req, res) => {
+    const db = app.get('mongodb');
+    const pack = app.get('package');
+    const logger = app.get('logger');
 
-        const db = app.get('mongodb');
-        const pack = app.get('package');
+    app.use('/health', (req, res) => {
 
         return res.status(200).send({
             data: {
@@ -26,7 +27,7 @@ function healthCheck(app, rest, graphql, server) {
                 },
                 database: {
                     mongodb: {
-                        status: (db) ? 'active' : 'disable'
+                        status: (db) ? 'enable' : 'disable'
                     }
                 },
                 machine: {
@@ -44,7 +45,7 @@ function healthCheck(app, rest, graphql, server) {
                         loadavg: os.loadavg()
                     },
                     network: {
-                        interfaces: os.networkInterfaces().ens33
+                        interfaces: os.networkInterfaces()
                     },
                     others: {
                         hostname: os.hostname(),
@@ -56,6 +57,8 @@ function healthCheck(app, rest, graphql, server) {
             }
         });
     });
+
+    logger.info(`Rota Health-Check..: /health [*]`);
 
 }
 

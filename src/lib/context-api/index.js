@@ -26,6 +26,10 @@ function Context(modulePath, app) {
      * @return {any} Retornar o valor da variavel obtida.
      */
     this.getServer = name => {
+        _logger.debug({
+            source: _moduleName,
+            message: `Foi solicitado a variavel "${name}" do servidor.`
+        });
         let _mod = null;
         try {
             _mod = _app.get(name);
@@ -37,6 +41,7 @@ function Context(modulePath, app) {
         }
         return _mod;
     };
+
     /**
      * Obter modulos locais.
      * @param {string} name Nome do modulo
@@ -44,6 +49,11 @@ function Context(modulePath, app) {
      * @return {object} Conexão com o MongoDB
      */
     this.getModule = (name, self) => {
+
+        _logger.debug({
+            source: _moduleName,
+            message: `Foi solicitado o modulo "${name}".`
+        });
 
         if (typeof name !== 'string') return null;
 
@@ -66,7 +76,7 @@ function Context(modulePath, app) {
             _logger.error({
                 source: _moduleName,
                 message: `Modulo "${_name}" não foi encontrado!`
-            })
+            });
             return null;
         } else if (_self && typeof _mod === 'function') {
             return _mod(this);

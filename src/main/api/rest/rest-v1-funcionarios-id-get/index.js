@@ -16,9 +16,12 @@
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ params, query }, res, next, { getModule, logger }) => {
+module.exports.controller = async ({ params, query }, res, next, { getModule, getServer }) => {
 
-    logger('debug', 'Inicio da rota REST GET /v1/funcionarios');
+    const _ = require('lodash');
+    const logger = getServer('logger');
+    
+    logger.debug('Inicio da rota REST GET /v1/funcionarios');
 
     const modelFuncionario = getModule('models/funcionario', true);
     const validarEntrada = getModule('modules/form', true);
@@ -35,9 +38,16 @@ module.exports.controller = async ({ params, query }, res, next, { getModule, lo
         const _ret = (queryFields)
             ? fields(ret, queryFields)
             : ret;
-        res.status(200).send({ data: _ret });
+        if (_.isEmpty(ret)) {
+            res.status(204).send();
+        } else {
+            res.status(200).send({ data: _ret });
+        }
     } catch (error) {
-        res.status(204).send({});
+        res.status(500).send({
+            codigo: 'Erro interno',
+            mensagem: error.stack
+        });
     }
 
 };

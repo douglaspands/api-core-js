@@ -40,4 +40,4 @@ const controller = async ({ query }, res, next, { getModule }) => {
 
 };
 
-module.exports = constructor;
+module.exports = controller;
