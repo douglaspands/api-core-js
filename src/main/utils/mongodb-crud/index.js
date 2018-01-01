@@ -18,8 +18,7 @@ module.exports = ({ getServer }) => {
      * @return {boolean} 'true' o ID é valido. 
      */
     function isValidID(id) {
-        const idRegex = new RegExp('^[0-9a-f]{24}$', 'g');
-        return (id && typeof id === 'string' && idRegex.test(id));
+        return ObjectID.isValid(id);
     }
 
     /**
@@ -32,7 +31,7 @@ module.exports = ({ getServer }) => {
 
         const query = (key && typeof key === 'object') ? key : {};
 
-        if (isValidID(query._id)) {
+        if (query._id && isValidID(query._id)) {
             query['_id'] = ObjectID(query._id);
         }
 
@@ -43,8 +42,7 @@ module.exports = ({ getServer }) => {
                 .toArray()
                 .then(data => resolve(data))
                 .catch(err => {
-                    logger.log({
-                        level: 'error',
+                    logger.error({
                         source: 'utils/mongodb-crud',
                         message: err
                     });
@@ -70,8 +68,7 @@ module.exports = ({ getServer }) => {
             if (isValidID(_id)) {
                 query['_id'] = ObjectID(_id);
             } else {
-                logger.log({
-                    level: 'error',
+                logger.error({
                     source: 'utils/mongodb-crud',
                     message: '[find] Campo _id invalido!'
                 });
@@ -83,8 +80,7 @@ module.exports = ({ getServer }) => {
                 .toArray()
                 .then(data => resolve(data[0]))
                 .catch(err => {
-                    logger.log({
-                        level: 'error',
+                    logger.error({
                         source: 'utils/mongodb-crud',
                         message: `[find] ${err}`
                     });

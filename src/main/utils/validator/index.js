@@ -81,7 +81,7 @@ function inspection(objeto) {
 
             if (!flgValidation) return this;
 
-            const regex = new RegExp(constant.REGEX.MONGOID, 'g');
+            const regex = new RegExp(constant.REGEX.MONGOID);
             const ret = regex.test(elemento);
             if (!ret && !flgErro) {
                 listaErros.push(new InspectFail(propriedade, elemento, mensagemErro));
@@ -99,7 +99,7 @@ function inspection(objeto) {
 
             if (!flgValidation) return this;
 
-            const regex = new RegExp(constant.REGEX.EMAIL, 'g');
+            const regex = new RegExp(constant.REGEX.EMAIL);
             const ret = regex.test(elemento);
             if (!ret && !flgErro) {
                 listaErros.push(new InspectFail(propriedade, elemento, mensagemErro));
@@ -117,7 +117,7 @@ function inspection(objeto) {
 
             if (!flgValidation) return this;
 
-            const regex = new RegExp(constant.REGEX.PHONE, 'g');
+            const regex = new RegExp(constant.REGEX.PHONE);
             const ret = regex.test(elemento);
             if (!ret && !flgErro) {
                 listaErros.push(new InspectFail(propriedade, elemento, mensagemErro));
@@ -135,7 +135,7 @@ function inspection(objeto) {
 
             if (!flgValidation) return this;
 
-            const regex = new RegExp(constant.REGEX.CEP, 'g');
+            const regex = new RegExp(constant.REGEX.CEP);
             const ret = regex.test(elemento);
             if (!ret && !flgErro) {
                 listaErros.push(new InspectFail(propriedade, elemento, mensagemErro));

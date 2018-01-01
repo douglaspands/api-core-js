@@ -16,12 +16,7 @@ module.exports = ({ getModule }) => {
      */
     async function obterFuncionario(id) {
 
-        try {
-            let ret = (await crud.find('funcionarios', id));
-            return ret;
-        } catch (error) {
-            return error;
-        }
+        return await crud.find('funcionarios', id);
 
     }
 
@@ -32,12 +27,7 @@ module.exports = ({ getModule }) => {
      */
     async function pesquisarFuncionarios(query) {
 
-        try {
-            let ret = (await crud.scan('funcionarios', query));
-            return ret;
-        } catch (error) {
-            return error;
-        }
+        return await crud.scan('funcionarios', query);
 
     }
 
@@ -48,12 +38,7 @@ module.exports = ({ getModule }) => {
      */
     async function incluirFuncionario(funcionario) {
 
-        try {
-            let ret = (await crud.insert('funcionarios', funcionario));
-            return ret.ops[0];
-        } catch (error) {
-            return error;
-        }
+        return await crud.insert('funcionarios', funcionario);
 
     }
 
@@ -65,12 +50,7 @@ module.exports = ({ getModule }) => {
      */
     async function atualizarFuncionario(id, funcionario) {
 
-        try {
-            let ret = (await crud.update('funcionarios', id, funcionario));
-            return ret;
-        } catch (error) {
-            return error;
-        }
+        return await crud.update('funcionarios', id, funcionario);
 
     }
 
@@ -81,12 +61,7 @@ module.exports = ({ getModule }) => {
      */
     async function removerFuncionario(id) {
 
-        try {
-            const ret = (await crud.remove('funcionarios', id));
-            return ret;
-        } catch (error) {
-            return error;
-        }
+        return await crud.remove('funcionarios', id);
 
     }
 
