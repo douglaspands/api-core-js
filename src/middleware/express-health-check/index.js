@@ -5,15 +5,20 @@
  */
 'use strict';
 const os = require('os');
-
-
+/**
+ * Função que parametriza o Healh-Check no servidor
+ * @param {object} app Framework express.js configurado 
+ * @param {array} rest Lista de rotas de REST API 
+ * @param {array} graphql Lista de rotas de GraphQL API
+ * @param {object} server COnfigurações do servidor
+ */
 function healthCheck(app, rest, graphql, server) {
 
     const db = app.get('mongodb');
     const pack = app.get('package');
     const logger = app.get('logger');
 
-    app.use('/health', (req, res) => {
+    app.use('/check', (req, res) => {
 
         return res.status(200).send({
             data: {
@@ -22,7 +27,7 @@ function healthCheck(app, rest, graphql, server) {
                     version: pack.version,
                     host: (server.address().address === '::') ? 'localhost' : server.address().address,
                     port: server.address().port,
-                    rest_routes: rest.map(route => { return { method: route.verb, uri: route.uri }; }),
+                    rest_routes: rest.map(route => { return { method: route.method, uri: route.uri }; }),
                     graphql_services: graphql.map(service => `${service}`)
                 },
                 database: {
@@ -58,7 +63,7 @@ function healthCheck(app, rest, graphql, server) {
         });
     });
 
-    logger.info(`Rota Health-Check..: /health [*]`);
+    logger.info(`Rota Health-Check..: /check [*]`);
 
 }
 

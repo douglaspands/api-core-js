@@ -30,7 +30,7 @@ const registerRoutes = async app => {
             const context = new Context(route.file, app);
             let functionsList = [];
             if (typeof api === 'function') functionsList = [api];
-            else if (typeof api === 'object') functionsList = (Object.keys(api)).map(fn => api[fn]);
+            else if (typeof api === 'object') functionsList = (_.pull(Object.keys(api), 'route')).map(fn => api[fn]);
             const handlersList = functionsList.reduce((handlers, fn) => {
                 function createHandler(fn) {
                     function handler() {
@@ -44,7 +44,7 @@ const registerRoutes = async app => {
                 return handlers;
             }, []);
             try {
-                router[route.verb](route.uri, handlersList);
+                router[route.method](route.uri, handlersList);
             } catch (error) {
                 logger.error({
                     source: config.source,
@@ -62,7 +62,7 @@ const registerRoutes = async app => {
         let schemas = [];
         graphqlList.forEach(route => {
             try {
-                const resolverFunction = require(route.file)(new Context(route.file, app));
+                const resolverFunction = require(route.file).root(new Context(route.file, app));
                 const stringSchema = fs.readFileSync(route.graphql, 'utf8');
                 if (graphqlSchemaIsValid(stringSchema) && !duplicateFunctions(root, resolverFunction)) {
                     Object.assign(root, resolverFunction);

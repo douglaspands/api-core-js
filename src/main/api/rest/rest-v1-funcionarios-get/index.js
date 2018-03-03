@@ -4,11 +4,21 @@
  * @since 2017-11-22
  */
 'use strict';
-/**
- * @controller rest
- * @verb get
- * @uri /v1/funcionarios
+/** 
+ * Configuracoes da rota
+ * @returns {object} Retorna os campos:
+ * controller: tipo de api (rest|graphql)
+ * method: verbo http que esta sendo executado
+ * uri: rota 
+ * graphql: nome do arquivo .gql
  */
+const route = () => {
+    return {
+        controller: 'rest',
+        method: 'get',
+        uri: '/v1/funcionarios'
+    }
+};
 /**
  * Controller
  * @param {object} req Request da API
@@ -40,4 +50,7 @@ const controller = async ({ query }, res, next, { getModule }) => {
 
 };
 
-module.exports = controller;
+module.exports = {
+    controller,
+    route
+};

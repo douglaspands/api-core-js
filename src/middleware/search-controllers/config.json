@@ -1,9 +1,17 @@
 {
-    "file_type": "^(.+).js$",
+    "file": "index.js",
+    "file_type": "^(.+)/index.js$",
     "annotations": [
-        "@controller",
-        "@verb",
-        "@uri",
-        "@graphql"
+        "controller",
+        "method",
+        "uri",
+        "graphql"
+    ],
+    "methods": [
+        "get", 
+        "put", 
+        "post", 
+        "patch", 
+        "delete"
     ]
 }

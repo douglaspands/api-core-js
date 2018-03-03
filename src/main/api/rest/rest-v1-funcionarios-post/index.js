@@ -4,22 +4,20 @@
  * @since 2017-11-22
  */
 'use strict';
-/**
- * @controller rest
- * @verb post
- * @uri /v1/funcionarios
- */
-/**
- * Registro da rota
- * @return {object} metodo e uri da rota. 
+/** 
+ * Configuracoes da rota
+ * @returns {object} Retorna os campos:
+ * controller: tipo de api (rest|graphql)
+ * method: verbo http que esta sendo executado
+ * uri: rota 
+ * graphql: nome do arquivo .gql
  */
 module.exports.route = () => {
-
     return {
+        controller: 'rest',
         method: 'post',
         uri: '/v1/funcionarios'
-    };
-
+    }
 };
 /**
  * Controller

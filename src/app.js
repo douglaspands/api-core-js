@@ -28,7 +28,7 @@ const logger = require('./middleware/express-log')(app);
     // Log da inicialização do servidor
     logger.info(`Executando "${name}@${version}" em http://localhost:${server.address().port} (${(process.env.NODE_ENV || 'develop')})`);
     // Lista todas as APIs REST encontradas
-    rest.forEach(route => logger.info(`REST registrado....: ${route.uri} [${route.verb}]`));
+    rest.forEach(route => logger.info(`REST registrado....: ${route.uri} [${route.method}]`));
     // Lista todas as APIs GraphQL encontradas
     graphql.forEach(service => logger.info(`GraphQL registrado.: ${service}`));
     // Criando health-check

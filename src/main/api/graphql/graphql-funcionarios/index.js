@@ -15,11 +15,21 @@
  * - removerFuncionario: Remover funcionarios
  * - pesquisarFuncionarios: Pesquisar funcionario atraves de qualquer parametro do recurso 
  */
-/**
- * @controller graphql
- * @graphql funcionarios.gql
+/** 
+ * Configuracoes da rota
+ * @returns {object} Retorna os campos:
+ * controller: tipo de api (rest|graphql)
+ * method: verbo http que esta sendo executado
+ * uri: rota 
+ * graphql: nome do arquivo .gql
  */
-module.exports = ({ getModule }) => {
+const route = () => {
+    return {
+        controller: 'graphql',
+        graphql: 'funcionarios.gql'
+    }
+};
+const root = ({ getModule }) => {
 
     const modelFuncionario = getModule('models/funcionario', true);
     const validarEntrada = getModule('modules/form', true);
@@ -115,4 +125,9 @@ module.exports = ({ getModule }) => {
         removerFuncionario,
         pesquisarFuncionarios
     }
+}
+
+module.exports = {
+    route,
+    root
 }
