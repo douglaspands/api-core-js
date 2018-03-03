@@ -24,7 +24,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - ObterFuncionario() - Execução com sucesso`, async () => {
 
-        context.setMock('models/funcionario', {
+        context.setMock('services/funcionario', {
             obterFuncionario: () => {
                 return {
                     nome: 'Joao',
@@ -53,7 +53,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - criarFuncionario() - Execução com sucesso`, async () => {
 
-        context.setMock('models/funcionario', {
+        context.setMock('services/funcionario', {
             incluirFuncionario: () => {
                 return {
                     _id: '123456789012345678901234',
@@ -87,7 +87,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - listarFuncionarios() - Execução com sucesso`, async () => {
 
-        context.setMock('models/funcionario', {
+        context.setMock('services/funcionario', {
             pesquisarFuncionarios: () => {
                 return [{
                     _id: '123456789012345678901234',
@@ -123,7 +123,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - removerFuncionario() - Execução com sucesso`, async () => {
 
-        context.setMock('models/funcionario', {
+        context.setMock('services/funcionario', {
             removerFuncionario: () => {
                 return 'Foi/Foram removido(s) 1 registro(s)!';
             }
@@ -147,7 +147,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - atualizarFuncionario() - Execução com sucesso`, async () => {
 
-        context.setMock('models/funcionario', {
+        context.setMock('services/funcionario', {
             atualizarFuncionario: () => {
                 return 'Foi/Foram atualizado(s) 1 registro(s)!';
             }
@@ -172,7 +172,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - pesquisarFuncionarios() - Execução com sucesso`, async () => {
 
-        context.setMock('models/funcionario', {
+        context.setMock('services/funcionario', {
             pesquisarFuncionarios: () => {
                 return [{
                     _id: '12345678901234567890abcd',

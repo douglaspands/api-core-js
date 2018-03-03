@@ -33,7 +33,7 @@ module.exports.controller = async ({ params, query }, res, next, { getModule, ge
     
     logger.debug('Inicio da rota REST GET /v1/funcionarios');
 
-    const modelFuncionario = getModule('models/funcionario', true);
+    const modelFuncionario = getModule('services/funcionario', true);
     const validarEntrada = getModule('modules/form', true);
     const fields = getModule('utils/fields');
     const queryFields = (query['fields']) ? query['fields'] : '';
