@@ -17,12 +17,12 @@
   "author": "douglaspands",
   "license": "ISC",
   "dependencies": {
-    "lodash": "^4.17.4",
-    "moment": "^2.19.3",
+    "lodash": "^4.17.5",
+    "moment": "^2.21.0",
     "winston": "^3.0.0-rc1"
   },
   "devDependencies": {
-    "mocha": "^4.0.1",
-    "nyc": "^11.3.0"
+    "mocha": "^5.0.4",
+    "nyc": "^11.6.0"
   }
 }
