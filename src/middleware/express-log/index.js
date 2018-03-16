@@ -57,7 +57,17 @@ module.exports = app => {
                 },
                 response: {
                     headers: res._headers,
-                    body: (chunk) ? JSON.parse(chunk.toString()) : {}
+                    body: {}
+                }
+            }
+
+            if (chunk) {
+                try {
+                    dataLog.response.body = JSON.parse(chunk.toString());
+                } catch (error) {
+                    // When the body not some json file (GraphQL)
+                    //console.log(chunk);
+                    //console.error(error);
                 }
             }
 
@@ -73,7 +83,7 @@ module.exports = app => {
 
         next();
     }
-    
+
     // Armazenando logger no servidor
     app.set('logger', logger)
 
