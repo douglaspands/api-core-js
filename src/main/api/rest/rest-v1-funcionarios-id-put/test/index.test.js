@@ -34,7 +34,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com sucesso (statusCode: 200)`, (done) => {
 
-        context.setMock('services/funcionario', {
+        context.setMock('services/funcionario-crud', {
             atualizarFuncionario: () => {
                 return new Promise((resolved) => {
                     resolved({
@@ -78,7 +78,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com erro (statusCode: 204)`, (done) => {
 
-        context.setMock('services/funcionario', {
+        context.setMock('services/funcionario-crud', {
             atualizarFuncionario: () => {
                 return new Promise((_, reject) => {
                     reject({});
@@ -115,7 +115,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com erro (statusCode: 400)`, (done) => {
 
-        context.setMock('services/funcionario', {
+        context.setMock('services/funcionario-crud', {
             criarFuncionario: () => {
                 return new Promise((_, reject) => {
                     reject({});

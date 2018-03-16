@@ -31,7 +31,7 @@ const route = () => {
 };
 const root = ({ getModule }) => {
 
-    const modelFuncionario = getModule('services/funcionario', true);
+    const modelFuncionario = getModule('services/funcionario-crud', true);
     const validarEntrada = getModule('modules/form', true);
 
     /**
