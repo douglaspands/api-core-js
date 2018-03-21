@@ -25,8 +25,11 @@ const logger = require('./middleware/express-log')(app);
 })().then(({ rest, graphql }) => {
   // Inicializando o servidor
   const server = app.listen((process.env.PORT || 3000), () => {
+    let environment = process.env.NODE_ENV || 'develop';
     // Log da inicialização do servidor
-    logger.info(`Executando "${name}@${version}" em http://localhost:${server.address().port} (${(process.env.NODE_ENV || 'develop')})`);
+    logger.info(`Executando "${name}@${version}" em http://localhost:${server.address().port} (${environment})`);
+    // Caso seja o ambiente de desenvolvimento, disponibilizar interface para teste do GraphQL
+    if (environment === 'develop') logger.info(`GraphQL IDE disponivel em http://localhost:${server.address().port}/graphql`);
     // Lista todas as APIs REST encontradas
     rest.forEach(route => logger.info(`REST registrado....: ${route.uri} [${route.method}]`));
     // Lista todas as APIs GraphQL encontradas

@@ -1,5 +1,5 @@
 /**
- * @file Cobertura de testes do /services/funcionario.js
+ * @file Cobertura de testes do /services/funcionario-crud.js
  * @author douglaspands
  * @since 2017-11-24
  */
@@ -12,7 +12,7 @@ const Context = require('../../../../lib/context-app-test');
 const pathApp = path.join(__dirname, '../..');
 
 
-describe('# ./services/funcionario.js', () => {
+describe('# ./services/funcionario-crud.js', () => {
 
     let i = 0, context;
 
@@ -33,7 +33,7 @@ describe('# ./services/funcionario.js', () => {
             })
         });
 
-        const { obterFuncionario } = require('../../../services/funcionario')(context);
+        const { obterFuncionario } = require('../../../services/funcionario-crud')(context);
 
         const req = {
             _id: '123456789012345678901234'
@@ -59,7 +59,7 @@ describe('# ./services/funcionario.js', () => {
             })
         });
 
-        const { obterFuncionario } = require('../../../services/funcionario')(context);
+        const { obterFuncionario } = require('../../../services/funcionario-crud')(context);
 
         const req = {
             _id: '123456789012345678901234'
@@ -89,7 +89,7 @@ describe('# ./services/funcionario.js', () => {
             })
         });
 
-        const { incluirFuncionario } = require('../../../services/funcionario')(context);
+        const { incluirFuncionario } = require('../../../services/funcionario-crud')(context);
 
         const req = {
             input: {
@@ -119,7 +119,7 @@ describe('# ./services/funcionario.js', () => {
             })
         });
 
-        const { incluirFuncionario } = require('../../../services/funcionario')(context);
+        const { incluirFuncionario } = require('../../../services/funcionario-crud')(context);
 
         const req = {
             input: {
@@ -155,7 +155,7 @@ describe('# ./services/funcionario.js', () => {
             })
         });
 
-        const { pesquisarFuncionarios } = require('../../../services/funcionario')(context);
+        const { pesquisarFuncionarios } = require('../../../services/funcionario-crud')(context);
 
         const req = {};
 
@@ -182,7 +182,7 @@ describe('# ./services/funcionario.js', () => {
             })
         });
 
-        const { pesquisarFuncionarios } = require('../../../services/funcionario')(context);
+        const { pesquisarFuncionarios } = require('../../../services/funcionario-crud')(context);
 
         const req = {};
 
@@ -204,7 +204,7 @@ describe('# ./services/funcionario.js', () => {
             })
         });
 
-        const { removerFuncionario } = require('../../../services/funcionario')(context);
+        const { removerFuncionario } = require('../../../services/funcionario-crud')(context);
 
         const req = {
             _id: '123456789012345678901234'
@@ -228,7 +228,7 @@ describe('# ./services/funcionario.js', () => {
             })
         });
 
-        const { removerFuncionario } = require('../../../services/funcionario')(context);
+        const { removerFuncionario } = require('../../../services/funcionario-crud')(context);
 
         const req = {
             _id: '123456789012345678901234'
@@ -252,7 +252,7 @@ describe('# ./services/funcionario.js', () => {
             })
         });
 
-        const { atualizarFuncionario } = require('../../../services/funcionario')(context);
+        const { atualizarFuncionario } = require('../../../services/funcionario-crud')(context);
 
         const req = {
             _id: '123456789012345678901234',
@@ -277,7 +277,7 @@ describe('# ./services/funcionario.js', () => {
             })
         });
 
-        const { atualizarFuncionario } = require('../../../services/funcionario')(context);
+        const { atualizarFuncionario } = require('../../../services/funcionario-crud')(context);
 
         const req = {
             _id: '123456789012345678901234',

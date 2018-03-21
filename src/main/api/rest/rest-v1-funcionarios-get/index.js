@@ -29,7 +29,7 @@ const route = () => {
 const controller = async ({ query }, res, next, { getModule }) => {
 
     const _ = require('lodash');
-    const modelFuncionario = getModule('services/funcionario', true);
+    const modelFuncionario = getModule('services/funcionario-crud', true);
     const fields = getModule('utils/fields');
     const queryFields = (query['fields']) ? query['fields'] : '';
     delete query.fields;

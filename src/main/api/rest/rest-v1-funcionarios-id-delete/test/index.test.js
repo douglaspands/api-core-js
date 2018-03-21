@@ -34,7 +34,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com sucesso (statusCode: 200)`, (done) => {
 
-        context.setMock('services/funcionario', {
+        context.setMock('services/funcionario-crud', {
             removerFuncionario: () => {
                 return new Promise((resolved) => {
                     resolved('Foi/Foram removido(s) 1 registro(s)!');
@@ -69,7 +69,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com sucesso (statusCode: 204)`, (done) => {
 
-        context.setMock('services/funcionario', {
+        context.setMock('services/funcionario-crud', {
             removerFuncionario: () => {
                 return new Promise((_, reject) => {
                     reject('Foi/Foram removido(s) 0 registro(s)!');
@@ -104,7 +104,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com erro (statusCode: 400)`, (done) => {
         
-                context.setMock('services/funcionario', {
+                context.setMock('services/funcionario-crud', {
                     removerFuncionario: () => {
                         return new Promise((_, reject) => {
                             reject({});

@@ -1,6 +1,6 @@
 {
   "name": "core-api-js",
-  "version": "2.1.0",
+  "version": "2.1.2",
   "description": "Motor de APIs em Node.js",
   "main": "server.js",
   "scripts": {
@@ -10,20 +10,24 @@
   },
   "author": "douglaspands",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/douglaspands/core-api-js"
+  },
   "devDependencies": {
-    "nodemon": "^1.14.3"
+    "nodemon": "^1.17.2"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
-    "compression": "^1.7.1",
-    "express": "^4.16.2",
-    "express-graphql": "^0.6.11",
-    "graphql": "^0.11.3",
-    "lodash": "^4.17.4",
-    "merge-graphql-schemas": "^1.4.0",
-    "moment": "^2.20.1",
-    "mongodb": "^3.0.1",
-    "uuid": "^3.1.0",
+    "compression": "^1.7.2",
+    "express": "^4.16.3",
+    "express-graphql": "^0.6.12",
+    "graphql": "^0.13.1",
+    "lodash": "^4.17.5",
+    "merge-graphql-schemas": "^1.5.0",
+    "moment": "^2.21.0",
+    "mongodb": "^3.0.4",
+    "uuid": "^3.2.1",
     "winston": "^3.0.0-rc1"
   }
 }
