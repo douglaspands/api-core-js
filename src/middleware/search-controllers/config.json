@@ -1,6 +1,6 @@
 {
     "file": "index.js",
-    "file_type": "^(.+)/index.js$",
+    "file_type": "^(.+)([\\\\/])index.js$",
     "annotations": [
         "controller",
         "method",

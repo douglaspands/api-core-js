@@ -11,7 +11,7 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const config = require('./config');
-const REGEX_FILE_TYPE = new RegExp(config.file_type);
+const REGEX_FILE_TYPE = new RegExp(config.file_type, 'i');
 /**
  * Identifica notações abaixo para identificação se é uma controller e anota a rota.
  * @controller - tipo da api
