@@ -43,7 +43,7 @@ Para iniciar o motor, é necessario executar:
 $ cd core-api-js/src/
 $ npm start
 ```
-Ao executar, vai aparecer no console algo parecido com a demonstração abaixo:
+Ao executar, vai aparecer no console conforme a demonstração abaixo:
 ```console
 [info] 2018-03-20 23.31.33.138 mongodb-connect - MongoDB ativado com sucesso!
 [debug] 2018-03-20 23.31.33.276 graphql-funcionarios - Foi solicitado o modulo "services/funcionario-crud".
