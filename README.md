@@ -14,7 +14,7 @@ Esse projeto tambem é uma forma de apresentar meu conhecimento. Sendo assim, es
 ## Premissas
 
 Para iniciar a utilização desse motor de APIs, é necessario 3 coisas:   
-1. Ter o NoSQL [MongoDB](https://mongodb.github.io/node-mongodb-native/) instalado na maquina (se não tiver, as APIs vão funcionar parcialmente);
+1. Ter o NoSQL [MongoDB](https://mongodb.github.io/node-mongodb-native/) instalado (se não tiver, as APIs vão funcionar parcialmente);
 2. Ter o [Node.js](https://nodejs.org/en/) instalado;
 
 ## APIs REST/GraphQL de exemplo
