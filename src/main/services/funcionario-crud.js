@@ -38,7 +38,8 @@ module.exports = ({ getModule }) => {
      */
     async function incluirFuncionario(funcionario) {
 
-        return await crud.insert('funcionarios', funcionario);
+        let ret = await crud.insert('funcionarios', funcionario);
+        return (ret.ops)? ret.ops[0]: ret;
 
     }
 

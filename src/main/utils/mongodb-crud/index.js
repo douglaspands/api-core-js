@@ -5,9 +5,13 @@
  */
 'use strict';
 
-const { ObjectID } = require('mongodb');
+const {
+    ObjectID
+} = require('mongodb');
 
-module.exports = ({ getServer }) => {
+module.exports = ({
+    getServer
+}) => {
 
     const db = getServer('mongodb');
     const logger = getServer('logger');
@@ -37,17 +41,21 @@ module.exports = ({ getServer }) => {
 
         return new Promise((resolve, reject) => {
 
-            db.collection(collection)
-                .find(query)
-                .toArray()
-                .then(data => resolve(data))
-                .catch(err => {
-                    logger.error({
-                        source: 'utils/mongodb-crud',
-                        message: err
+            try {
+                db.collection(collection)
+                    .find(query)
+                    .toArray()
+                    .then(data => resolve(data))
+                    .catch(err => {
+                        logger.error({
+                            source: 'utils/mongodb-crud',
+                            message: err
+                        });
+                        reject(err);
                     });
-                    reject(err);
-                });
+            } catch (error) {
+                reject(error);
+            }
 
         });
 
@@ -75,18 +83,22 @@ module.exports = ({ getServer }) => {
                 reject({});
             }
 
-            db.collection(collection)
-                .find(query)
-                .toArray()
-                .then(data => resolve(data[0]))
-                .catch(err => {
-                    logger.error({
-                        source: 'utils/mongodb-crud',
-                        message: `[find] ${err}`
+            try {
+                db.collection(collection)
+                    .find(query)
+                    .toArray()
+                    .then(data => resolve(data[0]))
+                    .catch(err => {
+                        logger.error({
+                            source: 'utils/mongodb-crud',
+                            message: `[find] ${err}`
+                        });
+                        reject(err);
                     });
-                    reject(err);
-                });
 
+            } catch (error) {
+                reject(error);
+            }
         });
 
     };
@@ -114,17 +126,21 @@ module.exports = ({ getServer }) => {
                 reject({});
             }
 
-            db.collection(collection)
-                .deleteOne(query)
-                .then(data => resolve(`Foi/Foram removido(s) ${data.deletedCount} registro(s)!`))
-                .catch(err => {
-                    logger.log({
-                        level: 'error',
-                        source: 'utils/mongodb-crud',
-                        message: `[remove] ${err}`
+            try {
+                db.collection(collection)
+                    .deleteOne(query)
+                    .then(data => resolve(`Foi/Foram removido(s) ${data.deletedCount} registro(s)!`))
+                    .catch(err => {
+                        logger.log({
+                            level: 'error',
+                            source: 'utils/mongodb-crud',
+                            message: `[remove] ${err}`
+                        });
+                        reject(err);
                     });
-                    reject(err);
-                });
+            } catch (error) {
+                reject(error);
+            }
 
         });
 
@@ -151,17 +167,21 @@ module.exports = ({ getServer }) => {
                 reject({});
             }
 
-            db.collection(collection)
-                .insertOne(body)
-                .then(data => resolve(data))
-                .catch(err => {
-                    logger.log({
-                        level: 'error',
-                        source: 'utils/mongodb-crud',
-                        message: `[insert] ${err}`
+            try {
+                db.collection(collection)
+                    .insertOne(body)
+                    .then(data => resolve(data))
+                    .catch(err => {
+                        logger.log({
+                            level: 'error',
+                            source: 'utils/mongodb-crud',
+                            message: `[insert] ${err}`
+                        });
+                        reject(err);
                     });
-                    reject(err);
-                });
+            } catch (error) {
+                reject(error);
+            }
 
         });
 
@@ -176,7 +196,8 @@ module.exports = ({ getServer }) => {
      */
     async function update(collection, _id, set) {
 
-        const query = {}, update = {};
+        const query = {},
+            update = {};
 
         return new Promise((resolve, reject) => {
 
@@ -203,17 +224,21 @@ module.exports = ({ getServer }) => {
                 reject({});
             }
 
-            db.collection(collection)
-                .updateOne(query, update)
-                .then(data => resolve(`Foi/Foram atualizado(s) ${data.matchedCount} registro(s)!`))
-                .catch(err => {
-                    logger.log({
-                        level: 'error',
-                        source: 'utils/mongodb-crud',
-                        message: `[update] ${err}`
+            try {
+                db.collection(collection)
+                    .updateOne(query, update)
+                    .then(data => resolve(`Foi/Foram atualizado(s) ${data.matchedCount} registro(s)!`))
+                    .catch(err => {
+                        logger.log({
+                            level: 'error',
+                            source: 'utils/mongodb-crud',
+                            message: `[update] ${err}`
+                        });
+                        reject(err);
                     });
-                    reject(err);
-                });
+            } catch (error) {
+                reject(error);
+            }
 
         });
 

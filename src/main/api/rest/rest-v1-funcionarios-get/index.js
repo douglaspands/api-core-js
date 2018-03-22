@@ -45,7 +45,8 @@ const controller = async ({ query }, res, next, { getModule }) => {
             res.status(200).send({ data: _ret });
         }
     } catch (error) {
-        res.status(500).send(error);
+        let err = (error.constructor.name === 'Error')? { error: error.message } : error;
+        res.status(500).send(err);
     }
 
 };

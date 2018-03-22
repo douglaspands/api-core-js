@@ -31,7 +31,7 @@ const route = () => {
 };
 const root = ({ getModule }) => {
 
-    const modelFuncionario = getModule('services/funcionario-crud', true);
+    const serviceFuncionario = getModule('services/funcionario-crud', true);
     const validarEntrada = getModule('modules/form', true);
 
     /**
@@ -43,7 +43,7 @@ const root = ({ getModule }) => {
 
         validarEntrada({ _id });
 
-        const ret = (await modelFuncionario.obterFuncionario(_id));
+        const ret = (await serviceFuncionario.obterFuncionario(_id));
         return ret;
 
     }
@@ -57,7 +57,7 @@ const root = ({ getModule }) => {
 
         validarEntrada(input);
 
-        const ret = (await modelFuncionario.incluirFuncionario(input));
+        const ret = (await serviceFuncionario.incluirFuncionario(input));
         return ret;
 
     }
@@ -68,7 +68,7 @@ const root = ({ getModule }) => {
      */
     async function listarFuncionarios() {
 
-        const ret = (await modelFuncionario.pesquisarFuncionarios({}));
+        const ret = (await serviceFuncionario.pesquisarFuncionarios({}));
         return ret;
 
     }
@@ -84,7 +84,7 @@ const root = ({ getModule }) => {
 
         const _id = funcionario._id, body = funcionario;
         delete body._id;
-        const ret = (await modelFuncionario.atualizarFuncionario(_id, body));
+        const ret = (await serviceFuncionario.atualizarFuncionario(_id, body));
         return ret;
 
     }
@@ -98,7 +98,7 @@ const root = ({ getModule }) => {
 
         validarEntrada({ _id });
 
-        const ret = (await modelFuncionario.removerFuncionario(_id));
+        const ret = (await serviceFuncionario.removerFuncionario(_id));
         return ret;
 
     }
@@ -112,7 +112,7 @@ const root = ({ getModule }) => {
 
         validarEntrada(pesquisa);
 
-        const ret = (await modelFuncionario.pesquisarFuncionarios(pesquisa));
+        const ret = (await serviceFuncionario.pesquisarFuncionarios(pesquisa));
         return ret;
 
     }
