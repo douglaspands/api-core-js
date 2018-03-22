@@ -5,7 +5,10 @@
  */
 'use strict';
 // Obtendo informações do servidor
-const { name, version } = require('./package');
+const {
+  name,
+  version
+} = require('./package');
 // Inicializando servidor
 const app = require('express')();
 // Armazenando diretorio do servidor e configurações
@@ -22,7 +25,10 @@ const logger = require('./middleware/express-log')(app);
   // Registrando APIs
   const routes = await require('./middleware/express-register-routes')(app);
   return routes;
-})().then(({ rest, graphql }) => {
+})().then(({
+  rest,
+  graphql
+}) => {
   // Inicializando o servidor
   const server = app.listen((process.env.PORT || 3000), () => {
     let environment = process.env.NODE_ENV || 'develop';

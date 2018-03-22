@@ -5,7 +5,9 @@
  */
 'use strict';
 const winston = require('winston');
-const { createLogger } = winston;
+const {
+    createLogger
+} = winston;
 const uuid = require('uuid/v1');
 
 /**
@@ -39,8 +41,8 @@ module.exports = app => {
         res.setHeader('X-Correlation-Id', correlationId);
 
         // Capturando send 
-        const end = res.end;
-        res.end = (chunk, encoding, callback) => {
+        let end = res.end;
+        res.end = function (chunk, encoding, callback) {
 
             res.end = end;
             res.end(chunk, encoding, callback);
@@ -56,20 +58,25 @@ module.exports = app => {
                     body: req.body
                 },
                 response: {
+                    statusCode: res.statusCode,
                     headers: res._headers,
                     body: {}
                 }
-            }
+            };
 
             if (chunk) {
                 try {
-                    dataLog.response.body = JSON.parse(chunk.toString());
+                    let _chunk = chunk.toString();
+                    let _body = JSON.parse(_chunk);
+                    dataLog.response.body = _body;
                 } catch (error) {
                     // When the body not some json file (GraphQL)
                     //console.log(chunk);
                     //console.error(error);
                 }
-            }
+            } /*else if (res.statusMessage) {
+                dataLog.response.body = res.statusMessage;
+            }*/
 
             logger.log({
                 level: 'info',

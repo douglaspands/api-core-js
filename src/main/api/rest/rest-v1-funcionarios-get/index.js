@@ -26,7 +26,11 @@ const route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-const controller = async ({ query }, res, next, { getModule }) => {
+const controller = async ({
+    query
+}, res, next, {
+    getModule
+}) => {
 
     const _ = require('lodash');
     const modelFuncionario = getModule('services/funcionario-crud', true);
@@ -39,13 +43,19 @@ const controller = async ({ query }, res, next, { getModule }) => {
         if (_.isEmpty(ret)) {
             res.status(204).send();
         } else {
-            const _ret = (queryFields && _.isArray(ret))
-                ? _.map(ret, o => fields(o, queryFields))
-                : ret;
-            res.status(200).send({ data: _ret });
+            const _ret = (queryFields && _.isArray(ret)) ?
+                _.map(ret, o => fields(o, queryFields)) :
+                ret;
+            res.status(200).send({
+                data: _ret
+            });
         }
     } catch (error) {
-        res.status(500).send(error);
+        let err = (error.constructor.name === 'TypeError') ? {
+            code: error.message,
+            message: (error.stack).toString().split('\n')
+        } : error;
+        res.status(500).send(err);
     }
 
 };
