@@ -26,11 +26,17 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ params, query }, res, next, { getModule, getServer }) => {
+module.exports.controller = async ({
+    params,
+    query
+}, res, next, {
+    getModule,
+    getServer
+}) => {
 
     const _ = require('lodash');
     const logger = getServer('logger');
-    
+
     logger.debug('Inicio da rota REST GET /v1/funcionarios');
 
     const modelFuncionario = getModule('services/funcionario-crud', true);
@@ -39,25 +45,30 @@ module.exports.controller = async ({ params, query }, res, next, { getModule, ge
     const queryFields = (query['fields']) ? query['fields'] : '';
     delete query.fields;
 
-    const errors = validarEntrada({ _id: params.id });
+    const errors = validarEntrada({
+        _id: params.id
+    });
 
     if (errors) return res.status(400).send(errors);
 
     try {
         const ret = await modelFuncionario.obterFuncionario(params.id);
-        const _ret = (queryFields)
-            ? fields(ret, queryFields)
-            : ret;
+        const _ret = (queryFields) ?
+            fields(ret, queryFields) :
+            ret;
         if (_.isEmpty(ret)) {
             res.status(204).send();
         } else {
-            res.status(200).send({ data: _ret });
+            res.status(200).send({
+                data: _ret
+            });
         }
     } catch (error) {
-        res.status(500).send({
-            codigo: 'Erro interno',
-            mensagem: error.stack
-        });
+        let err = (error.constructor.name === 'TypeError') ? {
+            code: error.message,
+            message: (error.stack).toString().split('\n')
+        } : error;
+        res.status(500).send(err);
     }
 
 };
