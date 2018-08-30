@@ -28,7 +28,7 @@ module.exports = (winston, app) => {
     const customConsole = () => {
 
         return new transports.Console({
-            level: 'silly',
+            level: (process.env.LOG_ENV || 'silly'),
             format: combine(
                 colorize(),
                 label({ label: 'server' }),
@@ -59,7 +59,7 @@ module.exports = (winston, app) => {
         }
 
         return new transports.File({
-            level: 'silly',
+            level: (process.env.LOG_ENV || 'silly'),
             options: { flags: 'a+', encoding: 'utf8' },
             maxsize: 10240,
             maxFiles: 10,

@@ -6,6 +6,8 @@ services:
             context: ./src
         image: api-core-js:latest
         container_name: api-core-app
+        volumes: 
+            - "./logs:/var/www/logs"
         ports:
             - "3000:3000"
         networks:
