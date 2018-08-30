@@ -1,0 +1,26 @@
+version: '3.1'
+services:
+    api-core-js:
+        build:
+            dockerfile: ./src/Dockerfile
+            context: .
+        image: node:latest
+        container_name: api-core-js
+        ports:
+            - "3000:3000"
+        networks: 
+            - production-network
+        #depends_on:
+        #    - "mongo-db"
+    #mongo-db:
+    #    image: mongo
+    #    container_name: mongo_api-core-js
+    #    volumes: 
+    #        - "./data:/data/db"
+    #    networks: 
+    #        - production-network
+    #    ports:
+    #        - "27017:27017"
+networks: 
+    production-network:
+        driver: bridge
