@@ -9,6 +9,7 @@ const path = require('path');
 const moment = require('moment');
 const formatDate = 'YYYY-MM-DD HH.mm.ss.SSS';
 const formatDateFile = 'YYYYMMDDHHmmssSSS';
+const ID_BOOT = require('uuid/v4')();
 
 /**
  * Customização dos transports do moduloe winstonjs 
@@ -20,6 +21,7 @@ module.exports = (winston, app) => {
 
     const { transports, format } = winston;
     const { combine, timestamp, colorize, label, printf } = format;
+    const LEVEL = (process.env.LOG || 'silly');
 
     /**
      * Customização da geração de log pelo console
@@ -28,7 +30,7 @@ module.exports = (winston, app) => {
     const customConsole = () => {
 
         return new transports.Console({
-            level: (process.env.LOG_ENV || 'silly'),
+            level: LEVEL,
             format: combine(
                 colorize(),
                 label({ label: 'server' }),
@@ -59,18 +61,19 @@ module.exports = (winston, app) => {
         }
 
         return new transports.File({
-            level: (process.env.LOG_ENV || 'silly'),
+            level: LEVEL,
             options: { flags: 'a+', encoding: 'utf8' },
             maxsize: 10240,
             maxFiles: 10,
-            filename: path.join(logFolder, ('core-api-js-' + moment().format(formatDateFile) + '.log')),
+            //filename: path.join(logFolder, ('core-api-js-' + moment().format(formatDateFile) + '.log')),
+            filename: path.join(logFolder, 'core-api-js.log'),
             format: combine(
                 label({ label: 'server' }),
                 timestamp(),
                 printf(info => {
                     const data = {
                         source: (info.source || info.label),
-                        'correlation-id': (app.get('id') || ''),
+                        'correlation-id': (app.get('id') || ID_BOOT),
                         level: info.level,
                         timestamp: moment().format(formatDate),
                         message: (info.request || info.message)

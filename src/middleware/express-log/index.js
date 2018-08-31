@@ -8,7 +8,7 @@ const winston = require('winston');
 const {
     createLogger
 } = winston;
-const uuid = require('uuid/v1');
+const uuid = require('uuid/v4');
 
 /**
  * Função que disponibiliza o modulo de log pra cadastro no express.js

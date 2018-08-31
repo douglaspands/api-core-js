@@ -6,6 +6,7 @@
 'use strict';
 const { MongoClient } = require('mongodb');
 const { source, uri, database } = require('./config');
+const URL_MONGO = (process.env.MONGO || uri);
 
 /**
  * Obter conexão com o MongoDB
@@ -16,13 +17,14 @@ const mongoConnect = async app => {
     const logger = app.get('logger');
     let db = null;
     try {
-        const client = await MongoClient.connect(uri);
+        const client = await MongoClient.connect(URL_MONGO, { useNewUrlParser: true });
         db = client.db(database);
+        db.url = URL_MONGO;
         app.set('mongodb', db);
         logger.log({
             level: 'info',
             source: source,
-            message: 'MongoDB ativado com sucesso!'
+            message: `MongoDB ativado com sucesso na url: ${URL_MONGO}`
         });
     } catch (error) {
         logger.log({
