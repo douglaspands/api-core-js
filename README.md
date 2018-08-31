@@ -36,10 +36,10 @@ Para esse topico, eu criei duas automatizações utilizando o Docker:
 
 #### 1.1 Container da aplicação e orquestração via Docker-Compose
 
-Foi gerado script **compose-stack.yaml** com todo o processo de download da imagem do Node.js e criação de um container com codigo fonte da aplicação. Nas sequencia ele vai baixar a imagem do MongoDB e criar um container com ele.
+Foi gerado script **compose-stack-prd.yaml** (**compose-stack-dev.yaml** disponibiliza o GraphiQL) com todo o processo de download da imagem do Node.js e criação de um container com codigo fonte da aplicação. Nas sequencia ele vai baixar a imagem do MongoDB e criar um container com ele.
 Após a criação dos containers, ele vai montar uma rede dentro do Docker e subir os containers na seguinte sequencia: mongo e depois o core-api-js.
 ```console
-$ docker-compose -f ./compose-stack.yaml up
+$ docker-compose -f ./compose-stack-prd.yaml up
 ```
 
 #### 1.2 Executar apenas a imagem do MongoDB
@@ -95,4 +95,54 @@ Ao executar, vai aparecer no console conforme a demonstração abaixo:
 [info] 2018-08-31 19.25.42.933 server - GraphQL registrado.: removerFuncionario
 [info] 2018-08-31 19.25.42.933 server - GraphQL registrado.: pesquisarFuncionarios
 [info] 2018-08-31 19.25.42.934 health-check - Rota de Health-Check em: http://localhost:3001/check
+```
+## Exemplos de GraphQL
+Os exemplos abaixo foram utilizados no GraphiQL (interface grafica):
+```graphql
+# Inclusao de funcionario
+mutation example1{
+  criarFuncionario(input:{
+    nome: "Douglas"
+    sobrenome: "Silva"
+    cidade: "São Paulo"
+    estado: "SP"
+  }) {
+    nome
+    sobrenome
+  }
+}
+# Consulta de funcionarios
+query example2 {
+  listarFuncionarios {
+    nome
+    cidade 
+  }
+}
+# Atualizacao do funcionario
+mutation example3{
+  atualizarFuncionario(
+    _id: "?"
+    cidade: "Maceio"
+    estado: "Alagoas"
+  }) {
+    nome
+    cidade
+  }
+}
+# Excluir funcionario
+mutation example4{
+  excluirrFuncionario(
+    _id: "?"
+  })
+}
+```
+## Exemplos de API REST
+Os exemplos abaixos de execução REST (via POSTMAN):
+```console
+# Inclusão funcionario
+url: [POST] http://localhost:3000/
+body: 
+{
+
+}
 ```

@@ -1,3 +1,6 @@
+# file: compose-stack-dev.yaml 
+# description: Criar container da aplicação (desenvolvimento).
+# Disponibiliza a interface GraphiQL.
 version: '3.1'
 services:
     core-api-js:
@@ -10,6 +13,7 @@ services:
             - MONGO=mongodb://mongodb:27017
             - LOG=info
             - PORT=3000
+            - NODE_ENV=development
         volumes: 
             - "./logs:/var/www/logs"
         ports:
