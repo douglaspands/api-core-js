@@ -101,7 +101,7 @@ Os exemplos abaixo são executados no GraphiQL (interface grafica, disponivel ap
 GraphiQL disponivel na rota: http://localhost:3000/graphql
 ```graphql
 # Inclusao de funcionario
-mutation example1{
+mutation example1 {
   criarFuncionario(input:{
     nome: "Douglas"
     sobrenome: "Silva"
@@ -123,8 +123,8 @@ query example2 {
     cidade 
   }
 }
-# Listar funcionarios
-query example2 {
+# Pesquisar funcionarios
+query example3 {
   pesquisarFuncionarios (
     estado: "SP"
   ){
@@ -133,15 +133,15 @@ query example2 {
     cidade 
   }
 }
-# Consulta de funcionarios
-query example3 {
+# Consultar funcionarios pelo ID
+query example4 {
   obterFuncionario (_id: ?) {
     nome
     cidade 
   }
 }
-# Atualizacao do funcionario
-mutation example4{
+# Atualizar funcionario
+mutation example5 {
   atualizarFuncionario(
     _id: ?
     cidade: "Maceio"
@@ -152,8 +152,8 @@ mutation example4{
   }
 }
 # Excluir funcionario
-mutation example5{
-  excluirrFuncionario(
+mutation example6 {
+  excluirFuncionario(
     _id: ?
   })
 }
