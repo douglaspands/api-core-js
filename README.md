@@ -94,7 +94,7 @@ Ao executar, vai aparecer no console conforme a demonstração abaixo:
 [info] 2018-08-31 19.25.42.933 server - GraphQL registrado.: atualizarFuncionario
 [info] 2018-08-31 19.25.42.933 server - GraphQL registrado.: removerFuncionario
 [info] 2018-08-31 19.25.42.933 server - GraphQL registrado.: pesquisarFuncionarios
-[info] 2018-08-31 19.25.42.934 health-check - Rota de Health-Check em: http://localhost:3001/check
+[info] 2018-08-31 19.25.42.934 health-check - Health-Check registrado: http://localhost:3001
 ```
 ## Exemplos de request utilizando API GraphQL
 Os exemplos abaixo são executados no GraphiQL (interface grafica, disponivel apenas em desenvolvimento).
