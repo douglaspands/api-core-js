@@ -60,4 +60,5 @@ typings/
 # Personal
 .vscode
 data/*
+main/*
 *.sh
