@@ -33,11 +33,18 @@ module.exports = ({
      */
     async function scan(collection, key) {
 
-        const query = (key && typeof key === 'object') ? key : {};
+        //const query = ((key && typeof key === 'object') ? key : {});
+        const query = {};
 
-        if (query._id && isValidID(query._id)) {
-            query['_id'] = ObjectID(query._id);
-        }
+        (Object.keys(((key && typeof key === 'object') ? key : {}))).forEach(prop => {
+            if (prop === '_id') {
+                if (isValidID(key['_id'])) {
+                    query['_id'] = ObjectID(key['_id']);
+                }
+            } else {
+                query[prop] = new RegExp(key[prop], 'gi');
+            } 
+        });
 
         return new Promise((resolve, reject) => {
 

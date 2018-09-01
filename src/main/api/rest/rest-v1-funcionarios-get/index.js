@@ -12,7 +12,7 @@
  * uri: rota 
  * graphql: nome do arquivo .gql
  */
-const route = () => {
+module.exports.route = () => {
     return {
         controller: 'rest',
         method: 'get',
@@ -26,16 +26,16 @@ const route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-const controller = async ({ query }, res, next, { getModule }) => {
+module.exports.controller = async ({ query }, res, next, { getModule }) => {
 
     const _ = require('lodash');
-    const modelFuncionario = getModule('services/funcionario-service', true);
+    const service = getModule('services/funcionario-service', true);
     const fields = getModule('utils/fields');
     const queryFields = (query['fields']) ? query['fields'] : '';
     delete query.fields;
 
     try {
-        const ret = await modelFuncionario.pesquisarFuncionarios(query);
+        const ret = await service.pesquisarFuncionarios(query);
         if (_.isEmpty(ret)) {
             res.status(204).send();
         } else {
@@ -54,9 +54,4 @@ const controller = async ({ query }, res, next, { getModule }) => {
         res.status(500).send(err);
     }
 
-};
-
-module.exports = {
-    controller,
-    route
 };

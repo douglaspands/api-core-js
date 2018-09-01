@@ -28,14 +28,14 @@ module.exports.route = () => {
  */
 module.exports.controller = async ({ body }, res, next, { getModule }) => {
 
-    const modelFuncionario = getModule('services/funcionario-service', true);
+    const service = getModule('services/funcionario-service', true);
     const validarEntrada = getModule('modules/form', true);
 
     const errors = validarEntrada(body);
     if (errors) return res.status(400).send(errors);
 
     try {
-        const ret = await modelFuncionario.criarFuncionario(body);
+        const ret = await service.criarFuncionario(body);
         res.status(201).send({ data: ret });
     } catch (error) {
         let err = (error.constructor.name === 'TypeError') ? {
