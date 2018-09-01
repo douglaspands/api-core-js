@@ -1,6 +1,6 @@
 # file: compose-mongo.yaml 
 # description: Executar uma instancia do MongoDB.
-version: '3.7'
+version: '3.1'
 services:
     mongodb:
         image: mongo:4.0.1
