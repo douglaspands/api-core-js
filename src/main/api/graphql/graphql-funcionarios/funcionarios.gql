@@ -41,7 +41,10 @@ type Query {
     """
     Consultar funcionario pelo ID
     """
-    obterFuncionario(_id: ID!): Funcionario
+    obterFuncionario(
+        "ID do Funcionario"
+        _id: ID!
+    ): Funcionario
     """
     Listar funcionarios
     """
@@ -50,7 +53,20 @@ type Query {
     Pesquisar funcionario
     - Todos os parametros solicitados são opcionais, preenchendo apenas os campos que deseja pequisar.
     """
-    pesquisarFuncionarios(nome: String, sobrenome: String, cidade: String, estado: String, telefone: String, empresa: String): [Funcionario]
+    pesquisarFuncionarios(
+        "Nome do funcionario"
+        nome: String
+        "Sobrenome do funcionario"
+        sobrenome: String
+        "Cidade onde o funcionario mora"
+        cidade: String
+        "Estado onde o funcionario mora"
+        estado: String
+        "Telefone do funcionario"
+        telefone: String
+        "Email do funcionario"
+        email: String
+    ): [Funcionario]
 }
 """
 Funções de persistencia
@@ -59,13 +75,34 @@ type Mutation {
     """
     Criar funcionario
     """
-    criarFuncionario(input: inputFuncionario): Funcionario
+    criarFuncionario(
+        "Dados do Funcionario"
+        input: inputFuncionario
+    ): Funcionario
     """
     Atualizar funcionario pelo ID
     """
-    atualizarFuncionario(_id: ID!, nome: String, sobrenome: String, cidade: String, estado: String, telefone: String, empresa: String): String
+    atualizarFuncionario(
+        "ID do Funcionario (Obrigatorio)"
+        _id: ID!
+        "Nome do funcionario"
+        nome: String
+        "Sobrenome do funcionario"
+        sobrenome: String
+        "Cidade onde o funcionario mora"
+        cidade: String
+        "Estado onde o funcionario mora"
+        estado: String
+        "Telefone do funcionario"
+        telefone: String
+        "Email do funcionario"
+        email: String
+    ): String
     """
     Remover funcionario"
     """
-    removerFuncionario(_id: ID!): String
+    removerFuncionario(
+        "ID do Funcionario"
+        _id: ID!
+    ): String
 }
