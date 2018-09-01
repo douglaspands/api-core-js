@@ -1,6 +1,6 @@
 # file: compose-stack-prd.yaml 
 # description: Criar container da aplicação (producao).
-version: '3.1'
+version: '3.7'
 services:
     core-api-js:
         build:
@@ -28,8 +28,6 @@ services:
             - "./data:/data/db"
         networks: 
             - production-network
-        ports:
-            - "27017:27017"
 networks: 
     production-network:
         driver: bridge

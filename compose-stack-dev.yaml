@@ -1,7 +1,7 @@
 # file: compose-stack-dev.yaml 
 # description: Criar container da aplicação (desenvolvimento).
 # Disponibiliza a interface GraphiQL.
-version: '3.1'
+version: '3.7'
 services:
     core-api-js:
         build:
@@ -11,16 +11,17 @@ services:
         container_name: coreapi-app
         environment:
             - MONGO=mongodb://mongodb:27017
-            - LOG=info
             - PORT=3000
             - NODE_ENV=development
+        command: npm run start-dev
         volumes: 
             - "./logs:/var/www/logs"
+            - "./main:/var/www/main"
         ports:
             - "3000:3000"
             - "3001:3001"
         networks:
-            - production-network
+            - develop-network
         depends_on:
             - "mongodb"
     mongodb:
@@ -29,9 +30,9 @@ services:
         volumes: 
             - "./data:/data/db"
         networks: 
-            - production-network
+            - develop-network
         ports:
             - "27017:27017"
 networks: 
-    production-network:
+    develop-network:
         driver: bridge

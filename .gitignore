@@ -60,3 +60,4 @@ typings/
 # Personal
 .vscode
 data/*
+*.sh
