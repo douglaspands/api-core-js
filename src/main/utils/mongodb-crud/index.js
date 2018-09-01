@@ -5,9 +5,7 @@
  */
 'use strict';
 
-const {
-    ObjectID
-} = require('mongodb');
+const { ObjectID } = require('mongodb');
 
 module.exports = ({ getServer }) => {
 
@@ -201,8 +199,7 @@ module.exports = ({ getServer }) => {
      */
     async function update(collection, _id, set) {
 
-        const query = {},
-            update = {};
+        const query = {}, update = {};
 
         return new Promise((resolve, reject) => {
 
