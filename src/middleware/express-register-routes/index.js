@@ -26,7 +26,7 @@ const registerRoutes = async app => {
 
     router.get('/', (req, res, next) => {
         const pack = app.get('package');
-        res.status(200).send(`<h1>Servidor "${pack.name}-${pack.version}" no ar!</h1>`);
+        res.status(200).send(`<h1>Servidor "${pack.name}@${pack.version}" no ar!</h1>`);
     });
 
     const registerRoutesRest = restList => {
