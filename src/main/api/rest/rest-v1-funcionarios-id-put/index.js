@@ -26,9 +26,9 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ params, body }, res, _, { getModule }) => {
+module.exports.controller = async ({ params, body }, res, next, { getModule }) => {
 
-    const modelFuncionario = getModule('services/funcionario-crud', true);
+    const service = getModule('services/funcionario-service', true);
     const validarEntrada = getModule('modules/form', true);
 
     let input = body;
@@ -38,7 +38,7 @@ module.exports.controller = async ({ params, body }, res, _, { getModule }) => {
     if (errors) return res.status(400).send(errors);
 
     try {
-        const ret = await modelFuncionario.atualizarFuncionario(input._id, body);
+        const ret = await service.atualizarFuncionario(input._id, body);
         res.status(200).send({ data: ret });
     } catch (error) {
         res.status(204).send({});

@@ -5,13 +5,9 @@
  */
 'use strict';
 
-const {
-    ObjectID
-} = require('mongodb');
+const { ObjectID } = require('mongodb');
 
-module.exports = ({
-    getServer
-}) => {
+module.exports = ({ getServer }) => {
 
     const db = getServer('mongodb');
     const logger = getServer('logger');
@@ -33,11 +29,18 @@ module.exports = ({
      */
     async function scan(collection, key) {
 
-        const query = (key && typeof key === 'object') ? key : {};
+        //const query = ((key && typeof key === 'object') ? key : {});
+        const query = {};
 
-        if (query._id && isValidID(query._id)) {
-            query['_id'] = ObjectID(query._id);
-        }
+        (Object.keys(((key && typeof key === 'object') ? key : {}))).forEach(prop => {
+            if (prop === '_id') {
+                if (isValidID(key['_id'])) {
+                    query['_id'] = ObjectID(key['_id']);
+                }
+            } else {
+                query[prop] = new RegExp(key[prop], 'gi');
+            } 
+        });
 
         return new Promise((resolve, reject) => {
 
@@ -196,8 +199,7 @@ module.exports = ({
      */
     async function update(collection, _id, set) {
 
-        const query = {},
-            update = {};
+        const query = {}, update = {};
 
         return new Promise((resolve, reject) => {
 

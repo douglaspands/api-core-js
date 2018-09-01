@@ -43,9 +43,9 @@ module.exports = ({ getModule }) => {
             .isOptional()
             .isPhoneNumber();
 
-        checkField('empresa', 'Empresa invalida')
+        checkField('email', 'Email invalido')
             .isOptional()
-            .notEmpty();
+            .isEmail();
 
         return checkReportForREST();
 

@@ -59,5 +59,6 @@ typings/
 
 # Personal
 .vscode
-data
+data/*
+main/*
 *.sh

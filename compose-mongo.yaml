@@ -1,0 +1,11 @@
+# file: compose-mongo.yaml 
+# description: Executar uma instancia do MongoDB.
+version: '3.7'
+services:
+    mongodb:
+        image: mongo:4.0.1
+        container_name: coreapi-db
+        volumes: 
+            - "./data:/data/db"
+        ports:
+            - "27017:27017"
