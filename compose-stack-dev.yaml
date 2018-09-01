@@ -16,7 +16,6 @@ services:
         command: [ "npm", "run", "start-dev" ]
         volumes: 
             - "./logs:/var/www/logs"
-            - "./main:/var/www/main"
         ports:
             - "3000:3000"
             - "3001:3001"
