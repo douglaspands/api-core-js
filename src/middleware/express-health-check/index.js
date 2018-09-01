@@ -13,15 +13,16 @@ const os = require('os');
  * @param {object} server Configurações do servidor
  * @param {object} app_health Framework express.js configurado (servidor health-check)
  */
-function healthCheck(app, rest, graphql, server, app_health) {
+module.exports = (app, rest, graphql, server, app_health) => {
 
     const db = app.get('mongodb');
     const pack = app.get('package');
     const logger = app.get('logger');
 
-    app_health.use('/check', (req, res) => {
+    app_health.use((req, res) => {
 
-        return res.status(200).send({
+        const flagJson = (req.headers['content-type'] === 'application/json')? true: false;
+        const resultData = {
             data: {
                 server: {
                     name: pack.name,
@@ -62,9 +63,10 @@ function healthCheck(app, rest, graphql, server, app_health) {
                     }
                 }
             }
-        });
+        };
+
+        const response = (flagJson)? resultData: `<pre>\n${JSON.stringify(resultData, null, 4)}\n</pre>`;
+        return res.status(200).send(response);
+
     });
-
-}
-
-module.exports = healthCheck;
+};
