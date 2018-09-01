@@ -96,8 +96,8 @@ Ao executar, vai aparecer no console conforme a demonstração abaixo:
 [info] 2018-08-31 19.25.42.933 server - GraphQL registrado.: pesquisarFuncionarios
 [info] 2018-08-31 19.25.42.934 health-check - Rota de Health-Check em: http://localhost:3001/check
 ```
-## Exemplos request utilizando API GraphQL
-Os exemplos abaixo foram utilizados no GraphiQL (interface grafica):
+## Exemplos de request utilizando API GraphQL
+Os exemplos abaixo são executados no GraphiQL (interface grafica):
 ```graphql
 # Inclusao de funcionario
 mutation example1{
@@ -147,8 +147,8 @@ mutation example5{
   })
 }
 ```
-## Exemplos request utilizando API REST
-Os exemplos abaixos de execução REST (via POSTMAN):
+## Exemplos de request utilizando API REST
+Os exemplos abaixos são executados via POSTMAN:
 ```yaml
 # Inclusão de funcionario
 - rota: [POST] http://localhost:3000/v1/funcionarios
