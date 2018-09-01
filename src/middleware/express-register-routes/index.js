@@ -24,6 +24,11 @@ const registerRoutes = async app => {
     const files = searchFiles(path.join(app.get('root'), config.directory));
     const routes = searchController(files);
 
+    router.get('/', (req, res, next) => {
+        const pack = app.get('package');
+        res.status(200).send(`<h1>Servidor "${pack.name}-${pack.version}" no ar!</h1>`);
+    });
+
     const registerRoutesRest = restList => {
         restList.forEach(route => {
             const api = require(route.file);
@@ -52,7 +57,11 @@ const registerRoutes = async app => {
                 });
             }
         });
-        if (restList.length > 0) app.use('/', router);
+
+        if (restList.length > 0) app.use(router);
+        app.use((req, res, next) => {
+            res.status(404).send('Rota não encontrada!');
+        });
         return restList;
     }
 
