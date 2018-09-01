@@ -59,9 +59,6 @@ const registerRoutes = async app => {
         });
 
         if (restList.length > 0) app.use(router);
-        app.use((req, res, next) => {
-            res.status(404).send('Rota não encontrada!');
-        });
         return restList;
     }
 
@@ -118,10 +115,16 @@ const registerRoutes = async app => {
     const restList = routes.filter(route => route.controller === 'rest');
     const graphqlList = routes.filter(route => route.controller === 'graphql');
 
-    return {
+    const register = {
         rest: registerRoutesRest(restList),
         graphql: registerRoutesGraphql(graphqlList)
     };
+
+    app.use((req, res, next) => {
+        res.status(404).send('Rota não encontrada!');
+    });
+
+    return register;
 
 }
 
