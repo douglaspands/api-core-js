@@ -9,9 +9,7 @@ const {
     ObjectID
 } = require('mongodb');
 
-module.exports = ({
-    getServer
-}) => {
+module.exports = ({ getServer }) => {
 
     const db = getServer('mongodb');
     const logger = getServer('logger');
