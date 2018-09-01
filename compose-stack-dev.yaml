@@ -13,7 +13,7 @@ services:
             - MONGO=mongodb://mongodb:27017
             - PORT=3000
             - NODE_ENV=development
-        command: npm run start-dev
+        command: [ "npm", "run", "start-dev" ]
         volumes: 
             - "./logs:/var/www/logs"
             - "./main:/var/www/main"
