@@ -97,7 +97,8 @@ Ao executar, vai aparecer no console conforme a demonstração abaixo:
 [info] 2018-08-31 19.25.42.934 health-check - Rota de Health-Check em: http://localhost:3001/check
 ```
 ## Exemplos de request utilizando API GraphQL
-Os exemplos abaixo são executados no GraphiQL (interface grafica):
+Os exemplos abaixo são executados no GraphiQL (interface grafica, disponivel apenas em desenvolvimento).
+GraphiQL disponivel na rota: http://localhost:3000/graphql
 ```graphql
 # Inclusao de funcionario
 mutation example1{
