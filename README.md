@@ -107,7 +107,7 @@ mutation example1{
     cidade: "São Paulo"
     estado: "SP"
     telefone: "1170707070"
-    empresa: "douglaspands enterprise"
+    email: "dougla.silva@enterprise.com"
   }) {
     _id
     nome
@@ -159,7 +159,7 @@ Os exemplos abaixos são executados via POSTMAN:
         "cidade": "São Paulo",
         "estado": "SP",
         "telefone": "1170707070",
-        "empresa": "douglaspands enterprise"
+        "email": "dougla.silva@enterprise.com"
     }
 # Listar funcionarios
 - rota: [GET] http://localhost:3000/v1/funcionarios
@@ -174,7 +174,7 @@ Os exemplos abaixos são executados via POSTMAN:
         "cidade": "Maceio",
         "estado": "AL",
         "telefone": "1170707070",
-        "empresa": "douglaspands enterprise"
+        "email": "dougla.silva@enterprise.com"
     }
 # Excluir funcionario especifico
 - rota: [DELETE] http://localhost:3000/v1/funcionarios/:_id
