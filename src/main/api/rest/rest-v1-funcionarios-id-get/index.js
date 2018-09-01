@@ -39,7 +39,7 @@ module.exports.controller = async ({
 
     logger.debug('Inicio da rota REST GET /v1/funcionarios');
 
-    const modelFuncionario = getModule('services/funcionario-crud', true);
+    const modelFuncionario = getModule('services/funcionario-service', true);
     const validarEntrada = getModule('modules/form', true);
     const fields = getModule('utils/fields');
     const queryFields = (query['fields']) ? query['fields'] : '';

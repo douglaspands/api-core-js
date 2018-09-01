@@ -28,7 +28,7 @@ module.exports.route = () => {
  */
 module.exports.controller = async ({ params }, res, _, { getModule }) => {
 
-    const modelFuncionario = getModule('services/funcionario-crud', true);
+    const modelFuncionario = getModule('services/funcionario-service', true);
     const validarEntrada = getModule('modules/form', true);
 
     const errors = validarEntrada({ _id: params.id });

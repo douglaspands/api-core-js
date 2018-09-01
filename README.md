@@ -115,9 +115,19 @@ mutation example1{
     sobrenome
   }
 }
-# Consulta de funcionarios
+# Listar funcionarios
 query example2 {
   listarFuncionarios {
+    _id
+    nome
+    cidade 
+  }
+}
+# Listar funcionarios
+query example2 {
+  pesquisarFuncionarios (
+    estado: "SP"
+  ){
     _id
     nome
     cidade 

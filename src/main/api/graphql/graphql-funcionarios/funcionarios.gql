@@ -54,17 +54,17 @@ type Query {
     - Todos os parametros solicitados são opcionais, preenchendo apenas os campos que deseja pequisar.
     """
     pesquisarFuncionarios(
-        "Nome do funcionario"
+        "Nome do funcionario (opcional)"
         nome: String
-        "Sobrenome do funcionario"
+        "Sobrenome do funcionario (opcional)"
         sobrenome: String
-        "Cidade onde o funcionario mora"
+        "Cidade onde o funcionario mora (opcional)"
         cidade: String
-        "Estado onde o funcionario mora"
+        "Estado onde o funcionario mora (opcional)"
         estado: String
-        "Telefone do funcionario"
+        "Telefone do funcionario (opcional)"
         telefone: String
-        "Email do funcionario"
+        "Email do funcionario (opcional)"
         email: String
     ): [Funcionario]
 }
