@@ -82,7 +82,7 @@ $ npm start
 Ao executar, vai aparecer no console conforme a demonstração abaixo:
 ```console
 [info] 2018-08-31 19.25.42.772 mongodb-connect - MongoDB ativado com sucesso na url: mongodb://mongodb:27017
-[info] 2018-08-31 19.25.42.928 server - Executando "core-api-js@2.2.4" em http://localhost:3000 (production)
+[info] 2018-08-31 19.25.42.928 server - Executando "core-api-js@2.2.5" em http://localhost:3000 (production)
 [info] 2018-08-31 19.25.42.929 server - REST registrado....: /v1/funcionarios [get]
 [info] 2018-08-31 19.25.42.930 server - REST registrado....: /v1/funcionarios/:id [delete]
 [info] 2018-08-31 19.25.42.930 server - REST registrado....: /v1/funcionarios/:id [get]
