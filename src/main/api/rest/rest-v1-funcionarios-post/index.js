@@ -26,24 +26,17 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({
-    body
-}, res, _, {
-    getModule
-}) => {
+module.exports.controller = async ({ body }, res, next, { getModule }) => {
 
     const modelFuncionario = getModule('services/funcionario-crud', true);
     const validarEntrada = getModule('modules/form', true);
 
     const errors = validarEntrada(body);
-
     if (errors) return res.status(400).send(errors);
 
     try {
         const ret = await modelFuncionario.criarFuncionario(body);
-        res.status(201).send({
-            data: ret
-        });
+        res.status(201).send({ data: ret });
     } catch (error) {
         let err = (error.constructor.name === 'TypeError') ? {
             code: error.message,

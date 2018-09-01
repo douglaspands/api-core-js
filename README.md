@@ -96,7 +96,7 @@ Ao executar, vai aparecer no console conforme a demonstração abaixo:
 [info] 2018-08-31 19.25.42.933 server - GraphQL registrado.: pesquisarFuncionarios
 [info] 2018-08-31 19.25.42.934 health-check - Rota de Health-Check em: http://localhost:3001/check
 ```
-## Exemplos de GraphQL
+## Exemplos request utilizando API GraphQL
 Os exemplos abaixo foram utilizados no GraphiQL (interface grafica):
 ```graphql
 # Inclusao de funcionario
@@ -106,7 +106,10 @@ mutation example1{
     sobrenome: "Silva"
     cidade: "São Paulo"
     estado: "SP"
+    telefone: "1170707070"
+    empresa: "douglaspands enterprise"
   }) {
+    _id
     nome
     sobrenome
   }
@@ -114,14 +117,22 @@ mutation example1{
 # Consulta de funcionarios
 query example2 {
   listarFuncionarios {
+    _id
+    nome
+    cidade 
+  }
+}
+# Consulta de funcionarios
+query example3 {
+  obterFuncionario (_id: ?) {
     nome
     cidade 
   }
 }
 # Atualizacao do funcionario
-mutation example3{
+mutation example4{
   atualizarFuncionario(
-    _id: "?"
+    _id: ?
     cidade: "Maceio"
     estado: "Alagoas"
   }) {
@@ -130,19 +141,41 @@ mutation example3{
   }
 }
 # Excluir funcionario
-mutation example4{
+mutation example5{
   excluirrFuncionario(
-    _id: "?"
+    _id: ?
   })
 }
 ```
-## Exemplos de API REST
+## Exemplos request utilizando API REST
 Os exemplos abaixos de execução REST (via POSTMAN):
-```console
-# Inclusão funcionario
-url: [POST] http://localhost:3000/
-body: 
-{
-
-}
+```yaml
+# Inclusão de funcionario
+- rota: [POST] http://localhost:3000/v1/funcionarios
+  payload:
+    {
+        "nome": "Douglas",
+        "sobrenome": "Silva",
+        "cidade": "São Paulo",
+        "estado": "SP",
+        "telefone": "1170707070",
+        "empresa": "douglaspands enterprise"
+    }
+# Listar funcionarios
+- rota: [GET] http://localhost:3000/v1/funcionarios
+# Obter funcionario especifico
+- rota: [GET] http://localhost:3000/v1/funcionarios/:_id
+# Atualizar funcionario especifico
+- rota: [PUT] http://localhost:3000/v1/funcionarios/:_id
+  payload:
+    {
+        "nome": "Douglas",
+        "sobrenome": "Silva",
+        "cidade": "Maceio",
+        "estado": "AL",
+        "telefone": "1170707070",
+        "empresa": "douglaspands enterprise"
+    }
+# Excluir funcionario especifico
+- rota: [DELETE] http://localhost:3000/v1/funcionarios/:_id
 ```
