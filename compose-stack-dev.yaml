@@ -15,7 +15,6 @@ services:
             - NODE_ENV=development
         volumes: 
             - "./logs:/var/www/logs"
-            - "./main:/var/www/main"
         ports:
             - "3000:3000"
             - "3001:3001"
