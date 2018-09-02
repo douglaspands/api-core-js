@@ -1,5 +1,5 @@
 # file: compose-stack-prd.yaml 
-# description: Criar container da aplicação (producao).
+# description: Criar container da aplicação (producao). 
 version: '3.1'
 services:
     core-api-js:
