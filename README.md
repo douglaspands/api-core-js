@@ -1,4 +1,4 @@
-# Node.js Core REST/GraphQL API
+# Node.js Core REST/GraphQL API com NoSQL MongoDB
 
 Motor de API REST/GraphQL com MongoDB em Node.js.
 
