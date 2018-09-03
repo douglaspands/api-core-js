@@ -26,11 +26,10 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.cache = async ({ query }, res, next, { getServer }) => {
+module.exports.cache = async ({ method, originalUrl, query }, res, next, { getServer }) => {
     const cache = getServer('cache');
-    const result = await cache.get(`rest-v1-funcionarios-get/${JSON.stringify(query)}`);
+    const result = await cache.get(`${method}_${originalUrl}`);
     if (result) {
-        //res.status(304).send({ data: JSON.parse(result) });
         res.set('X-Cache', true);
         res.status(200).send({ data: JSON.parse(result) });
     } else {
@@ -44,8 +43,7 @@ module.exports.cache = async ({ query }, res, next, { getServer }) => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ query }, res, next, { getModule, getServer }) => {
-
+module.exports.controller = async ({ method, originalUrl, query }, res, next, { getModule, getServer }) => {
     const _ = require('lodash');
     const service = getModule('services/funcionario-service', true);
     const fields = getModule('utils/fields');
@@ -59,9 +57,9 @@ module.exports.controller = async ({ query }, res, next, { getModule, getServer 
         } else {
             const _ret = (queryFields && _.isArray(ret)) ? _.map(ret, o => fields(o, queryFields)) : ret;
             
-            // Cache
+            // Inclusão no cache
             const cache = getServer('cache');
-            cache.set(`rest-v1-funcionarios-get/${JSON.stringify(query)}`, JSON.stringify(_ret), 60);
+            cache.set(`${method}_${originalUrl}`, JSON.stringify(_ret), 60);
             
             res.status(200).send({ data: _ret });
         }
