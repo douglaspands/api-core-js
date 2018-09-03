@@ -1,6 +1,6 @@
-# Node.js Core REST/GraphQL API com NoSQL MongoDB
+# Node.js Core REST/GraphQL API com NoSQL MongoDB e cache utilizando Redis
 
-Motor de API REST/GraphQL com MongoDB em Node.js.
+Motor de API REST/GraphQL com MongoDB e Redis em Node.js.
 
 ## Objetivo  
 
@@ -13,10 +13,9 @@ Esse projeto tambem é uma forma de apresentar meu conhecimento. Sendo assim, es
 
 ## Premissas
 
-Para iniciar a utilização desse motor de APIs, é necessario 3 coisas:
-1. Ter o NoSQL [MongoDB](https://mongodb.github.io/node-mongodb-native/) na versão >= 4 instalado (se não tiver, as APIs vão funcionar parcialmente).   
-*Caso tenha o Docker instalado, não é necessario a instalação do MongoDB;
-2. Ter o [Node.js](https://nodejs.org/en/) na versão >= 8.10 instalado;
+Para iniciar a utilização desse motor de APIs, é necessario 2 coisas:
+1. Ter o [Node.js](https://nodejs.org/en/) na versão >= 8.10 instalado;
+2. Ter o [Docker](https://www.docker.com/) instalado; 
 
 ## APIs REST/GraphQL de exemplo
 
@@ -25,14 +24,14 @@ No diretorio de cada API, contem a pasta de *test*, onde contem os testes utiliz
 
 ## Configuração Inicial
 
-Faz um tempo que eu estava planejando usar a tecnologia de containers do Docker para empacotar a aplicação e usar tambem uma imagem do MongoDB para evitar instalação do mesmo.   
-Então fiz o seguinte, vou manter a configuração manual (que já estava) e adicionar uma configuração automatizada com containers do Docker.
+### 1. Docker-Compose
 
-### 1. Configuração Automatizada (Docker)
+Foi gerado 3 scripts yaml para rodar com o *docker-compose*
+- **compose-db.yaml**: Esse script baixa e executa o MongoDB e o Redis configurado para uma melhor utilização no desenvolvimento do projeto.   Utilizando esse script, é necessario baixar as dependencias e executar o server em Node.js;
+- **compose-stack-dev.yaml**: Esse script baixa e executa o MongoDB e o Redis, baixa o Node.js e cria uma imagem e container com o server dentro. Utiliza as configurações para uma melhor utilização no desenvolvimento do projeto. Tambem é disponibilzado a interface GraphiQL, para querys e mutations de APIs GraphQL.;
+- **compose-stack-prd.yaml**: Esse script baixa e executa o MongoDB e o Redis, baixa o Node.js e cria uma imagem e container com o server dentro. Utiliza as configurações para execução em produção;
 
-Para esse topico, eu criei duas automatizações utilizando o Docker:
-1. Obter as imagens do Node.js e do MongoDB, encapsular esse projeto em um container e executar tudo integrado e orquestrado pelo docker-compose;
-2. Obter apenas a imagem do MongoDB, e usar o Node.js instalado. Dessa forma é mais confortavel para desenvolver e customizar o codigo;
+Eu criei esses scripts para ajudar em cada fase do desenvolvimento.
 
 #### 1.1 Container da aplicação e orquestração via Docker-Compose
 
@@ -50,23 +49,6 @@ $ docker-compose -f ./compose-mongo.yaml up
 ```
 Feito isso ele vai subir uma instancia do MongoDB, e vai armazenar o volume do banco de dados na pasta: "**./data**". Assim, sempre que precisar criar uma nova instancia do MongoDB, ele sempre vai utilizar a mesma estrutura e dados criado.   
 
-Como todo projeto em Node.js, é necessario instalar as dependencias antes:
-```console
-$ cd ./src
-$ npm i
-```
-E na sequencia, para iniciar o motor é necessario executar:
-```console
-$ npm start
-```
-
-### 2. Configuração Manual
-
-Se tiver o MongoDB instalado, recomendo criar repositorio do banco de dados dentro do projeto com os seguintes comandos:
-```console
-$ mkdir ./data
-$ mongod --dbpath ./data
-```
 Como todo projeto em Node.js, é necessario instalar as dependencias antes:
 ```console
 $ cd ./src
