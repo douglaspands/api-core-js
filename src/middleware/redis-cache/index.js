@@ -6,7 +6,7 @@
 'use strict';
 'use strict';
 const redis = require("redis");
-const { source, uri, database } = require('./config');
+const { source, uri, database, time_default } = require('./config');
 const URL_REDIS = (process.env.REDIS_CACHE || uri);
 
 /**
@@ -31,8 +31,21 @@ module.exports = app => {
     });
 
     cache.on("connect", () => {
-        cache.url = URL_REDIS;
-        app.set('cache', cache);
+        let _cache = {
+            get: (key) => {
+                return new Promise(resolve => {
+                    cache.get(key, (error, data) => {
+                        if (error) return resolve(null);
+                        else return resolve(data);
+                    });
+                });
+            },
+            set: (key, value, time = time_default) => {
+                cache.setex(key, time, value);         
+            },
+            url: URL_REDIS
+        }
+        app.set('cache', _cache);
         logger.log({
             level: 'info',
             source: source,

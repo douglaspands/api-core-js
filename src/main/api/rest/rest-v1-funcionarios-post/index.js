@@ -35,7 +35,7 @@ module.exports.controller = async ({ body }, res, next, { getModule }) => {
     if (errors) return res.status(400).send(errors);
 
     try {
-        const ret = await service.criarFuncionario(body);
+        const ret = await service.incluirFuncionario(body);
         res.status(201).send({ data: ret });
     } catch (error) {
         let err = (error.constructor.name === 'TypeError') ? {
