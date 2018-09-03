@@ -1,0 +1,12 @@
+# file: compose-mongo.yaml 
+# description: Executar uma instancia do MongoDB.
+version: '3.1'
+services:
+    redis-cache:
+        image: redis:4.0.11-alpine
+        container_name: coreapi-cache
+        command: ["redis-server", "--appendonly", "yes"]
+        volumes: 
+            - "./cache:/data"
+        ports:
+            - "6379:6379"

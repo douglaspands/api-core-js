@@ -1,5 +1,5 @@
 # file: compose-mongo.yaml 
-# description: Executar uma instancia do MongoDB.
+# description: Executar uma instancias de banco de dados.
 version: '3.1'
 services:
     mongodb:

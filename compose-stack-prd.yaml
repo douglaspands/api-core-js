@@ -6,10 +6,11 @@ services:
         build:
             dockerfile: ./Dockerfile
             context: ./src
-        image: douglaspands/core-api-js:2.2.5
+        image: douglaspands/core-api-js:2.3.1
         container_name: coreapi-app
         environment:
             - MONGO=mongodb://mongodb:27017
+            - REDIS_CACHE=redis://redis-cache:6379
             - LOG=info
             - PORT=3000
         volumes: 
@@ -21,6 +22,7 @@ services:
             - production-network
         depends_on:
             - "mongodb"
+            - "redis-cache"
     mongodb:
         image: mongo:4.0.1
         container_name: coreapi-db
@@ -28,6 +30,11 @@ services:
             - "./data:/data/db"
         networks: 
             - production-network
+    redis-cache:
+        image: redis:4.0.11-alpine
+        container_name: coreapi-cache
+        networks: 
+            - develop-network
 networks: 
     production-network:
         driver: bridge
