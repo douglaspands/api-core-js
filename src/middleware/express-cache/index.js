@@ -24,7 +24,7 @@ module.exports = app => {
     cache.on("error", error => {
         app.set('cache', null);
         logger.log({
-            level: 'error',
+            level: 'warn',
             source: source,
             message: error
         });
@@ -60,7 +60,5 @@ module.exports = app => {
         req['restCacheId'] = `${originalUrl}[${method}]`;
         next();
     });
-
-    app.disable('etag');
 
 }

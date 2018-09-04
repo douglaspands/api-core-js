@@ -1,4 +1,4 @@
-# file: compose-db.yaml 
+# file: stack-db.yaml 
 # description: Executar uma instancias de banco de dados mongo e redis.
 version: '3.1'
 services:

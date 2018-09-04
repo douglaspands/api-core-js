@@ -44,7 +44,7 @@ const logger = require('./middleware/express-log')(app);
             logger.log({
                 level: 'info',
                 source: 'health-check',
-                message: `Health-Check registrado: http://localhost:${server_health.address().port}`
+                message: `Rota registrada: http://localhost:${server_health.address().port}`
             });
             require('./middleware/express-health-check')(app, rest, graphql, server, app_health);
         });

@@ -1,5 +1,5 @@
 {
-    "source": "redis-cache",
+    "source": "express-cache",
     "uri": "redis://localhost:6379",
     "database": "core-api-js",
     "time_default": 600

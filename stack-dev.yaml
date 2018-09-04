@@ -1,4 +1,4 @@
-# file: compose-stack-dev.yaml 
+# file: stack-dev.yaml 
 # description: Criar container da aplicação (desenvolvimento).
 # Disponibiliza a interface GraphiQL e todos acessos aos servidores.
 version: '3.1'

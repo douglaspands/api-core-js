@@ -29,8 +29,12 @@ module.exports.route = () => {
 module.exports.cache = async ({ query, restCacheId }, res, next, { getServer }) => {
     const cache = getServer('cache');
     const result = await cache.get(restCacheId);
-    if (result) return res.status(304).send({ data: JSON.parse(result) });
-    else return next();
+    if (result) {
+        res.setHeader("X-Cache", true);
+        return res.status(200).send({ data: JSON.parse(result) });
+    } else {
+        return next();
+    }
 };
 /**
  * Controller
