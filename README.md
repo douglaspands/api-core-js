@@ -27,23 +27,23 @@ No diretorio de cada API, contem a pasta de *test*, onde contem os testes utiliz
 ### 1. Docker-Compose
 
 Foi gerado 3 scripts yaml para rodar com o *docker-compose*
-- **compose-db.yaml**: Esse script baixa e executa o MongoDB e o Redis configurado para uma melhor utilização no desenvolvimento do projeto.   Utilizando esse script, é necessario baixar as dependencias e executar o server em Node.js;
-- **compose-stack-dev.yaml**: Esse script baixa e executa o MongoDB e o Redis, baixa o Node.js e cria uma imagem e container com o server dentro. Utiliza as configurações para uma melhor utilização no desenvolvimento do projeto. Tambem é disponibilzado a interface GraphiQL, para querys e mutations de APIs GraphQL.;
-- **compose-stack-prd.yaml**: Esse script baixa e executa o MongoDB e o Redis, baixa o Node.js e cria uma imagem e container com o server dentro. Utiliza as configurações para execução em produção;
+- **stack-db.yaml**: Esse script baixa e executa o MongoDB e o Redis configurado para uma melhor utilização no desenvolvimento do projeto.   Utilizando esse script, é necessario baixar as dependencias e executar o server em Node.js;
+- **stack-dev.yaml**: Esse script baixa e executa o MongoDB e o Redis, baixa o Node.js e cria uma imagem e container com o server dentro. Utiliza as configurações para uma melhor utilização no desenvolvimento do projeto. Tambem é disponibilzado a interface GraphiQL, para querys e mutations de APIs GraphQL.;
+- **stack-prd.yaml**: Esse script baixa e executa o MongoDB e o Redis, baixa o Node.js e cria uma imagem e container com o server dentro. Utiliza as configurações para execução em produção;
 
 Eu criei esses scripts para ajudar em cada fase do desenvolvimento.
 
 #### 1.1 Container da aplicação e orquestração via Docker-Compose
 
-Foi gerado script **compose-stack-prd.yaml** (**compose-stack-dev.yaml** disponibiliza o GraphiQL) com todo o processo de download da imagem do Node.js e criação de um container com codigo fonte da aplicação. Nas sequencia ele vai baixar a imagem do MongoDB e criar um container com ele.
+Foi gerado script **stack-prd.yaml** (**stack-dev.yaml** disponibiliza o GraphiQL) com todo o processo de download da imagem do Node.js e criação de um container com codigo fonte da aplicação. Nas sequencia ele vai baixar a imagem do MongoDB e criar um container com ele.
 Após a criação dos containers, ele vai montar uma rede dentro do Docker e subir os containers na seguinte sequencia: mongo e depois o core-api-js.
 ```console
-$ docker-compose -f ./compose-stack-prd.yaml up
+$ docker-compose -f ./stack-prd.yaml up
 ```
 
 #### 1.2 Executar apenas a imagem do MongoDB
 
-Primeiro vamos iniciar a imagem e o container do MongoDB utilizando um script que esta na raiz do projeto chamado de **compose-mongo.yaml**.
+Primeiro vamos iniciar a imagem e o container do MongoDB utilizando um script que esta na raiz do projeto chamado de **stack-db.yaml**.
 ```console
 $ docker-compose -f ./compose-mongo.yaml up
 ```
