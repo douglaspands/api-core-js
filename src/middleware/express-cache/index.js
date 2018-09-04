@@ -14,7 +14,7 @@ const URL_REDIS = (process.env.REDIS_CACHE || uri);
  * @param {function} app Servidor Express.
  */
 module.exports = app => {
-    
+
     const logger = app.get('logger');
 
     const cache = redis.createClient({
@@ -41,7 +41,9 @@ module.exports = app => {
                 });
             },
             set: (key, value, time = time_default) => {
-                cache.setex(key, time, value);         
+                const _value = (typeof value === 'object')? JSON.stringify(value): value.toString();
+                cache.setex(key, time, _value);
+                return value;
             },
             url: URL_REDIS
         }
@@ -52,5 +54,13 @@ module.exports = app => {
             message: `Redis (cache) ativado com sucesso na url: ${URL_REDIS}`
         });
     });
+
+    app.use((req, res, next) => {
+        const { method, originalUrl } = req;
+        req['restCacheId'] = `${originalUrl}[${method}]`;
+        next();
+    });
+
+    app.disable('etag');
 
 }

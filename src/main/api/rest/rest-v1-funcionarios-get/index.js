@@ -26,15 +26,11 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.cache = async ({ method, originalUrl, query }, res, next, { getServer }) => {
+module.exports.cache = async ({ query, restCacheId }, res, next, { getServer }) => {
     const cache = getServer('cache');
-    const result = await cache.get(`${method}_${originalUrl}`);
-    if (result) {
-        res.set('X-Cache', true);
-        res.status(200).send({ data: JSON.parse(result) });
-    } else {
-        next();
-    }
+    const result = await cache.get(restCacheId);
+    if (result) return res.status(304).send({ data: JSON.parse(result) });
+    else return next();
 };
 /**
  * Controller
@@ -43,7 +39,7 @@ module.exports.cache = async ({ method, originalUrl, query }, res, next, { getSe
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ method, originalUrl, query }, res, next, { getModule, getServer }) => {
+module.exports.controller = async ({ query, restCacheId }, res, next, { getModule, getServer }) => {
     const _ = require('lodash');
     const service = getModule('services/funcionario-service', true);
     const fields = getModule('utils/fields');
@@ -57,11 +53,9 @@ module.exports.controller = async ({ method, originalUrl, query }, res, next, { 
         } else {
             const _ret = (queryFields && _.isArray(ret)) ? _.map(ret, o => fields(o, queryFields)) : ret;
             
-            // Inclusão no cache
-            const cache = getServer('cache');
-            cache.set(`${method}_${originalUrl}`, JSON.stringify(_ret), 60);
-            
-            res.status(200).send({ data: _ret });
+            // Inclusão no cache 
+            const cache = getServer('cache');            
+            res.status(200).send({ data: cache.set(restCacheId, _ret, 60) });
         }
     } catch (error) {
         let err = (error.constructor.name === 'TypeError') ? {

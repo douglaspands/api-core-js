@@ -19,7 +19,7 @@ const logger = require('./middleware/express-log')(app);
     // Incluindo middleware do Express
     require('./middleware/express-modules')(app);
     // Inicializando cache
-    require('./middleware/redis-cache')(app);
+    require('./middleware/express-cache')(app);
     // Inicializando banco de dados
     await require('./middleware/express-mongodb')(app);
     // Registrando APIs
