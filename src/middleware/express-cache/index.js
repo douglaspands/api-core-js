@@ -28,7 +28,7 @@ module.exports = app => {
         logger.log({
             level: 'warn',
             source: source,
-            message: `Tentando conectar na url: ${REDIS_HOST}:${port}...`
+            message: `Tentando conectar na url: redis://${REDIS_HOST}:${port}...`
         });
         logger.log({
             level: 'warn',
@@ -58,7 +58,7 @@ module.exports = app => {
         logger.log({
             level: 'info',
             source: source,
-            message: `Redis (cache) ativado com sucesso na url: ${REDIS_HOST}:${port}`
+            message: `Redis (cache) ativado com sucesso na url: redis://${REDIS_HOST}:${port}`
         });
     });
 
