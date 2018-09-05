@@ -34,7 +34,7 @@ services:
         image: redis:4.0.11-alpine
         container_name: coreapi-cache
         networks: 
-            - develop-network
+            - production-network
 networks: 
     production-network:
         driver: bridge
