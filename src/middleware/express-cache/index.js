@@ -26,6 +26,11 @@ module.exports = app => {
         logger.log({
             level: 'warn',
             source: source,
+            message: `Tentando conectar na url: ${URL_REDIS}`
+        });
+        logger.log({
+            level: 'warn',
+            source: source,
             message: error
         });
     });
