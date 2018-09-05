@@ -15,11 +15,11 @@ Esse projeto tambem é uma forma de apresentar meu conhecimento. Sendo assim, es
 
 Para iniciar a utilização desse motor de APIs, é necessario 2 coisas:
 1. Ter o [Node.js](https://nodejs.org/en/) na versão >= 8.10 instalado;
-2. Ter o [Docker](https://www.docker.com/) instalado; 
+2. Ter o [Docker](https://www.docker.com/) instalado e atualizado; 
 
 ## APIs REST/GraphQL de exemplo
 
-No diretorio *src/main/api* existem 2 pastas: *rest* e *graphql* (as APIs estão nelas respectivamente).  
+No diretorio **src/main/api** existem 2 pastas: **rest** e **graphql** (as APIs estão nelas respectivamente).  
 No diretorio de cada API, contem a pasta de *test*, onde contem os testes utilizando os frameworks *mocha* para validação e o *nyc* para mostrar a cobertura teste numa forma visual.
 
 ## Configuração Inicial
@@ -35,17 +35,17 @@ Eu criei esses scripts para ajudar em cada fase do desenvolvimento.
 
 #### 1.1 Container da aplicação e orquestração via Docker-Compose
 
-Foi gerado script **stack-prd.yaml** (**stack-dev.yaml** disponibiliza o GraphiQL) com todo o processo de download da imagem do Node.js e criação de um container com codigo fonte da aplicação. Nas sequencia ele vai baixar a imagem do MongoDB e criar um container com ele.
+Foi gerado script **stack-prd.yaml** (**stack-dev.yaml** disponibiliza a interface grafica GraphiQL) com todo o processo de download da imagem do Node.js e criação de um container com codigo fonte da aplicação. Nas sequencia ele vai baixar a imagem dos bancos de dados e criar um container com ele.
 Após a criação dos containers, ele vai montar uma rede dentro do Docker e subir os containers na seguinte sequencia: mongo e depois o core-api-js.
 ```console
 $ docker-compose -f ./stack-prd.yaml up
 ```
 
-#### 1.2 Executar apenas a imagem do MongoDB
+#### 1.2 Executar apenas a imagem dos bancos de dados
 
-Primeiro vamos iniciar a imagem e o container do MongoDB utilizando um script que esta na raiz do projeto chamado de **stack-db.yaml**.
+Primeiro vamos iniciar a imagem e o container do MongoDB e do Redis, utilizando um script que esta na raiz do projeto chamado de **stack-db.yaml**.
 ```console
-$ docker-compose -f ./compose-mongo.yaml up
+$ docker-compose -f ./compose-db.yaml up
 ```
 Feito isso ele vai subir uma instancia do MongoDB, e vai armazenar o volume do banco de dados na pasta: "**./data**". Assim, sempre que precisar criar uma nova instancia do MongoDB, ele sempre vai utilizar a mesma estrutura e dados criado.   
 
