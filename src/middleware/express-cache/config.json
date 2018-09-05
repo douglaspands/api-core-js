@@ -1,6 +1,6 @@
 {
     "source": "express-cache",
-    "uri": "redis://localhost:6379",
-    "database": "core-api-js",
+    "host": "localhost",
+    "port": 6379,
     "time_default": 600
 }

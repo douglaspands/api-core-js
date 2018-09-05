@@ -10,7 +10,7 @@ services:
         container_name: coreapi-app
         environment:
             - MONGO=mongodb://mongodb:27017
-            - REDIS_CACHE=redis://redis-cache:6379
+            - CACHE_HOST=redis-cache
             - LOG=info
             - PORT=3000
         volumes: 
