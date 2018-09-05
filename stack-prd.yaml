@@ -26,8 +26,6 @@ services:
     mongodb:
         image: mongo:4.0.1
         container_name: coreapi-db
-        volumes: 
-            - "./data:/data/db"
         networks: 
             - production-network
     redis-cache:
