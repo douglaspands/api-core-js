@@ -15,7 +15,10 @@ const REDIS_HOST = (process.env.CACHE_HOST || host);
 module.exports = app => {
 
     const logger = app.get('logger');
-
+    
+    /**
+     * Criando conexão.
+     */
     const cache = redis.createClient({
         host: REDIS_HOST,
         port: port,
@@ -23,6 +26,9 @@ module.exports = app => {
         detect_buffers: true
     });
 
+    /**
+     * Em caso de erro no acesso ao cache.
+     */
     cache.on("error", error => {
         app.set('cache', null);
         logger.log({
@@ -37,6 +43,9 @@ module.exports = app => {
         });
     });
 
+    /**
+     * Em caso de conexão com sucesso.
+     */
     cache.on("connect", () => {
         let _cache = {
             get: (key) => {
@@ -62,6 +71,9 @@ module.exports = app => {
         });
     });
 
+    /**
+     * Criando um cache unico para execuçãod e API REST.
+     */
     app.use((req, res, next) => {
         const { method, originalUrl } = req;
         req['restCacheId'] = `${originalUrl}[${method}]`;
