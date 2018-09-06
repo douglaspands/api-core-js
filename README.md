@@ -33,13 +33,13 @@ Foi gerado 3 scripts yaml para rodar com o *docker-compose*
 
 Eu criei esses scripts para ajudar em cada fase do desenvolvimento.
 
-#### 2. Inicializando a aplicação 
+### 2. Inicializando a aplicação 
 
 ```console
 $ docker-compose -f ./stack-prd.yaml up
 ```
 
-#### 3. Iniciando a aplicação sem o Docker-Compose (opcional)
+### 3. Iniciando a aplicação sem o Docker-Compose (opcional)
 
 Primeiro vamos iniciar a imagem e o container do MongoDB e do Redis, utilizando um script que esta na raiz do projeto chamado de **stack-db.yaml**.
 ```console
