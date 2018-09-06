@@ -51,5 +51,33 @@ const logger = require('./middleware/express-log')(app);
     });
 }).catch(error => {
     logger.error(error.stack);
-    process.exit(1);
+    encerramento(true);
 });
+/**
+ * Foi recebido um Ctrl + C para encerramento da aplicação.
+ */
+process.on('SIGINT', () => encerramento());
+/**
+ * Função de encerramento do servidor.
+ */
+function encerramento(erroRecebido) {
+    logger.info('SIGINT - Foi recebido sinal de encerramento do servidor.')
+    let ocorreuErro = (erroRecebido === true)? true: false;
+    (app.get('mongodb')).close(error => {
+        if (error) {
+            ocorreuErro = true;
+            logger.error(`Erro ao encerrar a conexão com o MongoDB: ${error}`);
+        } else {
+            logger.info('Conexão com o MongoDB encerrado com sucesso!');
+        }
+    });
+    app.close(error => {
+        if (error) {
+            ocorreuErro = true;
+            logger.error(`Erro ao encerrar o servidor http (Express): ${error}`);
+        } else {
+            logger.info('Servidor http (Express) encerrado com sucesso');
+        }
+    });
+    process.exit(ocorreuErro ? 1 : 0);
+};
