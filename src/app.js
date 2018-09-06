@@ -18,6 +18,8 @@ const logger = require('./middleware/express-log')(app);
 (async () => {
     // Incluindo middleware do Express
     require('./middleware/express-modules')(app);
+    // Inicializando cache
+    require('./middleware/express-cache')(app);
     // Inicializando banco de dados
     await require('./middleware/express-mongodb')(app);
     // Registrando APIs
@@ -42,7 +44,7 @@ const logger = require('./middleware/express-log')(app);
             logger.log({
                 level: 'info',
                 source: 'health-check',
-                message: `Health-Check registrado: http://localhost:${server_health.address().port}`
+                message: `Rota registrada: http://localhost:${server_health.address().port}`
             });
             require('./middleware/express-health-check')(app, rest, graphql, server, app_health);
         });

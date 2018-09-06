@@ -1,0 +1,6 @@
+{
+    "source": "express-cache",
+    "host": "localhost",
+    "port": 6379,
+    "time_default": 600
+}

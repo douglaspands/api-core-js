@@ -1,16 +1,17 @@
-# file: compose-stack-dev.yaml 
+# file: stack-dev.yaml 
 # description: Criar container da aplicação (desenvolvimento).
-# Disponibiliza a interface GraphiQL.
+# Disponibiliza a interface GraphiQL e todos acessos aos servidores.
 version: '3.1'
 services:
     core-api-js:
         build:
             dockerfile: ./Dockerfile
             context: ./src
-        image: douglaspands/core-api-js:2.2.5
+        image: douglaspands/core-api-js:2.3.1
         container_name: coreapi-app
         environment:
             - MONGO=mongodb://mongodb:27017
+            - CACHE_HOST=redis-cache
             - PORT=3000
             - NODE_ENV=development
         volumes: 
@@ -22,6 +23,7 @@ services:
             - develop-network
         depends_on:
             - "mongodb"
+            - "redis-cache"
     mongodb:
         image: mongo:4.0.1
         container_name: coreapi-db
@@ -31,6 +33,16 @@ services:
             - develop-network
         ports:
             - "27017:27017"
+    redis-cache:
+        image: redis:4.0.11-alpine
+        container_name: coreapi-cache
+        command: ["redis-server", "--appendonly", "yes"]
+        volumes: 
+            - "./cache:/data"
+        networks: 
+            - develop-network
+        ports:
+            - "6379:6379"
 networks: 
     develop-network:
         driver: bridge

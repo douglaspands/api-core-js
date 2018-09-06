@@ -1,5 +1,5 @@
 {
-    "source": "mongodb-connect",
+    "source": "express-mongodb",
     "uri": "mongodb://localhost:27017",
     "database": "core-api-js"
 }

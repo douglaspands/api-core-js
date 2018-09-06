@@ -16,6 +16,7 @@ const os = require('os');
 module.exports = (app, rest, graphql, server, app_health) => {
 
     const db = app.get('mongodb');
+    const cache = app.get('cache');
     const pack = app.get('package');
     const logger = app.get('logger');
 
@@ -36,6 +37,10 @@ module.exports = (app, rest, graphql, server, app_health) => {
                     mongodb: {
                         status: (db) ? 'enable' : 'disable',
                         url: (db) ? db.url : ''
+                    },
+                    redis_cache: {
+                        status: (cache) ? 'enable' : 'disable',
+                        url: (cache) ? cache.url : ''
                     }
                 },
                 machine: {
