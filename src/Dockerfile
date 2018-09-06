@@ -5,5 +5,5 @@ ENV NODE_ENV=production
 COPY . /var/www
 WORKDIR /var/www
 RUN npm i
-RUN npm install pm2 -g
+RUN npm i pm2 -g
 CMD [ "pm2-runtime", "start", "ecosystem.config.js" ]
