@@ -33,15 +33,13 @@ Foi gerado 3 scripts yaml para rodar com o *docker-compose*
 
 Eu criei esses scripts para ajudar em cada fase do desenvolvimento.
 
-#### 1.1 Container da aplicação e orquestração via Docker-Compose
+#### 2. Inicializando a aplicação 
 
-Foi gerado script **stack-prd.yaml** (**stack-dev.yaml** disponibiliza a interface grafica GraphiQL) com todo o processo de download da imagem do Node.js e criação de um container com codigo fonte da aplicação. Nas sequencia ele vai baixar a imagem dos bancos de dados e criar um container com ele.
-Após a criação dos containers, ele vai montar uma rede dentro do Docker e subir os containers na seguinte sequencia: mongo e depois o core-api-js.
 ```console
 $ docker-compose -f ./stack-prd.yaml up
 ```
 
-#### 1.2 Executar apenas a imagem dos bancos de dados
+#### 3. Iniciando a aplicação sem o Docker-Compose (opcional)
 
 Primeiro vamos iniciar a imagem e o container do MongoDB e do Redis, utilizando um script que esta na raiz do projeto chamado de **stack-db.yaml**.
 ```console
