@@ -1,17 +1,17 @@
 # file: stack-dev.yaml 
 # description: Criar container da aplicação (desenvolvimento).
 # Disponibiliza a interface GraphiQL e todos acessos aos servidores.
-version: '3.1'
+version: '3.5'
 services:
     core-api-js:
         build:
             dockerfile: ./Dockerfile
             context: ./src
-        image: douglaspands/core-api-js:2.3.1
+        image: douglaspands/core-api-js:2.4.1
         container_name: coreapi-app
         environment:
-            - MONGO=mongodb://mongodb:27017
-            - CACHE_HOST=redis-cache
+            - MONGO=mongodb:27017
+            - REDIS_CACHE=redis-cache:6379
             - PORT=3000
             - NODE_ENV=development
         volumes: 

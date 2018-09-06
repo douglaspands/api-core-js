@@ -1,16 +1,16 @@
 # file: stack-prd.yaml 
 # description: Criar container da aplicação (producao). 
-version: '3.1'
+version: '3.5'
 services:
     core-api-js:
         build:
             dockerfile: ./Dockerfile
             context: ./src
-        image: douglaspands/core-api-js:2.3.1
+        image: douglaspands/core-api-js:2.4.1
         container_name: coreapi-app
         environment:
-            - MONGO=mongodb://mongodb:27017
-            - CACHE_HOST=redis-cache
+            - MONGO=mongodb:27017
+            - REDIS_CACHE=redis-cache:6379
             - LOG=info
             - PORT=3000
         volumes: 
@@ -26,6 +26,8 @@ services:
     mongodb:
         image: mongo:4.0.1
         container_name: coreapi-db
+        volumes: 
+            - "./data:/data/db"
         networks: 
             - production-network
     redis-cache:

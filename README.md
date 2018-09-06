@@ -76,6 +76,13 @@ Ao executar, vai aparecer no console conforme a demonstração abaixo:
 [info] 2018-08-31 19.25.42.933 server - GraphQL registrado.: pesquisarFuncionarios
 [info] 2018-08-31 19.25.42.934 health-check - Health-Check registrado: http://localhost:3001
 ```
+## Monitor de execuções
+
+Se foi utilizado o docker-compose **stack-prd.yaml** ou **stack-dev.yaml** para iniciar a aplicação, você pode acompanhar as estatisticas de execução atraves do monitor **[pm2](http://pm2.keymetrics.io/)** abrindo um novo terminal e executando o comando abaixo:
+```console
+docker exec -it coreapi-app pm2 monit
+```
+
 ## Exemplos de request utilizando API GraphQL
 Os exemplos abaixo são executados no GraphiQL (interface grafica, disponivel apenas em desenvolvimento).
 GraphiQL disponivel na rota: http://localhost:3000/graphql

@@ -1,8 +1,9 @@
-FROM node:8.11.4-slim
+FROM node:carbon-alpine
 LABEL maintainer="@douglaspands"
-LABEL version="2.3.1"
+LABEL version="2.4.1"
 ENV NODE_ENV=production
 COPY . /var/www
 WORKDIR /var/www
 RUN npm i
-ENTRYPOINT npm start
+RUN npm install pm2 -g
+CMD [ "pm2-runtime", "start", "ecosystem.config.js" ]

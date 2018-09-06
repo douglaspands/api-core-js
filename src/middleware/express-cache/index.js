@@ -5,8 +5,8 @@
  */
 'use strict';
 const redis = require("redis");
-const { source, host, port, database, time_default } = require('./config');
-const REDIS_HOST = (process.env.CACHE_HOST || host);
+const { source, uri, database, time_default } = require('./config');
+const [REDIS_HOST, REDIS_PORT] = (process.env.REDIS_CACHE || uri).split(':');
 
 /**
  * Obter conexão com o Redis
@@ -21,7 +21,7 @@ module.exports = app => {
      */
     const cache = redis.createClient({
         host: REDIS_HOST,
-        port: port,
+        port: REDIS_PORT,
         db: database,
         detect_buffers: true
     });
@@ -34,7 +34,7 @@ module.exports = app => {
         logger.log({
             level: 'warn',
             source: source,
-            message: `Tentando conectar na url: redis://${REDIS_HOST}:${port}...`
+            message: `Tentando conectar na url: redis://${REDIS_HOST}:${REDIS_PORT}...`
         });
         logger.log({
             level: 'warn',
@@ -61,13 +61,13 @@ module.exports = app => {
                 cache.setex(key, time, _value);
                 return value;
             },
-            url: REDIS_HOST
+            url: `redis://${REDIS_HOST}:${REDIS_PORT}`
         }
         app.set('cache', _cache);
         logger.log({
             level: 'info',
             source: source,
-            message: `Redis (cache) ativado com sucesso na url: redis://${REDIS_HOST}:${port}`
+            message: `Redis (cache) ativado com sucesso na url: redis://${REDIS_HOST}:${REDIS_PORT}`
         });
     });
 
