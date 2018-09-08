@@ -8,10 +8,9 @@
 
 const { ObjectID } = require('mongodb');
 
-module.exports = ({ get }) => {
+module.exports = ({ get, logger }) => {
 
     const db = get.server('mongodb');
-    const logger = get.server('logger');
 
     /**
      * Vaidar ID.

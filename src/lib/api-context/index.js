@@ -110,6 +110,11 @@ function Context(modulePath, app) {
         }
     }
 
+    /**
+     * Modulo de log
+     */
+    this.logger = _logger;
+
     if (this instanceof Context) {
         Object.freeze(this);
     }

@@ -26,15 +26,13 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ params, query }, res, next, { get }) => {
+module.exports.controller = async ({ params, query }, res, next, { get, logger }) => {
 
-    const _ = require('lodash');
-    const logger = get.server('logger');
-
+    const _ = get.module('lodash');
     logger.debug('Inicio da rota REST GET /v1/funcionarios');
 
     const service = get.self.context.module('services/funcionario-service');
-    const validarEntrada = get.self.context.moduleet('modules/validador');
+    const validarEntrada = get.self.context.module('modules/validador');
     const cache = get.self.context.module('utils/cache-crud');
 
     const fields = get.self.module('utils/fields');
@@ -50,17 +48,17 @@ module.exports.controller = async ({ params, query }, res, next, { get }) => {
                             .casoContrarioIncluirResultadoDoMetodo(service.obterFuncionario, params.id)
                             .expirarEm(3600);
         if (_.isEmpty(ret)) {
-            res.status(404).send();
+            return res.status(404).send();
         } else {
             const _ret = (queryFields) ? fields(ret, queryFields) : ret;
-            res.status(200).send({ data: _ret });
+            return res.status(200).send({ data: _ret });
         }
     } catch (error) {
         let err = (error.constructor.name === 'TypeError') ? {
             code: error.message,
             message: (error.stack).toString().split('\n')
         } : error;
-        res.status(500).send(err);
+        return res.status(500).send(err);
     }
 
 };

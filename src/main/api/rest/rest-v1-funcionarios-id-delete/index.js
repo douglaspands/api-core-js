@@ -26,11 +26,11 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ params }, res, next, { getModule, getServer }) => {
+module.exports.controller = async ({ params }, res, next, { get }) => {
 
-    const service = getModule('services/funcionario-service', true);
-    const validarEntrada = getModule('modules/form', true);
-    const cache = getModule('utils/cache-crud', true);
+    const service = get.self.context.module('services/funcionario-service');
+    const validarEntrada = get.self.context.module('modules/validador');
+    const cache = get.self.context.module('utils/cache-crud');
 
     const errors = validarEntrada({ _id: params.id });
     if (errors) return res.status(400).send(errors);

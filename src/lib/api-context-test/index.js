@@ -164,6 +164,11 @@ function Context(modulePath, app) {
         }
     }
 
+    /**
+     * Modulo de log
+     */
+    this.logger = _logger;
+
     this.set = {
         mock: {
             module: (name, behavior) => {
