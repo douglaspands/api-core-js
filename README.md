@@ -22,6 +22,16 @@ Para iniciar a utilização desse motor de APIs, é necessario 2 coisas:
 No diretorio **src/main/api** existem 2 pastas: **rest** e **graphql** (as APIs estão nelas respectivamente).  
 No diretorio de cada API, contem a pasta de *test*, onde contem os testes utilizando os frameworks *mocha* para validação e o *nyc* para mostrar a cobertura teste numa forma visual.
 
+### API REST
+
+-- Em desenvolvimento
+getServer, getModule
+
+### API GraphQL
+
+-- Em desenvolvimento
+getServer, getModule
+
 ## Configuração Inicial
 
 ### 1. Docker-Compose

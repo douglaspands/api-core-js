@@ -36,6 +36,7 @@ const root = ({ getModule, getServer }) => {
 
     const service = getModule('services/funcionario-service', true);
     const validarEntrada = getModule('modules/form', true);
+    const validarEntradaInclusao = getModule('modules/form-insert', true);
     const cache = getServer('cache');
 
     /**
@@ -47,15 +48,11 @@ const root = ({ getModule, getServer }) => {
 
         validarEntrada({ _id });
 
-        const graphqlCacheId = `obterFuncionario+${_id}`;
-        let ret = await cache.get(graphqlCacheId);
-        if (ret) {
-            return JSON.parse(ret);
-        } else {
-            ret = await service.obterFuncionario(_id);
-            cache.set(graphqlCacheId, ret, 600);
-            return ret;
-        }
+        const cacheId = `obterFuncionario(${_id})`;
+        let ret = await cache.getJson(cacheId);
+        if (!ret) ret = await service.obterFuncionario(_id);
+        return (ret)? cache.set(cacheId, ret): ret;
+
     }
 
     /**
@@ -65,10 +62,12 @@ const root = ({ getModule, getServer }) => {
      */
     async function criarFuncionario({ input }) {
 
-        validarEntrada(input);
+        validarEntradaInclusao(input);
 
         const ret = await service.incluirFuncionario(input);
-        return ret;
+
+        const cacheId = `obterFuncionario(${ret['_id']})`;
+        return cache.set(cacheId, ret);
 
     }
 
@@ -78,15 +77,7 @@ const root = ({ getModule, getServer }) => {
      */
     async function listarFuncionarios() {
 
-        const graphqlCacheId = `listarFuncionarios`;
-        let ret = await cache.get(graphqlCacheId);
-        if (ret) {
-            return JSON.parse(ret);
-        } else {
-            ret = await service.pesquisarFuncionarios({});
-            cache.set(graphqlCacheId, ret, 60);
-            return ret;
-        }
+        return await service.pesquisarFuncionarios({});
 
     }
 
@@ -101,8 +92,11 @@ const root = ({ getModule, getServer }) => {
 
         const _id = funcionario._id, body = funcionario;
         delete body._id;
-        const ret = await service.atualizarFuncionario(_id, body);
-        return ret;
+        await service.atualizarFuncionario(_id, body);
+
+        const ret = await service.obterFuncionario(_id);
+        const cacheId = `obterFuncionario(${_id})`;
+        return (ret)? cache.set(cacheId, ret) : ret;
 
     }
 
@@ -116,6 +110,7 @@ const root = ({ getModule, getServer }) => {
         validarEntrada({ _id });
 
         const ret = await service.removerFuncionario(_id);
+        cache.del(`obterFuncionario(${_id})`);
         return ret;
 
     }
@@ -129,15 +124,9 @@ const root = ({ getModule, getServer }) => {
 
         validarEntrada(pesquisa);
 
-        const graphqlCacheId = `pesquisarFuncionarios+${JSON.stringify(pesquisa)}`;
-        let ret = cache.get(graphqlCacheId);
-        if (ret) {
-            return JSON.parse(ret);
-        } else {
-            ret = await service.pesquisarFuncionarios(pesquisa);
-            cache.set(graphqlCacheId, ret, 600);
-            return ret;
-        }
+        ret = await service.pesquisarFuncionarios(pesquisa);
+        return ret;
+
     }
 
     return {

@@ -97,7 +97,7 @@ type Mutation {
         telefone: String
         "Email do funcionario"
         email: String
-    ): String
+    ): Funcionario
     """
     Remover funcionario"
     """

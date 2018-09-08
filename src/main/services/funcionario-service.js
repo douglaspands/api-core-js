@@ -51,7 +51,8 @@ module.exports = ({ getModule }) => {
      */
     async function atualizarFuncionario(id, funcionario) {
 
-        return await crud.update('funcionarios', id, funcionario);
+        await crud.update('funcionarios', id, funcionario);
+        return await crud.find('funcionarios', id);
 
     }
 

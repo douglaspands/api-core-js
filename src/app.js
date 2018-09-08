@@ -50,6 +50,7 @@ const logger = require('./middleware/express-log')(app);
         });
     });
 }).catch(error => {
+    // Erro na inicialização dos middlewares
     logger.error(error.stack);
     process.exit(1);
 });
