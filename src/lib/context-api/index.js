@@ -2,6 +2,7 @@
  * @file Modulo de apoio a API.
  * @author @douglaspands
  * @since 2017-12-29
+ * @version 1.2.0
  */
 'use strict';
 const path = require('path');
@@ -86,9 +87,33 @@ function Context(modulePath, app) {
 
     }
 
-    if (this instanceof Context) {
-        Object.freeze(this);
+    /**
+     * Encapsulando em paradigmas funcionais
+     */
+    this.get = {
+        self: {
+            context: {
+                module: (moduleName) => {
+                    return this.getModule(moduleName, true);
+                },
+                server: (moduleName) => {
+                    return this.getServer(moduleName, true);
+                }
+            }
+        },
+        module: (moduleName) => {
+            return this.getModule(moduleName, false);
+        },
+        server: (moduleName) => {
+            return this.getServer(moduleName, false);
+        }
     }
+
+}
+
+if (this instanceof Context) {
+    Object.freeze(this);
+}
 
 }
 
