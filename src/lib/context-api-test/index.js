@@ -167,6 +167,9 @@ function Context(modulePath, app) {
         }
     }
 
+    if (this instanceof Context) {
+        Object.freeze(this);
+    }
 
 }
 
