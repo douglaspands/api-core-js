@@ -30,18 +30,18 @@ module.exports.controller = async ({ params }, res, next, { getModule, getServer
 
     const service = getModule('services/funcionario-service', true);
     const validarEntrada = getModule('modules/form', true);
+    const cache = getModule('utils/cache-crud', true);
 
     const errors = validarEntrada({ _id: params.id });
     if (errors) return res.status(400).send(errors);
 
-    const cache = getServer('cache');
-    const cacheId = `/v1/funcionarios/${params.id}-get`;
     try {
-        const ret = await service.removerFuncionario(params.id);
-        cache.del(cacheId);
+        const ret = await cache
+                            .excluir(`get_funcionario_${params.id}`)
+                            .aposMetodo(service.removerFuncionario, params.id);
         res.status(200).send({ data: ret });
     } catch (error) {
-        res.status(204).send({});
+        res.status(404).send({});
     }
 
 };

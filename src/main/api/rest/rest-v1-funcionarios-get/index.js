@@ -20,22 +20,6 @@ module.exports.route = () => {
     }
 };
 /**
- * Cache
- * @param {object} req Request da API
- * @param {object} res Response da API
- * @param {object} context Objeto de contexto da API
- * @return {void} 
- */
-module.exports.cache = async ({ query, restCacheId }, res, next, { getServer }) => {
-    const cache = getServer('cache');
-    const result = await cache.get(restCacheId);
-    if (result) {
-        return res.status(200).send({ data: JSON.parse(result) });
-    } else {
-        return next();
-    }
-};
-/**
  * Controller
  * @param {object} req Request da API
  * @param {object} res Response da API
@@ -46,12 +30,17 @@ module.exports.controller = async ({ query }, res, next, { getModule }) => {
 
     const _ = require('lodash');
     const service = getModule('services/funcionario-service', true);
+    const cache = getModule('utils/cache-crud', true);
+
     const fields = getModule('utils/fields');
     const queryFields = (query['fields']) ? query['fields'] : '';
     delete query.fields;
 
     try {
-        let ret = await service.pesquisarFuncionarios(query);
+        const ret = await cache
+                            .obter(`get_funcionarios_${JSON.stringify(query)}`)
+                            .casoContrarioIncluirResultadoDoMetodo(service.pesquisarFuncionarios, query)
+                            .expirarEm(600);        
         if (_.isEmpty(ret)) {
             res.status(204).send();
         } else {

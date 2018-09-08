@@ -38,8 +38,10 @@ module.exports = ({ getModule }) => {
      */
     async function incluirFuncionario(funcionario) {
 
+        delete funcionario.id;
+        delete funcionario._id;
         let ret = await crud.insert('funcionarios', funcionario);
-        return (ret.ops)? ret.ops[0]: ret;
+        return (ret.ops) ? ret.ops[0] : ret;
 
     }
 

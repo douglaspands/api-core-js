@@ -30,6 +30,7 @@ module.exports.controller = async ({ params, body }, res, next, { getModule, get
 
     const service = getModule('services/funcionario-service', true);
     const validarEntrada = getModule('modules/form', true);
+    const cache = getModule('utils/cache-crud', true);
 
     let input = body;
     input._id = params.id;
@@ -37,13 +38,14 @@ module.exports.controller = async ({ params, body }, res, next, { getModule, get
 
     if (errors) return res.status(400).send(errors);
 
-    const cache = getServer('cache');
-    const cacheId = `/v1/funcionarios/${params.id}-get`;
     try {
-        const ret = await service.atualizarFuncionario(input._id, body);
-        res.status(200).send({ data: cache.set(cacheId, ret) });
+        const ret = await cache
+                            .incluir(`get_funcionario_${params.id}`)
+                            .comResultadoDoMetodo(service.atualizarFuncionario, [ input._id, body ])
+                            .expirarEm(3600);
+        res.status(200).send({ data: ret });
     } catch (error) {
-        res.status(204).send({});
+        res.status(404).send({});
     }
 
 };

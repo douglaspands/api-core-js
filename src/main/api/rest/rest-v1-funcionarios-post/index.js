@@ -26,18 +26,21 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ body }, res, next, { getModule, getServer }) => {
+module.exports.controller = async ({ body }, res, next, { getModule }) => {
 
     const service = getModule('services/funcionario-service', true);
     const validarEntrada = getModule('modules/form', true);
+    const cache = getModule('utils/cache-crud', true);
 
     const errors = validarEntrada(body);
     if (errors) return res.status(400).send(errors);
 
-    const cache = getServer('cache');
     try {
-        const ret = await service.incluirFuncionario(body);
-        res.status(201).send({ data: cache.set(`/v1/funcionarios/${ret['_id']}-get`, ret) });
+        const ret = await cache
+                            .incluir(`get_funcionario_{{_id}}`)
+                            .comResultadoDoMetodo(service.incluirFuncionario, body)
+                            .expirarEm(3600);
+        res.status(201).send({ data: ret });
     } catch (error) {
         let err = (error.constructor.name === 'TypeError') ? {
             code: error.message,

@@ -70,27 +70,6 @@ module.exports = app => {
                     });
                 });
             },
-            getJson: (key) => {
-                return new Promise(resolve => {
-                    cache.get(key, (error, data) => {
-                        if (error) {
-                            logger.log({
-                                level: 'debug',
-                                source: source,
-                                message: `cache.getJson(key=${key}): error=${error}`
-                            });                    
-                            return resolve(null);
-                        } else {
-                            logger.log({
-                                level: 'debug',
-                                source: source,
-                                message: `cache.getJson(key=${key}): value=${data}`
-                            });                    
-                            return resolve(JSON.parse(data));
-                        }
-                    });
-                });
-            },
             set: (key, value, time = time_default) => {
                 const _value = (typeof value === 'object')? JSON.stringify(value): value.toString();
                 cache.set(key, _value, 'EX', time);

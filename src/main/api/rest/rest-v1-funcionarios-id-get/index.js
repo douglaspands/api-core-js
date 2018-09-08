@@ -26,7 +26,7 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ params, query }, res, next, { getModule, getServer }) => {
+module.exports.controller = async ({ params, query }, res, next, { getModule }) => {
 
     const _ = require('lodash');
     const logger = getServer('logger');
@@ -35,6 +35,8 @@ module.exports.controller = async ({ params, query }, res, next, { getModule, ge
 
     const service = getModule('services/funcionario-service', true);
     const validarEntrada = getModule('modules/form', true);
+    const cache = getModule('utils/cache-crud', true);
+
     const fields = getModule('utils/fields');
     const queryFields = (query['fields']) ? query['fields'] : '';
     delete query.fields;
@@ -42,16 +44,16 @@ module.exports.controller = async ({ params, query }, res, next, { getModule, ge
     const errors = validarEntrada({ _id: params.id });
     if (errors) return res.status(400).send(errors);
 
-    const cache = getServer('cache');
-    const cacheId = `/v1/funcionarios/${params.id}-get`;
     try {
-        let ret = await cache.getJson(cacheId);
-        if (!ret) ret = await service.obterFuncionario(params.id);
+        const ret = await cache
+                            .obter(`get_funcionario_${params.id}`)
+                            .casoContrarioIncluirResultadoDoMetodo(service.obterFuncionario, params.id)
+                            .expirarEm(3600);
         if (_.isEmpty(ret)) {
-            res.status(204).send();
+            res.status(404).send();
         } else {
-            const _ret = (queryFields)? fields(ret, queryFields) : ret;
-            res.status(200).send({ data: cache.set(cacheId, _ret) });
+            const _ret = (queryFields) ? fields(ret, queryFields) : ret;
+            res.status(200).send({ data: _ret });
         }
     } catch (error) {
         let err = (error.constructor.name === 'TypeError') ? {

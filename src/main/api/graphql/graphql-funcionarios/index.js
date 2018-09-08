@@ -32,12 +32,13 @@ const route = () => {
 /**
  *  Root do servidor GraphQL 
  */
-const root = ({ getModule, getServer }) => {
+const root = ({ getModule }) => {
 
     const service = getModule('services/funcionario-service', true);
     const validarEntrada = getModule('modules/form', true);
     const validarEntradaInclusao = getModule('modules/form-insert', true);
-    const cache = getServer('cache');
+    const validarEntradaAtualizacao = getModule('modules/form-update', true);
+    const cache = getModule('utils/cache-crud', true);
 
     /**
      * Obter funcionario atraves do id
@@ -47,12 +48,10 @@ const root = ({ getModule, getServer }) => {
     async function obterFuncionario({ _id }) {
 
         validarEntrada({ _id });
-
-        const cacheId = `obterFuncionario(${_id})`;
-        let ret = await cache.getJson(cacheId);
-        if (!ret) ret = await service.obterFuncionario(_id);
-        return (ret)? cache.set(cacheId, ret): ret;
-
+        return await cache
+                        .obter(`get_funcionario_${_id}`)
+                        .casoContrarioIncluirResultadoDoMetodo(service.obterFuncionario, _id)
+                        .expirarEm(3600);
     }
 
     /**
@@ -63,21 +62,10 @@ const root = ({ getModule, getServer }) => {
     async function criarFuncionario({ input }) {
 
         validarEntradaInclusao(input);
-
-        const ret = await service.incluirFuncionario(input);
-
-        const cacheId = `obterFuncionario(${ret['_id']})`;
-        return cache.set(cacheId, ret);
-
-    }
-
-    /**
-     * Obter lista de funcionarios
-     * @return {array} lista de funcionarios
-     */
-    async function listarFuncionarios() {
-
-        return await service.pesquisarFuncionarios({});
+        return await cache
+                        .incluir(`get_funcionario_{{_id}}`)
+                        .comResultadoDoMetodo(service.incluirFuncionario, input)
+                        .expirarEm(3600);
 
     }
 
@@ -88,15 +76,14 @@ const root = ({ getModule, getServer }) => {
      */
     async function atualizarFuncionario(funcionario) {
 
-        validarEntrada(funcionario);
+        validarEntradaAtualizacao(funcionario);
 
-        const _id = funcionario._id, body = funcionario;
-        delete body._id;
-        await service.atualizarFuncionario(_id, body);
-
-        const ret = await service.obterFuncionario(_id);
-        const cacheId = `obterFuncionario(${_id})`;
-        return (ret)? cache.set(cacheId, ret) : ret;
+        const _id = funcionario._id;
+        delete funcionario._id;
+        return await cache
+                        .incluir(`get_funcionario_${_id}`)
+                        .comResultadoDoMetodo(service.atualizarFuncionario, [ _id, funcionario ])
+                        .expirarEm(3600);
 
     }
 
@@ -108,10 +95,9 @@ const root = ({ getModule, getServer }) => {
     async function removerFuncionario({ _id }) {
 
         validarEntrada({ _id });
-
-        const ret = await service.removerFuncionario(_id);
-        cache.del(`obterFuncionario(${_id})`);
-        return ret;
+        return await cache
+                        .excluir(`get_funcionario_${_id}`)
+                        .aposMetodo(service.removerFuncionario, _id);
 
     }
 
@@ -123,16 +109,16 @@ const root = ({ getModule, getServer }) => {
     async function pesquisarFuncionarios(pesquisa) {
 
         validarEntrada(pesquisa);
-
-        ret = await service.pesquisarFuncionarios(pesquisa);
-        return ret;
+        return await cache
+                        .obter(`get_funcionarios_${JSON.stringify(pesquisa)}`)
+                        .casoContrarioIncluirResultadoDoMetodo(service.pesquisarFuncionarios, pesquisa)
+                        .expirarEm(600);
 
     }
 
     return {
         obterFuncionario,
         criarFuncionario,
-        listarFuncionarios,
         atualizarFuncionario,
         removerFuncionario,
         pesquisarFuncionarios
