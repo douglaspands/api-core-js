@@ -30,7 +30,6 @@ module.exports.cache = async ({ query, restCacheId }, res, next, { getServer }) 
     const cache = getServer('cache');
     const result = await cache.get(restCacheId);
     if (result) {
-        res.setHeader("X-Cache", true);
         return res.status(200).send({ data: JSON.parse(result) });
     } else {
         return next();
@@ -43,7 +42,8 @@ module.exports.cache = async ({ query, restCacheId }, res, next, { getServer }) 
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ query, restCacheId }, res, next, { getModule, getServer }) => {
+module.exports.controller = async ({ query }, res, next, { getModule }) => {
+
     const _ = require('lodash');
     const service = getModule('services/funcionario-service', true);
     const fields = getModule('utils/fields');
@@ -51,15 +51,12 @@ module.exports.controller = async ({ query, restCacheId }, res, next, { getModul
     delete query.fields;
 
     try {
-        const ret = await service.pesquisarFuncionarios(query);
+        let ret = await service.pesquisarFuncionarios(query);
         if (_.isEmpty(ret)) {
             res.status(204).send();
         } else {
-            const _ret = (queryFields && _.isArray(ret)) ? _.map(ret, o => fields(o, queryFields)) : ret;
-            
-            // Inclusão no cache 
-            const cache = getServer('cache');            
-            res.status(200).send({ data: cache.set(restCacheId, _ret, 60) });
+            const _ret = (queryFields && _.isArray(ret)) ? _.map(ret, o => fields(o, queryFields)) : ret;            
+            res.status(200).send({ data: _ret });
         }
     } catch (error) {
         let err = (error.constructor.name === 'TypeError') ? {

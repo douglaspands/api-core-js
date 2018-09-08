@@ -26,7 +26,7 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ params, body }, res, next, { getModule }) => {
+module.exports.controller = async ({ params, body }, res, next, { getModule, getServer }) => {
 
     const service = getModule('services/funcionario-service', true);
     const validarEntrada = getModule('modules/form', true);
@@ -37,9 +37,11 @@ module.exports.controller = async ({ params, body }, res, next, { getModule }) =
 
     if (errors) return res.status(400).send(errors);
 
+    const cache = getServer('cache');
+    const cacheId = `/v1/funcionarios/${params.id}-get`;
     try {
         const ret = await service.atualizarFuncionario(input._id, body);
-        res.status(200).send({ data: ret });
+        res.status(200).send({ data: cache.set(cacheId, ret) });
     } catch (error) {
         res.status(204).send({});
     }

@@ -7,6 +7,7 @@
 const redis = require("redis");
 const { source, uri, database, time_default } = require('./config');
 const [REDIS_HOST, REDIS_PORT] = (process.env.REDIS_CACHE || uri).split(':');
+const REDIS_URL = `redis://${REDIS_HOST}:${REDIS_PORT}`;
 
 /**
  * Obter conexão com o Redis
@@ -34,7 +35,7 @@ module.exports = app => {
         logger.log({
             level: 'warn',
             source: source,
-            message: `Tentando conectar na url: redis://${REDIS_HOST}:${REDIS_PORT}...`
+            message: `Tentando conectar na url: ${REDIS_URL}...`
         });
         logger.log({
             level: 'warn',
@@ -51,33 +52,71 @@ module.exports = app => {
             get: (key) => {
                 return new Promise(resolve => {
                     cache.get(key, (error, data) => {
-                        if (error) return resolve(null);
-                        else return resolve(data);
+                        if (error) {
+                            logger.log({
+                                level: 'debug',
+                                source: source,
+                                message: `cache.get(key=${key}): error=${error}`
+                            });                    
+                            return resolve(null);
+                        } else {
+                            logger.log({
+                                level: 'debug',
+                                source: source,
+                                message: `cache.get(key=${key}): value=${data}`
+                            });                    
+                            return resolve(data);
+                        }
+                    });
+                });
+            },
+            getJson: (key) => {
+                return new Promise(resolve => {
+                    cache.get(key, (error, data) => {
+                        if (error) {
+                            logger.log({
+                                level: 'debug',
+                                source: source,
+                                message: `cache.getJson(key=${key}): error=${error}`
+                            });                    
+                            return resolve(null);
+                        } else {
+                            logger.log({
+                                level: 'debug',
+                                source: source,
+                                message: `cache.getJson(key=${key}): value=${data}`
+                            });                    
+                            return resolve(JSON.parse(data));
+                        }
                     });
                 });
             },
             set: (key, value, time = time_default) => {
                 const _value = (typeof value === 'object')? JSON.stringify(value): value.toString();
-                cache.setex(key, time, _value);
+                cache.set(key, _value, 'EX', time);
+                logger.log({
+                    level: 'debug',
+                    source: source,
+                    message: `cache.set(key=${key}, value=${_value}, 'EX', seconds=${time})`
+                });                    
                 return value;
             },
-            url: `redis://${REDIS_HOST}:${REDIS_PORT}`
+            del: (key) => {
+                cache.del(key);
+                logger.log({
+                    level: 'debug',
+                    source: source,
+                    message: `cache.del(key=${key})`
+                });                    
+            },
+            url: REDIS_URL
         }
         app.set('cache', _cache);
         logger.log({
             level: 'info',
             source: source,
-            message: `Redis (cache) ativado com sucesso na url: redis://${REDIS_HOST}:${REDIS_PORT}`
+            message: `Redis (cache) ativado com sucesso na url: ${REDIS_URL}`
         });
-    });
-
-    /**
-     * Criando um cache unico para execuçãod e API REST.
-     */
-    app.use((req, res, next) => {
-        const { method, originalUrl } = req;
-        req['restCacheId'] = `${originalUrl}[${method}]`;
-        next();
     });
 
 }

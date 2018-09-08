@@ -39,23 +39,19 @@ module.exports.controller = async ({ params, query }, res, next, { getModule, ge
     const queryFields = (query['fields']) ? query['fields'] : '';
     delete query.fields;
 
-    const errors = validarEntrada({
-        _id: params.id
-    });
-
+    const errors = validarEntrada({ _id: params.id });
     if (errors) return res.status(400).send(errors);
 
+    const cache = getServer('cache');
+    const cacheId = `/v1/funcionarios/${params.id}-get`;
     try {
-        const ret = await service.obterFuncionario(params.id);
-        const _ret = (queryFields) ?
-            fields(ret, queryFields) :
-            ret;
+        let ret = await cache.getJson(cacheId);
+        if (!ret) ret = await service.obterFuncionario(params.id);
         if (_.isEmpty(ret)) {
             res.status(204).send();
         } else {
-            res.status(200).send({
-                data: _ret
-            });
+            const _ret = (queryFields)? fields(ret, queryFields) : ret;
+            res.status(200).send({ data: cache.set(cacheId, _ret) });
         }
     } catch (error) {
         let err = (error.constructor.name === 'TypeError') ? {
