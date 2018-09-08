@@ -8,7 +8,7 @@ services:
             dockerfile: ./Dockerfile
             context: ./src
         image: douglaspands/core-api-js:2.4.1
-        container_name: coreapi-app
+        container_name: apicore-app
         environment:
             - MONGO=mongodb:27017
             - REDIS_CACHE=redis-cache:6379
@@ -26,7 +26,7 @@ services:
             - "redis-cache"
     mongodb:
         image: mongo:4.0.1
-        container_name: coreapi-db
+        container_name: apicore-db
         volumes: 
             - "./data:/data/db"
         networks: 
@@ -35,7 +35,7 @@ services:
             - "27017:27017"
     redis-cache:
         image: redis:4.0.11-alpine
-        container_name: coreapi-cache
+        container_name: apicore-cache
         #command: ["redis-server", "--appendonly", "yes"]
         #volumes: 
         #    - "./cache:/data"

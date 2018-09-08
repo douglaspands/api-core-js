@@ -26,7 +26,7 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ query }, res, next, { get }) => {
+module.exports.controller = async ({ headers, query }, res, next, { get }) => {
 
     const _ = get.module('lodash');
     const service = get.self.context.module('services/funcionario-service', true);
@@ -38,9 +38,10 @@ module.exports.controller = async ({ query }, res, next, { get }) => {
 
     try {
         const ret = await cache
-                            .obter(`get_funcionarios_${JSON.stringify(query)}`)
-                            .casoContrarioIncluirResultadoDoMetodo(service.pesquisarFuncionarios, query)
-                            .expirarEm(600);        
+                            .get(`get_funcionarios_${JSON.stringify(query)}`)
+                            .resetCache((headers['x-cache-reset'] === 'true')? true: false)
+                            .orElseSetResultOfMethod(service.pesquisarFuncionarios, query)
+                            .expireOn(600);        
         if (_.isEmpty(ret)) {
             res.status(204).send();
         } else {

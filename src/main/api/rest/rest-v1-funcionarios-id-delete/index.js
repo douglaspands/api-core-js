@@ -37,8 +37,8 @@ module.exports.controller = async ({ params }, res, next, { get }) => {
 
     try {
         const ret = await cache
-                            .excluir(`get_funcionario_${params.id}`)
-                            .aposMetodo(service.removerFuncionario, params.id);
+                            .remove(`get_funcionario_${params.id}`)
+                            .afterMethod(service.removerFuncionario, params.id);
         res.status(200).send({ data: ret });
     } catch (error) {
         res.status(404).send({});

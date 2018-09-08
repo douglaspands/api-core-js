@@ -49,9 +49,9 @@ const root = ({ get }) => {
 
         validarEntrada({ _id });
         return await cache
-                        .obter(`get_funcionario_${_id}`)
-                        .casoContrarioIncluirResultadoDoMetodo(service.obterFuncionario, _id)
-                        .expirarEm(3600);
+                        .get(`get_funcionario_${_id}`)
+                        .orElseSetResultOfMethod(service.obterFuncionario, _id)
+                        .expireOn(3600);
     }
 
     /**
@@ -63,9 +63,9 @@ const root = ({ get }) => {
 
         validarEntradaInclusao(input);
         return await cache
-                        .incluir(`get_funcionario_{{_id}}`)
-                        .comResultadoDoMetodo(service.incluirFuncionario, input)
-                        .expirarEm(3600);
+                        .set(`get_funcionario_{{_id}}`)
+                        .withResultOfMethod(service.incluirFuncionario, input)
+                        .expireOn(3600);
 
     }
 
@@ -81,9 +81,9 @@ const root = ({ get }) => {
         const _id = funcionario._id;
         delete funcionario._id;
         return await cache
-                        .incluir(`get_funcionario_${_id}`)
-                        .comResultadoDoMetodo(service.atualizarFuncionario, [ _id, funcionario ])
-                        .expirarEm(3600);
+                        .set(`get_funcionario_${_id}`)
+                        .withResultOfMethod(service.atualizarFuncionario, [ _id, funcionario ])
+                        .expireOn(3600);
 
     }
 
@@ -96,8 +96,8 @@ const root = ({ get }) => {
 
         validarEntrada({ _id });
         return await cache
-                        .excluir(`get_funcionario_${_id}`)
-                        .aposMetodo(service.removerFuncionario, _id);
+                        .remove(`get_funcionario_${_id}`)
+                        .afterMethod(service.removerFuncionario, _id);
 
     }
 
@@ -110,9 +110,9 @@ const root = ({ get }) => {
 
         validarEntrada(pesquisa);
         return await cache
-                        .obter(`get_funcionarios_${JSON.stringify(pesquisa)}`)
-                        .casoContrarioIncluirResultadoDoMetodo(service.pesquisarFuncionarios, pesquisa)
-                        .expirarEm(600);
+                        .get(`get_funcionarios_${JSON.stringify(pesquisa)}`)
+                        .orElseSetResultOfMethod(service.pesquisarFuncionarios, pesquisa)
+                        .expireOn(600);
 
     }
 

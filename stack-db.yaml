@@ -4,14 +4,14 @@ version: '3.1'
 services:
     mongodb:
         image: mongo:4.0.1
-        container_name: coreapi-db
+        container_name: apicore-db
         volumes: 
             - "./data:/data/db"
         ports:
             - "27017:27017"
     redis-cache:
         image: redis:4.0.11-alpine
-        container_name: coreapi-cache
+        container_name: apicore-cache
         #command: ["redis-server", "--appendonly", "yes"]
         #volumes: 
         #    - "./cache:/data"

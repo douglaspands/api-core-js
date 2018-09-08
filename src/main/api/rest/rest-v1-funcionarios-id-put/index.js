@@ -29,7 +29,7 @@ module.exports.route = () => {
 module.exports.controller = async ({ params, body }, res, next, { get }) => {
 
     const service = get.self.context.module('services/funcionario-service');
-    const validarEntrada = get.self.context.module('modules/form');
+    const validarEntrada = get.self.context.module('modules/validador');
     const cache = get.self.context.module('utils/cache-crud');
 
     let input = body;
@@ -40,9 +40,9 @@ module.exports.controller = async ({ params, body }, res, next, { get }) => {
 
     try {
         const ret = await cache
-                            .incluir(`get_funcionario_${params.id}`)
-                            .comResultadoDoMetodo(service.atualizarFuncionario, [ input._id, body ])
-                            .expirarEm(3600);
+                            .set(`get_funcionario_${params.id}`)
+                            .withResultOfMethod(service.atualizarFuncionario, [ input._id, body ])
+                            .expireOn(3600);
         return res.status(200).send({ data: ret });
     } catch (error) {
         return res.status(404).send({});

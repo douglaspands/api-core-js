@@ -26,7 +26,7 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ params, query }, res, next, { get, logger }) => {
+module.exports.controller = async ({ headers, params, query }, res, next, { get, logger }) => {
 
     const _ = get.module('lodash');
     logger.debug('Inicio da rota REST GET /v1/funcionarios');
@@ -44,9 +44,10 @@ module.exports.controller = async ({ params, query }, res, next, { get, logger }
 
     try {
         const ret = await cache
-                            .obter(`get_funcionario_${params.id}`)
-                            .casoContrarioIncluirResultadoDoMetodo(service.obterFuncionario, params.id)
-                            .expirarEm(3600);
+                            .get(`get_funcionario_${params.id}`)
+                            .resetCache((headers['x-cache-reset'] === 'true')? true: false)
+                            .orElseSetResultOfMethod(service.obterFuncionario, params.id)
+                            .expireOn(3600);
         if (_.isEmpty(ret)) {
             return res.status(404).send();
         } else {

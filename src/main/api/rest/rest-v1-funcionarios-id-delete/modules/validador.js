@@ -6,9 +6,9 @@
  */
 'use strict';
 
-module.exports = ({ getModule }) => {
+module.exports = ({ get }) => {
 
-    const validator = getModule('utils/validator');
+    const validator = get.self.module('utils/validator');
 
     /**
      * Função para validar objeto de entrada.

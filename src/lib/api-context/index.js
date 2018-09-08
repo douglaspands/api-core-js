@@ -57,7 +57,7 @@ function Context(modulePath, app) {
         if (typeof name !== 'string') return null;
 
         const _name = name;
-        const _self = (typeof self === 'boolean') ? self : false;
+        const _self = (self) ? self : false;
 
         function getLocalModule(modulePath, name) {
             if (!regexFolderLimit.test(modulePath)) return null;
@@ -72,7 +72,7 @@ function Context(modulePath, app) {
         let _mod = getLocalModule(_modulePath, _name);
 
         if (_mod) {
-            if (_self && typeof _mod === 'function') _mod = _mod(this);
+            if (_self && typeof _mod === 'function') _mod = _mod(self);
         } else {
             _logger.error({
                 source: _moduleName,
@@ -91,11 +91,11 @@ function Context(modulePath, app) {
         self: {
             context: {
                 module: (moduleName) => {
-                    return getModule(moduleName, true);
+                    return getModule(moduleName, this);
                 }
             },
             module: (moduleName) => {
-                return getModule(moduleName, false);
+                return getModule(moduleName, null);
             }
         },
         server: (moduleName) => {

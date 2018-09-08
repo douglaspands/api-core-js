@@ -5,170 +5,181 @@
  * @version 1.3.0
  */
 'use strict'
-module.exports = ({ get }) => {
-    const cache = get.server('cache');
+module.exports = (context) => {
+    const cache = context.get.server('cache');
     /**
      * Enviar erro
-     * @param {string} mensagem com erro
+     * @param {string} message Mensagem de erro.
      * @returns {void}
      */
-    const enviarErro = (mensagem) => {
-        const erro = new Error(`Cache Error: Falta informar "${mensagem}"!`);
-        throw erro;
+    const sendError = (message) => {
+        const error = new Error(`Cache Error: Missing the "${message}"!`);
+        throw error;
     }
     /**
      * Consultar cache.
-     * @param {string} chave do cache
+     * @param {string} key cache key
      * @returns {function} 
-     * - casoContrarioIncluirValor
-     * - casoContrarioIncluirResultadoDoMetodo 
+     * - orElseSetValue
+     * - orElseSetResultOfMethod 
      */
-    const obter = (chave = enviarErro('chave do cache')) => {
-        let _chave = chave;
-        let _valor = null;
-        let _metodo = null;
+    function Get(key = sendError('cache key')) {
+
+        if (!(this instanceof Get)) {
+            return new Get(key)
+        } 
+
+        let _key = key;
+        let _value = null;
+        let _method = null;
         let _args = null;
+        let _resetCache = null;
         /**
          * Armazenar em cache e retorna valor.
          * @param {number} segundos para expirar. Caso não preenchido, o valor default é 600 segundos (15 min) 
          * @returns {Promise<object>} Retorna objeto do banco de dados
          */
-        const expirarEm = async (segundos = enviarErro('os segundos para expirar')) => {
-            if (!_valor) {
-                _valor = await cache.get(_chave);
-                if (_valor) _valor = JSON.parse(_valor);
+        this.expireOn = async (seconds = sendError('seconds to expire')) => {
+            if (!_value) {
+                _value = (!_resetCache)? await cache.get(_key): null;
+                if (_value) _value = JSON.parse(_value);
                 else {
-                    _valor = await ((Arrays.isArray(_args))? _metodo(..._args) : _metodo(_args));
+                    _value = await ((Array.isArray(_args))? _method(..._args) : _method(_args));
+                    if (_value) cache.set(_key, _value, seconds);
                 }
             }
-            return (_valor) ? cache.set(_chave, _valor, segundos) : null;
+            return _value;
         }
         /**
-         * Incluir o valor
-         * @param {any} valor armazenado em cache
-         * @returns {function} expirarEm
+         * set o valor
+         * @param {any} value armazenado em cache
+         * @returns {function} expireOn
          */
-        const casoContrarioIncluirValor = (valor = enviarErro('os segundos para expirar')) => {
-            _valor = valor;
-            return {
-                expirarEm
-            }
+        this.orElseSetValue = (value = sendError('seconds to expire')) => {
+            _value = value;
+            return this;
         }
         /**
          * Armazenar no cache o resultado da consulta do banco de dados
-         * @param {string} metodo para consultar o banco de dados 
+         * @param {string} method para consultar o banco de dados 
          * @param {object} args para execução do metodo
-         * @returns {function} expirarEm 
+         * @returns {function} expireOn 
          */
-        const casoContrarioIncluirResultadoDoMetodo = (metodo = enviarErro('metodo a ser executado'), args = enviarErro('os argumentos do metodo informado')) => {
-            if (typeof metodo !== 'function') enviarErro('metodo como função');
-            _metodo = metodo;
+        this.orElseSetResultOfMethod = (method = sendError('method to be executed'), args = sendError('arguments from method')) => {
+            if (typeof method !== 'function') sendError('method as function');
+            _method = method;
             _args = args;
-            return {
-                expirarEm
-            }
+            return this;
         }
-        return {
-            casoContrarioIncluirValor,
-            casoContrarioIncluirResultadoDoMetodo
+
+        /**
+         * Serve pra verificar se existe uma solicitação  pra limpar o cache
+         * @param {boolean} reset parametro para resetar o cache da api 
+         * @returns {this}
+         */
+        this.resetCache = (reset) => {
+            _resetCache = (reset === true)? true: false;
+            return this;
         }
     }
     /**
-     * Incluir cache.
-     * @param {string} chave do cache
+     * set cache.
+     * @param {string} key key
      * @returns {function} 
-     * - incluirValor
-     * - incluirResultadoDoMetodo
+     * - setValue
+     * - withResultOfMethod
      */
-    const incluir = (chave = enviarErro('chave do cache')) => {
-        let _chave = chave;
-        let _valor = null;
-        let _metodo = null;
+    function Set(key = sendError('cache key')) {
+
+        if (!(this instanceof Set)) {
+            return new Set(key)
+        } 
+
+        let _key = key;
+        let _value = null;
+        let _method = null;
         let _args = null;
-        const EXTRAIR_KEY = new RegExp('(?<=\{\{)(.+)(?=\}\})', 'g');
-        const SUBSTITUIR_KEY = new RegExp('(\{\{)(.+)(\}\})', 'g');
+        const EXTRACT_KEY = new RegExp('(?<=\{\{)(.+)(?=\}\})', 'g');
+        const REPLACE_KEY = new RegExp('(\{\{)(.+)(\}\})', 'g');
         /**
          * Armazenar em cache e retorna valor.
-         * @param {number} segundos para expirar. Caso não preenchido, o valor default é 600 segundos (15 min) 
+         * @param {number} seconds para expirar. Caso não preenchido, o valor default é 600 segundos (15 min) 
          * @returns {Promise<object>} Retorna objeto do banco de dados
          */
-        const expirarEm = async (segundos = enviarErro('os segundos para expirar')) => {
-            if (!_valor) _valor = await _metodo(_args);
-            const [ key ] = _chave.match(EXTRAIR_KEY);
-            return (_valor) ? cache.set(_chave, _chave.replace(SUBSTITUIR_KEY, _valor[key]), segundos) : null;
+        this.expireOn = async (seconds = sendError('seconds to expire')) => {
+            if (!_value) _value = (Array.isArray(_args))? await _method(..._args) : await _method(_args);
+            try {
+                const [ key ] = _key.match(EXTRACT_KEY); 
+                return (_value) ? cache.set(_key.replace(REPLACE_KEY, _value[key]), _value, seconds) : null;               
+            } catch (error) {
+                return (_value) ? cache.set(_key, _value, seconds) : null;               
+            }
         }
         /**
-         * Incluir o valor
-         * @param {any} valor armazenado em cache
-         * @returns {function} expirarEm
+         * set o valor
+         * @param {any} value armazenado em cache
+         * @returns {function} expireOn
          */
-        const comValor = async (valor = enviarErro('os segundos para expirar')) => {
-            _valor = valor;
-            return {
-                expirarEm
-            }
+        this.withValue = (value = sendError('seconds to expire')) => {
+            _value = value;
+            return this;
         }
         /**
          * Armazenar no cache o resultado da consulta do banco de dados
-         * @param {string} metodo para consultar o banco de dados 
+         * @param {string} method para consultar o banco de dados 
          * @param {object} args para execução do metodo
-         * @returns {function} expirarEm 
+         * @returns {function} expireOn 
          */
-        const comResultadoDoMetodo = (metodo = enviarErro('metodo a ser executado'), args = enviarErro('os argumentos do metodo informado')) => {
-            if (typeof metodo !== 'function') enviarErro('metodo como função');
-            _metodo = metodo;
+        this.withResultOfMethod = (method = sendError('method to be executed'), args = sendError('arguments from method')) => {
+            if (typeof method !== 'function') sendError('method as function');
+            _method = method;
             _args = args;
-            return {
-                expirarEm
-            }
-        }
-        return {
-            comValor,
-            comResultadoDoMetodo
+            return this;
         }
     }
     /**
-     * Excluir cache.
-     * @param {string} chave do cache
+     * remove cache.
+     * @param {string} cache key
      * @returns {function} 
-     * - executar
-     * - executarAposMetodo
+     * - now
+     * - afterMethod
      */
-    const excluir = (chave = enviarErro('chave do cache')) => {
-        let _chave = chave;
-        let _metodo = null;
+    function Remove (key = sendError('cache key')) {
+        
+        if (!(this instanceof Remove)) {
+            return new Remove(key)
+        } 
+        
+        let _key = key;
+        let _method = null;
         let _args = null;
-        let _valor = null;
+        let _value = null;
         /**
          * Remove do cache
          * @returns {Promise<any>}
          */
-        const agora = async () => {
-            if (_metodo) _valor = await _metodo(_args)
-            cache.del(_chave);
-            return (_valor)? _valor : true;
+        this.now = async () => {
+            if (_method) _value = await _method(_args)
+            cache.del(_key);
+            return (_value)? _value : true;
         }
         /**
          * Armazenar no cache o resultado da consulta do banco de dados
-         * @param {string} metodo para consultar o banco de dados 
+         * @param {string} method para consultar o banco de dados 
          * @param {object} args para execução do metodo
          * @returns {function} expirarCacheEm 
          */
-        const aposMetodo = async (metodo = enviarErro('metodo a ser executado'), args = enviarErro('os argumentos do metodo informado')) => {
-            if (typeof metodo !== 'function') enviarErro('metodo como função');
-            _metodo = metodo;
+        this.afterMethod = async (method = sendError('method to be executed'), args = sendError('arguments from method')) => {
+            if (typeof method !== 'function') sendError('method as function');
+            _method = method;
             _args = args;
-            return await agora();
-        }
-        return {
-            agora,
-            aposMetodo
+            return this.now();
         }
     }
 
     return {
-        obter,
-        incluir,
-        excluir
+        get: Get,
+        set: Set,
+        remove: Remove
     }
 }
