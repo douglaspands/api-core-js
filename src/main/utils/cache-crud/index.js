@@ -2,10 +2,11 @@
  * @file Arquivo de alternancia de cache
  * @author @douglaspands
  * @since 2018-09-08
+ * @version 1.3.0
  */
 'use strict'
-module.exports = ({ getServer }) => {
-    const cache = getServer('cache');
+module.exports = ({ get }) => {
+    const cache = get.server('cache');
     /**
      * Enviar erro
      * @param {string} mensagem com erro

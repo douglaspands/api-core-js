@@ -1,13 +1,14 @@
 /**
- * @file Model Funcionarios
- * @author douglaspands
+ * @file Service Funcionarios
+ * @author @douglaspands
  * @since 2017-11-23
+ * @version 1.3.0
  */
 'use strict';
 
-module.exports = ({ getModule }) => {
+module.exports = ({ get }) => {
 
-    const crud = getModule('utils/mongodb-crud', true);
+    const crud = get.self.context.module('utils/mongodb-crud');
 
     /**
      * Obter funcionario pelo ID.

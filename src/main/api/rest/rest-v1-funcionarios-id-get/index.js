@@ -26,18 +26,18 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ params, query }, res, next, { getModule }) => {
+module.exports.controller = async ({ params, query }, res, next, { get }) => {
 
     const _ = require('lodash');
-    const logger = getServer('logger');
+    const logger = get.server('logger');
 
     logger.debug('Inicio da rota REST GET /v1/funcionarios');
 
-    const service = getModule('services/funcionario-service', true);
-    const validarEntrada = getModule('modules/form', true);
-    const cache = getModule('utils/cache-crud', true);
+    const service = get.self.context.module('services/funcionario-service');
+    const validarEntrada = get.self.context.moduleet('modules/validador');
+    const cache = get.self.context.module('utils/cache-crud');
 
-    const fields = getModule('utils/fields');
+    const fields = get.self.module('utils/fields');
     const queryFields = (query['fields']) ? query['fields'] : '';
     delete query.fields;
 

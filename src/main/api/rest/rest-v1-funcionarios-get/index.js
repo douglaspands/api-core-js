@@ -26,13 +26,13 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ query }, res, next, { getModule }) => {
+module.exports.controller = async ({ query }, res, next, { get }) => {
 
-    const _ = require('lodash');
-    const service = getModule('services/funcionario-service', true);
-    const cache = getModule('utils/cache-crud', true);
+    const _ = get.module('lodash');
+    const service = get.self.context.module('services/funcionario-service', true);
+    const cache = get.self.context.module('utils/cache-crud', true);
 
-    const fields = getModule('utils/fields');
+    const fields = get.self.module('utils/fields');
     const queryFields = (query['fields']) ? query['fields'] : '';
     delete query.fields;
 

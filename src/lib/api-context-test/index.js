@@ -2,7 +2,7 @@
  * @file Modulo de apoio a API.
  * @author @douglaspands
  * @since 2018-09-08
- * @version 1.0.0
+ * @version 2.0.0
  */
 'use strict';
 const path = require('path');

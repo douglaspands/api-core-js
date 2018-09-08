@@ -2,15 +2,16 @@
  * @file CRUD padrão no MongoDB.
  * @author douglaspands
  * @since 2017-11-21
+ * @version 1.3.0
  */
 'use strict';
 
 const { ObjectID } = require('mongodb');
 
-module.exports = ({ getServer }) => {
+module.exports = ({ get }) => {
 
-    const db = getServer('mongodb');
-    const logger = getServer('logger');
+    const db = get.server('mongodb');
+    const logger = get.server('logger');
 
     /**
      * Vaidar ID.

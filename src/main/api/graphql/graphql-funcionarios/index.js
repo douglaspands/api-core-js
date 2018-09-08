@@ -32,17 +32,17 @@ const route = () => {
 /**
  *  Root do servidor GraphQL 
  */
-const root = ({ getModule }) => {
+const root = ({ get }) => {
 
-    const service = getModule('services/funcionario-service', true);
-    const validarEntrada = getModule('modules/form', true);
-    const validarEntradaInclusao = getModule('modules/form-insert', true);
-    const validarEntradaAtualizacao = getModule('modules/form-update', true);
-    const cache = getModule('utils/cache-crud', true);
+    const service = get.self.context.module('services/funcionario-service');
+    const validarEntrada = get.self.context.module('modules/validador-opcional');
+    const validarEntradaInclusao = get.self.context.module('modules/validador-insert');
+    const validarEntradaAtualizacao = get.self.context.module('modules/validador-update');
+    const cache = get.self.context.module('utils/cache-crud');
 
     /**
      * Obter funcionario atraves do id
-     * @param {string} id 
+     * @param {object} input Objeto com _id (unico campo usado)
      * @return {object} funcionario
      */
     async function obterFuncionario({ _id }) {

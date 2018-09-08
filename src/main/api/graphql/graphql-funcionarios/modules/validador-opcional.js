@@ -1,13 +1,14 @@
 /**
- * @file Modulo para validar os parametros de entrada na inclusão de funcionario.
+ * @file Modulo para validar os parametros de entrada.
  * @author douglaspands
- * @since 2018-09-06
+ * @author Victor Tripeno
+ * @since 2017-11-23
  */
 'use strict';
 
-module.exports = ({ getModule }) => {
+module.exports = ({ get }) => {
 
-    const validator = getModule('utils/validator');
+    const validator = get.self.module('utils/validator');
 
     /**
      * Função para validar objeto de entrada.
@@ -16,9 +17,10 @@ module.exports = ({ getModule }) => {
      */
     function validar(funcionario) {
 
-        const { checkField, checkReportForGraphQL } = validator(funcionario);
+        const { checkField, checkReportForGraphQL } = validator(funcionario);        
 
         checkField('_id', 'ID invalido')
+            .isOptional()
             .isMongoId();
 
         checkField('nome', 'Nome invalido')
