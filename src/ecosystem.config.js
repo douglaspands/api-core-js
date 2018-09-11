@@ -7,12 +7,10 @@
 const npm_config = require('./package.json');
 const environment = (process.env.NODE_ENV === 'production')? 'production' : 'development';
 const appName = `${npm_config.name}@${npm_config.version}-${(environment).substr(0, 1)}`;
-const clusters = (environment === 'production')? 'max': 1;
 
 module.exports = {
     apps: [{
         name: appName,
-        script: './app.js',
-        instances: clusters
+        script: './app.js'
     }]
 }
