@@ -8,13 +8,12 @@ const path = require('path');
 const assert = require('assert');
 const _ = require('lodash');
 
-const Context = require('../../../../../lib/api-context-test');
+const Context = require('../../../../../middleware/express-context-test');
 const pathApp = path.join(__dirname);
 
-const reqExpress = {
+const req = {
     headers: {}
 }
-
 
 describe('# ./index.js', () => {
 
@@ -25,8 +24,8 @@ describe('# ./index.js', () => {
         context = new Context(pathApp);
         context.set.mock.server('cache', {
             get: () => new Promise(resolve => resolve(null)),
-            set: () => {},
-            del: () => {} 
+            set: (key, value, seconds) => value,
+            del: () => { }
         });
 
     });
@@ -44,11 +43,11 @@ describe('# ./index.js', () => {
 
         const { obterFuncionario } = require('../index').root(context);
 
-        const req = {
+        const input = {
             _id: '123456789012345678901234'
         };
 
-        let result = await obterFuncionario(req, reqExpress);
+        let result = await obterFuncionario(input, req);
 
         assert.equal(result.nome, 'Joao');
         assert.equal(result.empresa, 'CPMGFHJKL');
@@ -63,66 +62,35 @@ describe('# ./index.js', () => {
                 return {
                     _id: '123456789012345678901234',
                     nome: 'Joao',
-                    empresa: 'CPMGFHJKL'
-                };
+                    sobrenome: 'Silva',
+                    empresa: 'CPMGFHJKL',
+                    telefone: '1188888888',
+                    email: 'joao.silva@lala.com',
+                    cidade: 'sao paulo',
+                    estado: 'sp'
+                }
             }
         });
 
         const { criarFuncionario } = require('../index').root(context);
 
-        const req = {
+        const input = {
             input: {
                 nome: 'Joao',
-                empresa: 'CPMGFHJKL'
+                sobrenome: 'Silva',
+                empresa: 'CPMGFHJKL',
+                telefone: '1188888888',
+                email: 'joao.silva@lala.com',
+                cidade: 'sao paulo',
+                estado: 'sp'
             }
         };
 
-        try {
-            var result = await criarFuncionario(req, reqExpress);
-        } catch (error) {
-            console.error(error);
-        }
-
+        let result = await criarFuncionario(input, req);
 
         assert.equal(result._id, '123456789012345678901234');
         assert.equal(result.nome, 'Joao');
         assert.equal(result.empresa, 'CPMGFHJKL');
-
-    });
-
-    it(`${++i} - listarFuncionarios() - Execução com sucesso`, async () => {
-
-        context.set.mock.module('services/funcionario-service', {
-            pesquisarFuncionarios: () => {
-                return [{
-                    _id: '123456789012345678901234',
-                    nome: 'Joao',
-                    empresa: 'CPMGFHJKL'
-                },
-                {
-                    _id: '12345678901234567890abcd',
-                    nome: 'Fabio',
-                    empresa: 'JHGFRT'
-                }];
-            }
-        });
-
-        const { listarFuncionarios } = require('../index').root(context);
-
-        const req = {};
-
-        try {
-            var result = await listarFuncionarios(req, reqExpress);
-        } catch (error) {
-            console.error(error);
-        }
-
-        assert.equal(result[0]._id, '123456789012345678901234');
-        assert.equal(result[0].nome, 'Joao');
-        assert.equal(result[0].empresa, 'CPMGFHJKL');
-        assert.equal(result[1]._id, '12345678901234567890abcd');
-        assert.equal(result[1].nome, 'Fabio');
-        assert.equal(result[1].empresa, 'JHGFRT');
 
     });
 
@@ -136,15 +104,11 @@ describe('# ./index.js', () => {
 
         const { removerFuncionario } = require('../index').root(context);
 
-        const req = {
+        const input = {
             _id: '123456789012345678901234'
         };
 
-        try {
-            var result = await removerFuncionario(req, reqExpress);
-        } catch (error) {
-            console.error(error);
-        }
+        let result = await removerFuncionario(input, req);
 
         assert.equal(result, 'Foi/Foram removido(s) 1 registro(s)!');
 
@@ -160,16 +124,12 @@ describe('# ./index.js', () => {
 
         const { atualizarFuncionario } = require('../index').root(context);
 
-        const req = {
+        const input = {
             _id: '123456789012345678901234',
             empresa: 'JHGFRT'
         };
 
-        try {
-            var result = await atualizarFuncionario(req, reqExpress);
-        } catch (error) {
-            console.error(error);
-        }
+        let result = await atualizarFuncionario(input, req);
 
         assert.equal(result, 'Foi/Foram atualizado(s) 1 registro(s)!');
 
@@ -189,13 +149,13 @@ describe('# ./index.js', () => {
 
         const { pesquisarFuncionarios } = require('../index').root(context);
 
-        const req = {
+        const input = {
             _id: '123456789012345678901234',
             empresa: 'JHGFRT'
         };
 
         try {
-            var result = await pesquisarFuncionarios(req, reqExpress);
+            var result = await pesquisarFuncionarios(input, req);
         } catch (error) {
             console.error(error);
         }

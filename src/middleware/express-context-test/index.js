@@ -79,7 +79,7 @@ function Context(modulePath, app) {
         if (typeof name !== 'string') return null;
 
         const _name = name;
-        const _self = (typeof self === 'boolean') ? self : false;
+        const _self = (self) ? self : false;
 
         function getLocalModule(modulePath, name) {
             if (!regexFolderLimit.test(modulePath)) return null;
@@ -88,7 +88,7 @@ function Context(modulePath, app) {
             } catch (error) {
                 const newModulePath = path.join(modulePath, '..');
                 return getLocalModule(newModulePath, name);
-            }s
+            } s
         }
 
         //-- mock
@@ -102,7 +102,7 @@ function Context(modulePath, app) {
         }
         //--
 
-        let _mod = getLocalModule(_modulePath, _name);boolean
+        let _mod = getLocalModule(_modulePath, _name);
 
         if (_mod) {
             if (_self && typeof _mod === 'function') {
