@@ -34,12 +34,12 @@ const logger = require('./middleware/express-log')(app);
         logger.info(`Executando "${name}@${version}" em http://localhost:${server.address().port} (${environment}) (pid:${process.pid}) `);
         // Caso seja o ambiente de desenvolvimento, disponibilizar interface para teste do GraphQL
         if (environment !== 'production' && graphql.length > 0) {
-            logger.info(`GraphQL IDE disponivel em http://localhost:${server.address().port}/graphql`);
+            logger.debug(`GraphQL IDE disponivel em http://localhost:${server.address().port}/graphql`);
         }
         // Lista todas as APIs REST encontradas
-        rest.forEach(route => logger.info(`REST registrado....: ${route.uri} [${route.method}]`));
+        rest.forEach(route => logger.debug(`REST registrado....: ${route.uri} [${route.method}]`));
         // Lista todas as APIs GraphQL encontradas
-        graphql.forEach(service => logger.info(`GraphQL registrado.: ${service}`));
+        graphql.forEach(service => logger.debug(`GraphQL registrado.: ${service}`));
         // Criando health-check
         const server_health = http.createServer(app_health).listen(((parseInt(process.env.PORT) + 1) || 3001), () => {
             logger.log({
