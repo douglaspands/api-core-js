@@ -9,7 +9,7 @@ const assert = require('assert');
 const _ = require('lodash');
 
 const Context = require('../../../lib/api-context-test');
-const pathApp = path.join(__dirname, '../..');
+const pathApp = path.join(__dirname);
 
 
 describe('# ./services/funcionario-service.js', () => {
