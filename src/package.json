@@ -1,12 +1,11 @@
 {
   "name": "api-core-js",
-  "version": "2.6.1",
+  "version": "2.6.2",
   "description": "Motor de APIs em Node.js",
   "main": "app.js",
   "scripts": {
     "start": "node ./app.js",
     "start-cluster": "node ./bin/www",
-    "start-dev": "pm2 start ./app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "douglaspands",
@@ -15,9 +14,7 @@
     "type": "git",
     "url": "git://github.com/douglaspands/api-core-js"
   },
-  "devDependencies": {
-    "pm2": "^3.0.4"
-  },
+  "devDependencies": {},
   "dependencies": {
     "body-parser": "^1.18.2",
     "compression": "^1.7.2",
