@@ -29,8 +29,8 @@ module.exports.route = () => {
 module.exports.controller = async ({ headers, query }, res, next, { get }) => {
 
     const _ = get.module('lodash');
-    const service = get.self.context.module('services/funcionario-service', true);
-    const cache = get.self.context.module('utils/cache-crud', true);
+    const service = get.self.context.module('services/funcionario-service');
+    const cache = get.self.context.module('utils/cache-crud');
 
     const fields = get.self.module('utils/fields');
     const queryFields = (query['fields']) ? query['fields'] : '';
