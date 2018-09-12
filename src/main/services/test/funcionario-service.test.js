@@ -8,7 +8,7 @@ const path = require('path');
 const assert = require('assert');
 const _ = require('lodash');
 
-const Context = require('../../../lib/api-context-test');
+const Context = require('../../../middleware/express-context-test');
 const pathApp = path.join(__dirname);
 
 

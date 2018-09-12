@@ -5,9 +5,7 @@
  */
 'use strict';
 const winston = require('winston');
-const {
-    createLogger
-} = winston;
+const { createLogger } = winston;
 const uuid = require('uuid/v4');
 
 /**
@@ -18,15 +16,18 @@ const uuid = require('uuid/v4');
 module.exports = app => {
 
     // transports customizados
-    const transports = require('./transports')(winston, app);
+    const transports = require('./transports')(app);
 
     const logger = createLogger({
         transports: [
-            transports.customConsole(),
             transports.customFile()
         ]
     });
 
+    if (process.env.NODE_ENV !== 'production') {
+        logger.add(transports.customConsole());
+    };
+    
     /**
      * Função de geração de log no express.
      * @param {object} req Request (express) 

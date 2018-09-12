@@ -66,7 +66,7 @@ function Context(modulePath, app) {
     /**
      * Obter modulos locais.
      * @param {string} name Nome do modulo
-     * @param {boolean} self "true" - Executa a primeira função passando o "this".
+     * @param {object} self Recebe o this.
      * @return {object} Conexão com o MongoDB
      */
     function getModule(name, self) {
@@ -95,17 +95,19 @@ function Context(modulePath, app) {
         let mock = moduleMock[_name];
         if (mock) {
             if (_self && typeof mock === 'function') {
-                return mock(this);
+                return mock(self);
             } else {
                 return mock;
             }
         }
         //--
 
-        let _mod = getLocalModule(_modulePath, _name);
+        let _mod = getLocalModule(_modulePath, _name);boolean
 
         if (_mod) {
-            if (_self && typeof _mod === 'function') _mod = _mod(this);
+            if (_self && typeof _mod === 'function') {
+                _mod = _mod(self);
+            }
         } else {
             _logger.error({
                 source: _moduleName,
@@ -146,11 +148,11 @@ function Context(modulePath, app) {
         self: {
             context: {
                 module: (moduleName) => {
-                    return getModule(moduleName, true);
+                    return getModule(moduleName, this);
                 }
             },
             module: (moduleName) => {
-                return getModule(moduleName, false);
+                return getModule(moduleName, null);
             }
         },
         server: (moduleName) => {

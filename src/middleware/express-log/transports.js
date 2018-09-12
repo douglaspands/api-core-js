@@ -4,6 +4,8 @@
  * @since 2017-12-07
  */
 'use strict';
+const pack = require('../../package.json');
+const winston = require('winston');
 const fs = require('fs');
 const path = require('path');
 const moment = require('moment');
@@ -17,7 +19,7 @@ const ID_BOOT = require('uuid/v4')();
  * @param {object} app Modulo expressjs
  * @return {object} Retorna funções que representam transports customizados.
  */
-module.exports = (winston, app) => {
+module.exports = (app) => {
 
     const { transports, format } = winston;
     const { combine, timestamp, colorize, label, printf } = format;
@@ -65,8 +67,7 @@ module.exports = (winston, app) => {
             options: { flags: 'a+', encoding: 'utf8' },
             maxsize: 10240,
             maxFiles: 10,
-            //filename: path.join(logFolder, ('core-api-js-' + moment().format(formatDateFile) + '.log')),
-            filename: path.join(logFolder, 'core-api-js.log'),
+            filename: path.join(logFolder, `${pack.name}.log`),
             format: combine(
                 label({ label: 'server' }),
                 timestamp(),

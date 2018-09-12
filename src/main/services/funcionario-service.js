@@ -18,7 +18,7 @@ module.exports = ({ get }) => {
     async function obterFuncionario(id) {
 
         let ret = await crud.find('funcionarios', id);
-        if (ret) ret['_id'] = ret['_id'].toString();
+        if (ret && ret['_id']) ret['_id'] = ret['_id'].toString();
         return ret;
     }
 
@@ -31,7 +31,7 @@ module.exports = ({ get }) => {
 
         let ret = await crud.scan('funcionarios', query);
         return (ret || []).map(o => {
-            o['_id'] = o['_id'].toString();
+            if (o['_id']) o['_id'] = o['_id'].toString();
             return o;
         }, []);
 
@@ -48,7 +48,7 @@ module.exports = ({ get }) => {
         delete funcionario._id;
         let ret = await crud.insert('funcionarios', funcionario);
         ret = (ret.ops) ? ret.ops[0] : ret;
-        if (ret['_id']) ret['_id'] = ret['_id'].toString();
+        if (ret && ret['_id']) ret['_id'] = ret['_id'].toString();
         return ret;
 
     }
@@ -63,7 +63,7 @@ module.exports = ({ get }) => {
 
         await crud.update('funcionarios', id, funcionario);
         let ret = await crud.find('funcionarios', id);
-        if (ret) ret['_id'] = ret['_id'].toString();
+        if (ret && ret['_id']) ret['_id'] = ret['_id'].toString();
         return ret;
 
     }

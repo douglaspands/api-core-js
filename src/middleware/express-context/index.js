@@ -44,7 +44,7 @@ function Context(modulePath, app) {
     /**
      * Obter modulos locais.
      * @param {string} name Nome do modulo
-     * @param {boolean} self "true" - Executa a primeira função passando o "this".
+     * @param {object} self "true" - Executa a primeira função passando o "this".
      * @return {object} Conexão com o MongoDB
      */
     function getModule(name, self) {
@@ -72,7 +72,9 @@ function Context(modulePath, app) {
         let _mod = getLocalModule(_modulePath, _name);
 
         if (_mod) {
-            if (_self && typeof _mod === 'function') _mod = _mod(self);
+            if (_self && (typeof _mod === 'function')) {
+                _mod = _mod(self);
+            }
         } else {
             _logger.error({
                 source: _moduleName,

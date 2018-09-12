@@ -11,6 +11,10 @@ const _ = require('lodash');
 const Context = require('../../../../../lib/api-context-test');
 const pathApp = path.join(__dirname);
 
+const reqExpress = {
+    headers: {}
+}
+
 
 describe('# ./index.js', () => {
 
@@ -44,7 +48,7 @@ describe('# ./index.js', () => {
             _id: '123456789012345678901234'
         };
 
-        let result = await obterFuncionario(req);
+        let result = await obterFuncionario(req, reqExpress);
 
         assert.equal(result.nome, 'Joao');
         assert.equal(result.empresa, 'CPMGFHJKL');
@@ -74,7 +78,7 @@ describe('# ./index.js', () => {
         };
 
         try {
-            var result = await criarFuncionario(req);
+            var result = await criarFuncionario(req, reqExpress);
         } catch (error) {
             console.error(error);
         }
@@ -108,7 +112,7 @@ describe('# ./index.js', () => {
         const req = {};
 
         try {
-            var result = await listarFuncionarios(req);
+            var result = await listarFuncionarios(req, reqExpress);
         } catch (error) {
             console.error(error);
         }
@@ -137,7 +141,7 @@ describe('# ./index.js', () => {
         };
 
         try {
-            var result = await removerFuncionario(req);
+            var result = await removerFuncionario(req, reqExpress);
         } catch (error) {
             console.error(error);
         }
@@ -162,7 +166,7 @@ describe('# ./index.js', () => {
         };
 
         try {
-            var result = await atualizarFuncionario(req);
+            var result = await atualizarFuncionario(req, reqExpress);
         } catch (error) {
             console.error(error);
         }
@@ -191,7 +195,7 @@ describe('# ./index.js', () => {
         };
 
         try {
-            var result = await pesquisarFuncionarios(req);
+            var result = await pesquisarFuncionarios(req, reqExpress);
         } catch (error) {
             console.error(error);
         }
