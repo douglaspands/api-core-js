@@ -38,7 +38,7 @@ module.exports.controller = async ({ headers, query }, res, next, { get }) => {
 
     try {
         const ret = await cache
-                            .get(`get_funcionarios_${JSON.stringify(query)}`)
+                            .get(`api:funcionarios|${JSON.stringify(pesquisa)}`)
                             .resetCache((headers['x-cache-reset'] === 'true')? true: false)
                             .orElseSetResultOfMethod(service.pesquisarFuncionarios, query)
                             .expireOn(600);        

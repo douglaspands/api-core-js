@@ -6,7 +6,7 @@ services:
         build:
             dockerfile: ./Dockerfile
             context: ./src
-        image: douglaspands/core-api-js:2.4.1
+        image: douglaspands/core-api-js:2.6.1
         container_name: apicore-app
         environment:
             - MONGO=mongodb:27017
