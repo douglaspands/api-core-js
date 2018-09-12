@@ -16,7 +16,7 @@ module.exports.route = () => {
     return {
         controller: 'rest',
         method: 'get',
-        uri: '/v1/funcionarios/:id'
+        uri: '/v1/funcionarios/:_id'
     }
 };
 /**
@@ -26,43 +26,40 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ params, query }, res, next, { getModule, getServer }) => {
+module.exports.controller = async ({ headers, params, query }, res, next, { get, logger }) => {
 
-    const _ = require('lodash');
-    const logger = getServer('logger');
-
+    const _ = get.module('lodash');
     logger.debug('Inicio da rota REST GET /v1/funcionarios');
 
-    const service = getModule('services/funcionario-service', true);
-    const validarEntrada = getModule('modules/form', true);
-    const fields = getModule('utils/fields');
+    const service = get.self.context.module('services/funcionario-service');
+    const validarEntrada = get.self.context.module('modules/validador');
+    const cache = get.self.context.module('utils/cache-crud');
+
+    const fields = get.self.module('utils/fields');
     const queryFields = (query['fields']) ? query['fields'] : '';
     delete query.fields;
 
-    const errors = validarEntrada({
-        _id: params.id
-    });
-
+    const errors = validarEntrada({ _id: params.id });
     if (errors) return res.status(400).send(errors);
 
     try {
-        const ret = await service.obterFuncionario(params.id);
-        const _ret = (queryFields) ?
-            fields(ret, queryFields) :
-            ret;
+        const ret = await cache
+                            .get(`api:funcionarios|${params._id}`)
+                            .resetCache((headers['x-cache-reset'] === 'true')? true: false)
+                            .orElseSetResultOfMethod(service.obterFuncionario, params._id)
+                            .expireOn(3600);
         if (_.isEmpty(ret)) {
-            res.status(204).send();
+            return res.status(404).send();
         } else {
-            res.status(200).send({
-                data: _ret
-            });
+            const _ret = (queryFields) ? fields(ret, queryFields) : ret;
+            return res.status(200).send({ data: _ret });
         }
     } catch (error) {
         let err = (error.constructor.name === 'TypeError') ? {
             code: error.message,
             message: (error.stack).toString().split('\n')
         } : error;
-        res.status(500).send(err);
+        return res.status(500).send(err);
     }
 
 };

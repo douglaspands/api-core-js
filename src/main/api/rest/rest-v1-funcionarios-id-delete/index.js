@@ -16,7 +16,7 @@ module.exports.route = () => {
     return {
         controller: 'rest',
         method: 'delete',
-        uri: '/v1/funcionarios/:id'
+        uri: '/v1/funcionarios/:_id'
     }
 };
 /**
@@ -26,20 +26,22 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ params }, res, next, { getModule }) => {
+module.exports.controller = async ({ params }, res, next, { get }) => {
 
-    const service = getModule('services/funcionario-service', true);
-    const validarEntrada = getModule('modules/form', true);
+    const service = get.self.context.module('services/funcionario-service');
+    const validarEntrada = get.self.context.module('modules/validador');
+    const cache = get.self.context.module('utils/cache-crud');
 
-    const errors = validarEntrada({ _id: params.id });
-
+    const errors = validarEntrada({ _id: params._id });
     if (errors) return res.status(400).send(errors);
 
     try {
-        const ret = await service.removerFuncionario(params.id);
+        const ret = await cache
+                            .remove(`api:funcionarios|${params._id}`)
+                            .afterMethod(service.removerFuncionario, params._id);
         res.status(200).send({ data: ret });
     } catch (error) {
-        res.status(204).send({});
+        res.status(404).send({});
     }
 
 };

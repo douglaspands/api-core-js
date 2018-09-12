@@ -22,6 +22,16 @@ Para iniciar a utilização desse motor de APIs, é necessario 2 coisas:
 No diretorio **src/main/api** existem 2 pastas: **rest** e **graphql** (as APIs estão nelas respectivamente).  
 No diretorio de cada API, contem a pasta de *test*, onde contem os testes utilizando os frameworks *mocha* para validação e o *nyc* para mostrar a cobertura teste numa forma visual.
 
+### API REST
+
+-- Documentação em desenvolvimento
+-- Testes em desenvolvimento
+
+### API GraphQL
+
+-- Documentação em desenvolvimento
+-- Testes em desenvolvimento
+
 ## Configuração Inicial
 
 ### 1. Docker-Compose
@@ -75,12 +85,6 @@ Ao executar, vai aparecer no console conforme a demonstração abaixo:
 [info] 2018-08-31 19.25.42.933 server - GraphQL registrado.: removerFuncionario
 [info] 2018-08-31 19.25.42.933 server - GraphQL registrado.: pesquisarFuncionarios
 [info] 2018-08-31 19.25.42.934 health-check - Health-Check registrado: http://localhost:3001
-```
-## Monitor de execuções
-
-Se foi utilizado o docker-compose **stack-prd.yaml** ou **stack-dev.yaml** para iniciar a aplicação, você pode acompanhar as estatisticas de execução atraves do monitor **[pm2](http://pm2.keymetrics.io/)** abrindo um novo terminal e executando o comando abaixo:
-```console
-docker exec -it coreapi-app pm2 monit
 ```
 
 ## Exemplos de request utilizando API GraphQL

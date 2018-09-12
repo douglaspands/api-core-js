@@ -26,36 +26,33 @@
 const route = () => {
     return {
         controller: 'graphql',
-        graphql: 'funcionarios.gql'
+        graphql: 'funcionario.gql'
     }
 };
 /**
  *  Root do servidor GraphQL 
  */
-const root = ({ getModule, getServer }) => {
+const root = ({ get }) => {
 
-    const service = getModule('services/funcionario-service', true);
-    const validarEntrada = getModule('modules/form', true);
-    const cache = getServer('cache');
+    const service = get.self.context.module('services/funcionario-service');
+    const validarEntrada = get.self.context.module('modules/validador-opcional');
+    const validarEntradaInclusao = get.self.context.module('modules/validador-insert');
+    const validarEntradaAtualizacao = get.self.context.module('modules/validador-update');
+    const cache = get.self.context.module('utils/cache-crud');
 
     /**
      * Obter funcionario atraves do id
-     * @param {string} id 
+     * @param {object} input Objeto com _id (unico campo usado)
      * @return {object} funcionario
      */
-    async function obterFuncionario({ _id }) {
+    async function obterFuncionario({ _id }, { headers }) {
 
         validarEntrada({ _id });
-
-        const graphqlCacheId = `obterFuncionario+${_id}`;
-        let ret = await cache.get(graphqlCacheId);
-        if (ret) {
-            return JSON.parse(ret);
-        } else {
-            ret = await service.obterFuncionario(_id);
-            cache.set(graphqlCacheId, ret, 600);
-            return ret;
-        }
+        return await cache
+                        .get(`api:funcionarios|${_id}`)
+                        .resetCache((headers['x-cache-reset'] === 'true')? true: false)
+                        .orElseSetResultOfMethod(service.obterFuncionario, _id)
+                        .expireOn(3600);
     }
 
     /**
@@ -65,28 +62,11 @@ const root = ({ getModule, getServer }) => {
      */
     async function criarFuncionario({ input }) {
 
-        validarEntrada(input);
-
-        const ret = await service.incluirFuncionario(input);
-        return ret;
-
-    }
-
-    /**
-     * Obter lista de funcionarios
-     * @return {array} lista de funcionarios
-     */
-    async function listarFuncionarios() {
-
-        const graphqlCacheId = `listarFuncionarios`;
-        let ret = await cache.get(graphqlCacheId);
-        if (ret) {
-            return JSON.parse(ret);
-        } else {
-            ret = await service.pesquisarFuncionarios({});
-            cache.set(graphqlCacheId, ret, 60);
-            return ret;
-        }
+        validarEntradaInclusao(input);
+        return await cache
+                        .set(`api:funcionarios|{{_id}}`)
+                        .withResultOfMethod(service.incluirFuncionario, input)
+                        .expireOn(3600);
 
     }
 
@@ -97,12 +77,14 @@ const root = ({ getModule, getServer }) => {
      */
     async function atualizarFuncionario(funcionario) {
 
-        validarEntrada(funcionario);
+        validarEntradaAtualizacao(funcionario);
 
-        const _id = funcionario._id, body = funcionario;
-        delete body._id;
-        const ret = await service.atualizarFuncionario(_id, body);
-        return ret;
+        const _id = funcionario._id;
+        delete funcionario._id;
+        return await cache
+                        .set(`api:funcionarios|${_id}`)
+                        .withResultOfMethod(service.atualizarFuncionario, [ _id, funcionario ])
+                        .expireOn(3600);
 
     }
 
@@ -114,9 +96,9 @@ const root = ({ getModule, getServer }) => {
     async function removerFuncionario({ _id }) {
 
         validarEntrada({ _id });
-
-        const ret = await service.removerFuncionario(_id);
-        return ret;
+        return await cache
+                        .remove(`api:funcionarios|${_id}`)
+                        .afterMethod(service.removerFuncionario, _id);
 
     }
 
@@ -125,25 +107,20 @@ const root = ({ getModule, getServer }) => {
      * @param {object} pesquisa 
      * @return {array} lista de funcionarios
      */
-    async function pesquisarFuncionarios(pesquisa) {
+    async function pesquisarFuncionarios(pesquisa, { headers }) {
 
         validarEntrada(pesquisa);
+        return await cache
+                        .get(`api:funcionarios|${JSON.stringify(pesquisa)}`)
+                        .resetCache((headers['x-cache-reset'] === 'true')? true: false)
+                        .orElseSetResultOfMethod(service.pesquisarFuncionarios, pesquisa)
+                        .expireOn(600);
 
-        const graphqlCacheId = `pesquisarFuncionarios+${JSON.stringify(pesquisa)}`;
-        let ret = cache.get(graphqlCacheId);
-        if (ret) {
-            return JSON.parse(ret);
-        } else {
-            ret = await service.pesquisarFuncionarios(pesquisa);
-            cache.set(graphqlCacheId, ret, 600);
-            return ret;
-        }
     }
 
     return {
         obterFuncionario,
         criarFuncionario,
-        listarFuncionarios,
         atualizarFuncionario,
         removerFuncionario,
         pesquisarFuncionarios

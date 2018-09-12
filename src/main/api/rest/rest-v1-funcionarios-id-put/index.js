@@ -26,10 +26,11 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ params, body }, res, next, { getModule }) => {
+module.exports.controller = async ({ params, body }, res, next, { get }) => {
 
-    const service = getModule('services/funcionario-service', true);
-    const validarEntrada = getModule('modules/form', true);
+    const service = get.self.context.module('services/funcionario-service');
+    const validarEntrada = get.self.context.module('modules/validador');
+    const cache = get.self.context.module('utils/cache-crud');
 
     let input = body;
     input._id = params.id;
@@ -38,10 +39,13 @@ module.exports.controller = async ({ params, body }, res, next, { getModule }) =
     if (errors) return res.status(400).send(errors);
 
     try {
-        const ret = await service.atualizarFuncionario(input._id, body);
-        res.status(200).send({ data: ret });
+        const ret = await cache
+                            .set(`api:funcionarios|${params._id}`)
+                            .withResultOfMethod(service.atualizarFuncionario, [ input._id, body ])
+                            .expireOn(3600);
+        return res.status(200).send({ data: ret });
     } catch (error) {
-        res.status(204).send({});
+        return res.status(404).send({});
     }
 
 };

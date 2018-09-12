@@ -7,10 +7,10 @@ services:
         build:
             dockerfile: ./Dockerfile
             context: ./src
-        image: douglaspands/core-api-js:2.4.1
-        container_name: coreapi-app
+        image: douglaspands/core-api-js:2.6.2
+        container_name: apicore-app
         environment:
-            - MONGO=mongodb:27017
+            - MONGO=mongo-db:27017
             - REDIS_CACHE=redis-cache:6379
             - PORT=3000
             - NODE_ENV=development
@@ -22,11 +22,11 @@ services:
         networks:
             - develop-network
         depends_on:
-            - "mongodb"
+            - "mongo-db"
             - "redis-cache"
-    mongodb:
+    mongo-db:
         image: mongo:4.0.1
-        container_name: coreapi-db
+        container_name: apicore-db
         volumes: 
             - "./data:/data/db"
         networks: 
@@ -35,10 +35,7 @@ services:
             - "27017:27017"
     redis-cache:
         image: redis:4.0.11-alpine
-        container_name: coreapi-cache
-        command: ["redis-server", "--appendonly", "yes"]
-        volumes: 
-            - "./cache:/data"
+        container_name: apicore-cache
         networks: 
             - develop-network
         ports:

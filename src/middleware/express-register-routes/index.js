@@ -16,7 +16,7 @@ const { buildSchema } = require('graphql');
 const graphqlHTTP = require('express-graphql');
 const { mergeTypes } = require('merge-graphql-schemas');
 
-const Context = require('../../lib/context-api');
+const Context = require('../../lib/api-context');
 
 const registerRoutes = async app => {
 

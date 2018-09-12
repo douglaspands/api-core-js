@@ -6,9 +6,9 @@
  */
 'use strict';
 
-module.exports = ({ getModule }) => {
+module.exports = ({ get }) => {
 
-    const validator = getModule('utils/validator');
+    const validator = get.self.module('utils/validator');
 
     /**
      * Função para validar objeto de entrada.
@@ -17,7 +17,7 @@ module.exports = ({ getModule }) => {
      */
     function validar(funcionario) {
 
-        const { checkField, checkReportForREST } = validator(funcionario);
+        const { checkField, checkReportForGraphQL } = validator(funcionario);        
 
         checkField('_id', 'ID invalido')
             .isOptional()
@@ -47,7 +47,7 @@ module.exports = ({ getModule }) => {
             .isOptional()
             .isEmail();
 
-        return checkReportForREST();
+        checkReportForGraphQL();
 
     }
 

@@ -1,0 +1,297 @@
+{
+	"info": {
+		"_postman_id": "e3892afa-737a-49fd-9414-5e164e93b306",
+		"name": "core-api-js",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Consulta servidor",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "localhost:3000",
+					"host": [
+						"localhost"
+					],
+					"port": "3000"
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionario (REST) - Criar",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nome\": \"Joao\",\n    \"sobrenome\": \"Da Silva\",\n    \"cidade\": \"Sorocaba\",\n    \"estado\": \"SP\",\n    \"telefone\": \"1599999999\",\n    \"email\": \"joao.silva@enterprise.com\"\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/v1/funcionarios",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"funcionarios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionario (REST) - Consultar ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-cache-reset",
+						"value": " true",
+						"disabled": true
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "{{server}}/v1/funcionarios/5b9420eb523b6d2ae5651368",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"v1",
+						"funcionarios",
+						"5b9420eb523b6d2ae5651368"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionario (REST) - Atualizar ID",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-cache-reset",
+						"value": " true"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"cidade\": \"taboao da serra\"\n}"
+				},
+				"url": {
+					"raw": "{{server}}/v1/funcionarios/5b9420eb523b6d2ae5651368",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"v1",
+						"funcionarios",
+						"5b9420eb523b6d2ae5651368"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionario (REST) - Excluir ID",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{server}}/v1/funcionarios/5b941bd1857543236409160f",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"v1",
+						"funcionarios",
+						"5b941bd1857543236409160f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionario (REST) - Pesquisar",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-cache-reset",
+						"value": "true",
+						"disabled": true
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "{{server}}/v1/funcionarios",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"v1",
+						"funcionarios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionario (GraphQL) - Criar",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"query\": \"mutation { criarFuncionario(input:{ nome: \\\"Victor\\\" sobrenome: \\\"Silva\\\" cidade: \\\"São Paulo\\\" estado: \\\"SP\\\" telefone: \\\"1166666666\\\" email: \\\"victor.silva@enterprise.com\\\" }) { _id nome sobrenome } }\"\n}\n"
+				},
+				"url": {
+					"raw": "localhost:3000/graphql",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionario (GraphQL) - Consultar ID",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"query\": \" query { obterFuncionario(_id: \\\"5b93611e274f7b4c5130990f\\\") { _id nome sobrenome cidade estado telefone email } }\"\n}\n"
+				},
+				"url": {
+					"raw": "localhost:3000/graphql",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionario (GraphQL) - Pesquisar",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"query\": \" query { pesquisarFuncionarios(estado: \\\"sp\\\") { _id nome sobrenome cidade estado telefone email } }\"\n}\n"
+				},
+				"url": {
+					"raw": "localhost:3000/graphql",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionario (GraphQL) - Remover ID",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"query\": \" mutation { removerFuncionario(_id: \\\"5b9420eb523b6d2ae5651368\\\") }\"\n}\n"
+				},
+				"url": {
+					"raw": "localhost:3000/graphql",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionario (GraphQL) - Atualizar ID",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"query\": \" mutation { atualizarFuncionario(_id: \\\"5b9431cce7fdee3fd5db0b77\\\" sobrenome: \\\"Cerqueira\\\") { _id nome sobrenome cidade estado telefone email } }\"\n}\n"
+				},
+				"url": {
+					"raw": "localhost:3000/graphql",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,5 +1,5 @@
 {
     "source": "express-cache",
     "uri": "localhost:6379",
-    "time_default": 600
+    "time_default": 3600
 }

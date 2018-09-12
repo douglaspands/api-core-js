@@ -1,13 +1,14 @@
 /**
- * @file Model Funcionarios
- * @author douglaspands
+ * @file Service Funcionarios
+ * @author @douglaspands
  * @since 2017-11-23
+ * @version 1.3.0
  */
 'use strict';
 
-module.exports = ({ getModule }) => {
+module.exports = ({ get }) => {
 
-    const crud = getModule('utils/mongodb-crud', true);
+    const crud = get.self.context.module('utils/mongodb-crud');
 
     /**
      * Obter funcionario pelo ID.
@@ -16,8 +17,9 @@ module.exports = ({ getModule }) => {
      */
     async function obterFuncionario(id) {
 
-        return await crud.find('funcionarios', id);
-
+        let ret = await crud.find('funcionarios', id);
+        if (ret) ret['_id'] = ret['_id'].toString();
+        return ret;
     }
 
     /**
@@ -27,7 +29,11 @@ module.exports = ({ getModule }) => {
      */
     async function pesquisarFuncionarios(query) {
 
-        return await crud.scan('funcionarios', query);
+        let ret = await crud.scan('funcionarios', query);
+        return (ret || []).map(o => {
+            o['_id'] = o['_id'].toString();
+            return o;
+        }, []);
 
     }
 
@@ -38,8 +44,12 @@ module.exports = ({ getModule }) => {
      */
     async function incluirFuncionario(funcionario) {
 
+        delete funcionario.id;
+        delete funcionario._id;
         let ret = await crud.insert('funcionarios', funcionario);
-        return (ret.ops)? ret.ops[0]: ret;
+        ret = (ret.ops) ? ret.ops[0] : ret;
+        if (ret['_id']) ret['_id'] = ret['_id'].toString();
+        return ret;
 
     }
 
@@ -51,7 +61,10 @@ module.exports = ({ getModule }) => {
      */
     async function atualizarFuncionario(id, funcionario) {
 
-        return await crud.update('funcionarios', id, funcionario);
+        await crud.update('funcionarios', id, funcionario);
+        let ret = await crud.find('funcionarios', id);
+        if (ret) ret['_id'] = ret['_id'].toString();
+        return ret;
 
     }
 

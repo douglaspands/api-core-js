@@ -1,14 +1,13 @@
 /**
- * @file Modulo para validar os parametros de entrada.
+ * @file Modulo para validar os parametros de entrada na inclusão de funcionario.
  * @author douglaspands
- * @author Victor Tripeno
- * @since 2017-11-23
+ * @since 2018-09-06
  */
 'use strict';
 
-module.exports = ({ getModule }) => {
+module.exports = ({ get }) => {
 
-    const validator = getModule('utils/validator');
+    const validator = get.self.module('utils/validator');
 
     /**
      * Função para validar objeto de entrada.
@@ -17,37 +16,27 @@ module.exports = ({ getModule }) => {
      */
     function validar(funcionario) {
 
-        const { checkField, checkReportForREST } = validator(funcionario);
-
-        checkField('_id', 'ID invalido')
-            .isOptional()
-            .isMongoId();
+        const { checkField, checkReportForGraphQL } = validator(funcionario);        
 
         checkField('nome', 'Nome invalido')
-            .isOptional()
             .notEmpty();
 
         checkField('sobrenome', 'Sobrenome invalido')
-            .isOptional()
             .notEmpty();
 
         checkField('cidade', 'Cidade invalida')
-            .isOptional()
             .notEmpty();
 
         checkField('estado', 'Estado invalido')
-            .isOptional()
             .isUF();
 
         checkField('telefone', 'Telefone invalido')
-            .isOptional()
             .isPhoneNumber();
 
         checkField('email', 'Email invalido')
-            .isOptional()
             .isEmail();
 
-        return checkReportForREST();
+        checkReportForGraphQL();
 
     }
 

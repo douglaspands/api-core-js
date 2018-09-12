@@ -1,7 +1,8 @@
 /**
- * @file Modulo de apoio a API para testes.
+ * @file Modulo de apoio a API.
  * @author @douglaspands
- * @since 2017-12-29
+ * @since 2018-09-08
+ * @version 2.0.0
  */
 'use strict';
 const path = require('path');
@@ -42,26 +43,20 @@ function Context(modulePath, app) {
      * @param {string} name Nome da variavel do servidor
      * @return {any} Retornar o valor da variavel obtida.
      */
-    this.getServer = name => {
-
+    function getServer(name) {
         _logger.debug({
             source: _moduleName,
             message: `Foi solicitado a variavel "${name}" do servidor.`
         });
-
-        let _mod = null;
-
         //-- mock
         let mock = serverMock.find(m => m.name === name);
         if (mock) return mock.behavior;
         //--
-
-        try {
-            _mod = _app.get(name);
-        } catch (error) {
+        let _mod = _app.get(name);
+        if (!_mod) {
             _logger.error({
                 source: _moduleName,
-                message: error.stack
+                message: `Modulo "${name}" do servidor não foi encontrada!`
             });
         }
         return _mod;
@@ -73,7 +68,7 @@ function Context(modulePath, app) {
      * @param {boolean} self "true" - Executa a primeira função passando o "this".
      * @return {object} Conexão com o MongoDB
      */
-    this.getModule = (name, self) => {
+    function getModule(name, self) {
 
         _logger.debug({
             source: _moduleName,
@@ -84,6 +79,16 @@ function Context(modulePath, app) {
 
         const _name = name;
         const _self = (typeof self === 'boolean') ? self : false;
+
+        function getLocalModule(modulePath, name) {
+            if (!regexFolderLimit.test(modulePath)) return null;
+            try {
+                return require(path.join(modulePath, name));
+            } catch (error) {
+                const newModulePath = path.join(modulePath, '..');
+                return getLocalModule(newModulePath, name);
+            }
+        }
 
         //-- mock
         let mock = moduleMock.find(m => m.name === _name);
@@ -96,29 +101,18 @@ function Context(modulePath, app) {
         }
         //--
 
-        function getLocalModule(modulePath, name) {
-            if (!regexFolderLimit.test(modulePath)) return null;
-            try {
-                return require(path.join(modulePath, name));
-            } catch (error) {
-                const newModulePath = path.join(modulePath, '..');
-                return getLocalModule(newModulePath, name);
-            }
-        }
+        let _mod = getLocalModule(_modulePath, _name);
 
-        const _mod = getLocalModule(_modulePath, _name);
-
-        if (!_mod) {
+        if (_mod) {
+            if (_self && typeof _mod === 'function') _mod = _mod(this);
+        } else {
             _logger.error({
                 source: _moduleName,
                 message: `Modulo "${_name}" não foi encontrado!`
-            })
-            return null;
-        } else if (_self && typeof _mod === 'function') {
-            return _mod(this);
-        } else {
-            return _mod;
+            });
         }
+
+        return _mod;
 
     }
 
@@ -127,7 +121,7 @@ function Context(modulePath, app) {
      * @param {string} name Nome da variavel
      * @param {any} behavior Comportamento
      */
-    this.setServerMock = (name, behavior) => {
+    function setServerMock(name, behavior) {
         if (typeof name === 'string' && name.length > 0) {
             serverMock.push({ name, behavior });
         }
@@ -138,12 +132,57 @@ function Context(modulePath, app) {
      * @param {string} name Nome do modulo
      * @param {any} behavior Comportamento
      */
-    this.setModuleMock = (name, behavior) => {
+    function setModuleMock(name, behavior) {
         if (typeof name === 'string' && name.length > 0) {
             serverMock.push({ name, behavior });
         }
     }
 
+    /**
+     * Encapsulando em paradigmas funcionais
+     */
+    this.get = {
+        self: {
+            context: {
+                module: (moduleName) => {
+                    return getModule(moduleName, true);
+                }
+            },
+            module: (moduleName) => {
+                return getModule(moduleName, false);
+            }
+        },
+        server: (moduleName) => {
+            return getServer(moduleName);
+        },
+        module: (moduleName) => {
+            _logger.debug({
+                source: _moduleName,
+                message: `Foi solicitado o modulo "${moduleName}" do node_modules.`
+            });
+            return require(moduleName);
+        }
+    }
+
+    /**
+     * Modulo de log
+     */
+    this.logger = _logger;
+
+    this.set = {
+        mock: {
+            module: (name, behavior) => {
+                setModuleMock(name, behavior)
+            },
+            server: (name, behavior) => {
+                setServerMock(name, behavior)
+            }
+        }
+    }
+
+    if (this instanceof Context) {
+        Object.freeze(this);
+    }
 
 }
 

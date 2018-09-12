@@ -46,10 +46,6 @@ type Query {
         _id: ID!
     ): Funcionario
     """
-    Listar funcionarios
-    """
-    listarFuncionarios: [Funcionario]
-    """
     Pesquisar funcionario
     - Todos os parametros solicitados são opcionais, preenchendo apenas os campos que deseja pequisar.
     """
@@ -97,7 +93,7 @@ type Mutation {
         telefone: String
         "Email do funcionario"
         email: String
-    ): String
+    ): Funcionario
     """
     Remover funcionario"
     """

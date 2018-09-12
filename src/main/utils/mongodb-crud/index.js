@@ -2,15 +2,15 @@
  * @file CRUD padrão no MongoDB.
  * @author douglaspands
  * @since 2017-11-21
+ * @version 1.3.0
  */
 'use strict';
 
 const { ObjectID } = require('mongodb');
 
-module.exports = ({ getServer }) => {
+module.exports = ({ get, logger }) => {
 
-    const db = getServer('mongodb');
-    const logger = getServer('logger');
+    const db = get.server('mongodb');
 
     /**
      * Vaidar ID.
@@ -27,7 +27,7 @@ module.exports = ({ getServer }) => {
      * @param {object} key pesquisa
      * @return {Promise.<array>} retorna lista de recursos pesquisado
      */
-    async function scan(collection, key) {
+    function scan(collection, key) {
 
         //const query = ((key && typeof key === 'object') ? key : {});
         const query = {};
@@ -39,7 +39,7 @@ module.exports = ({ getServer }) => {
                 }
             } else {
                 query[prop] = new RegExp(key[prop], 'gi');
-            } 
+            }
         });
 
         return new Promise((resolve, reject) => {
@@ -70,7 +70,7 @@ module.exports = ({ getServer }) => {
      * @param {string} _id id
      * @return {Promise.<array>} retorna lista de recursos pesquisado
      */
-    async function find(collection, _id) {
+    function find(collection, _id) {
 
         const query = {};
 
@@ -112,7 +112,7 @@ module.exports = ({ getServer }) => {
      * @param {string} _id id
      * @return {Promise.<string>} retorno o status
      */
-    async function remove(collection, _id) {
+    function remove(collection, _id) {
 
         const query = {};
 
@@ -155,7 +155,7 @@ module.exports = ({ getServer }) => {
      * @param {object} body documento/objeto que sera persistido.
      * @return {Promise.<object>} retorno o proprio documento/objeto com o ID.
      */
-    async function insert(collection, body) {
+    function insert(collection, body) {
 
         return new Promise((resolve, reject) => {
 
@@ -197,7 +197,7 @@ module.exports = ({ getServer }) => {
      * @param {object} set objeto com os campo que serão atualizados
      * @return {Promise.<object>} retorna o documento/objeto atualizado
      */
-    async function update(collection, _id, set) {
+    function update(collection, _id, set) {
 
         const query = {}, update = {};
 
