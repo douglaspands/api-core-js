@@ -10,8 +10,8 @@ services:
         image: douglaspands/core-api-js:2.6.2
         container_name: apicore-app
         environment:
-            - MONGO=mongo-db:27017
-            - REDIS_CACHE=redis-cache:6379
+            - MONGO_URL=mongo-db:27017
+            - REDIS_URL=redis-cache:6379
             - PORT=3000
             - NODE_ENV=development
         volumes: 

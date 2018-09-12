@@ -9,8 +9,8 @@ const path = require('path');
 const config = require('./config');
 const regexFolderLimit = new RegExp(config.folderLimit);
 const winston = require('winston');
-let serverMock = [];
-let moduleMock = [];
+let serverMock = {};
+let moduleMock = {};
 
 /**
  * Class de contexto da API
@@ -36,7 +36,8 @@ function Context(modulePath, app) {
             })
         ]
     });
-    serverMock.push({ name: 'logger', behavior: _logger });
+
+    serverMock['logger'] = _logger;
 
     /**
      * Obter variaveis do servidor
@@ -49,8 +50,8 @@ function Context(modulePath, app) {
             message: `Foi solicitado a variavel "${name}" do servidor.`
         });
         //-- mock
-        let mock = serverMock.find(m => m.name === name);
-        if (mock) return mock.behavior;
+        let mock = serverMock[name];
+        if (mock) return mock;
         //--
         let _mod = _app.get(name);
         if (!_mod) {
@@ -87,16 +88,16 @@ function Context(modulePath, app) {
             } catch (error) {
                 const newModulePath = path.join(modulePath, '..');
                 return getLocalModule(newModulePath, name);
-            }
+            }s
         }
 
         //-- mock
-        let mock = moduleMock.find(m => m.name === _name);
+        let mock = moduleMock[_name];
         if (mock) {
-            if (_self && typeof mock.behavior === 'function') {
-                return mock.behavior(this);
+            if (_self && typeof mock === 'function') {
+                return mock(this);
             } else {
-                return mock.behavior;
+                return mock;
             }
         }
         //--
@@ -123,7 +124,7 @@ function Context(modulePath, app) {
      */
     function setServerMock(name, behavior) {
         if (typeof name === 'string' && name.length > 0) {
-            serverMock.push({ name, behavior });
+            serverMock[name] = behavior;
         }
     }
 
@@ -134,7 +135,7 @@ function Context(modulePath, app) {
      */
     function setModuleMock(name, behavior) {
         if (typeof name === 'string' && name.length > 0) {
-            serverMock.push({ name, behavior });
+            moduleMock[name] = behavior;
         }
     }
 

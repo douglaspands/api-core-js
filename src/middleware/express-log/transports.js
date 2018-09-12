@@ -21,7 +21,7 @@ module.exports = (winston, app) => {
 
     const { transports, format } = winston;
     const { combine, timestamp, colorize, label, printf } = format;
-    const LEVEL = (process.env.LOG || 'silly');
+    const LEVEL = (process.env.LOG_LEVEL || 'silly');
 
     /**
      * Customização da geração de log pelo console

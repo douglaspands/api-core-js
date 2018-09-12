@@ -8,8 +8,8 @@ const path = require('path');
 const assert = require('assert');
 const _ = require('lodash');
 
-const Context = require('../../../lib/context-app-test');
-const pathApp = path.join(__dirname, '..');
+const Context = require('../../../../../lib/api-context-test');
+const pathApp = path.join(__dirname);
 
 
 describe('# ./index.js', () => {
@@ -19,12 +19,17 @@ describe('# ./index.js', () => {
     beforeEach(() => {
 
         context = new Context(pathApp);
+        context.set.mock.server('cache', {
+            get: () => new Promise(resolve => resolve(null)),
+            set: () => {},
+            del: () => {} 
+        });
 
     });
 
     it(`${++i} - ObterFuncionario() - Execução com sucesso`, async () => {
 
-        context.setMock('services/funcionario-service', {
+        context.set.mock.module('services/funcionario-service', {
             obterFuncionario: () => {
                 return {
                     nome: 'Joao',
@@ -33,17 +38,13 @@ describe('# ./index.js', () => {
             }
         });
 
-        const { obterFuncionario } = require('../index')(context);
+        const { obterFuncionario } = require('../index').root(context);
 
         const req = {
             _id: '123456789012345678901234'
         };
 
-        try {
-            var result = await obterFuncionario(req);
-        } catch (error) {
-            console.error(error);
-        }
+        let result = await obterFuncionario(req);
 
         assert.equal(result.nome, 'Joao');
         assert.equal(result.empresa, 'CPMGFHJKL');
@@ -53,7 +54,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - criarFuncionario() - Execução com sucesso`, async () => {
 
-        context.setMock('services/funcionario-service', {
+        context.set.mock.module('services/funcionario-service', {
             incluirFuncionario: () => {
                 return {
                     _id: '123456789012345678901234',
@@ -63,7 +64,7 @@ describe('# ./index.js', () => {
             }
         });
 
-        const { criarFuncionario } = require('../index')(context);
+        const { criarFuncionario } = require('../index').root(context);
 
         const req = {
             input: {
@@ -87,7 +88,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - listarFuncionarios() - Execução com sucesso`, async () => {
 
-        context.setMock('services/funcionario-service', {
+        context.set.mock.module('services/funcionario-service', {
             pesquisarFuncionarios: () => {
                 return [{
                     _id: '123456789012345678901234',
@@ -102,7 +103,7 @@ describe('# ./index.js', () => {
             }
         });
 
-        const { listarFuncionarios } = require('../index')(context);
+        const { listarFuncionarios } = require('../index').root(context);
 
         const req = {};
 
@@ -123,13 +124,13 @@ describe('# ./index.js', () => {
 
     it(`${++i} - removerFuncionario() - Execução com sucesso`, async () => {
 
-        context.setMock('services/funcionario-service', {
+        context.set.mock.module('services/funcionario-service', {
             removerFuncionario: () => {
                 return 'Foi/Foram removido(s) 1 registro(s)!';
             }
         });
 
-        const { removerFuncionario } = require('../index')(context);
+        const { removerFuncionario } = require('../index').root(context);
 
         const req = {
             _id: '123456789012345678901234'
@@ -147,13 +148,13 @@ describe('# ./index.js', () => {
 
     it(`${++i} - atualizarFuncionario() - Execução com sucesso`, async () => {
 
-        context.setMock('services/funcionario-service', {
+        context.set.mock.module('services/funcionario-service', {
             atualizarFuncionario: () => {
                 return 'Foi/Foram atualizado(s) 1 registro(s)!';
             }
         });
 
-        const { atualizarFuncionario } = require('../index')(context);
+        const { atualizarFuncionario } = require('../index').root(context);
 
         const req = {
             _id: '123456789012345678901234',
@@ -172,7 +173,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - pesquisarFuncionarios() - Execução com sucesso`, async () => {
 
-        context.setMock('services/funcionario-service', {
+        context.set.mock.module('services/funcionario-service', {
             pesquisarFuncionarios: () => {
                 return [{
                     _id: '12345678901234567890abcd',
@@ -182,7 +183,7 @@ describe('# ./index.js', () => {
             }
         });
 
-        const { pesquisarFuncionarios } = require('../index')(context);
+        const { pesquisarFuncionarios } = require('../index').root(context);
 
         const req = {
             _id: '123456789012345678901234',
