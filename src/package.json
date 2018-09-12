@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node ./app.js",
+    "start-cluster": "node ./bin/www",
     "start-dev": "pm2 start ./app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
