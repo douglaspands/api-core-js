@@ -26,7 +26,7 @@
 const route = () => {
     return {
         controller: 'graphql',
-        graphql: 'funcionarios.gql'
+        graphql: 'funcionario.gql'
     }
 };
 /**
@@ -45,11 +45,12 @@ const root = ({ get }) => {
      * @param {object} input Objeto com _id (unico campo usado)
      * @return {object} funcionario
      */
-    async function obterFuncionario({ _id }) {
+    async function obterFuncionario({ _id }, { headers }) {
 
         validarEntrada({ _id });
         return await cache
-                        .get(`get_funcionario_${_id}`)
+                        .get(`api:funcionarios|${_id}`)
+                        .resetCache((headers['x-cache-reset'] === 'true')? true: false)
                         .orElseSetResultOfMethod(service.obterFuncionario, _id)
                         .expireOn(3600);
     }
@@ -63,7 +64,7 @@ const root = ({ get }) => {
 
         validarEntradaInclusao(input);
         return await cache
-                        .set(`get_funcionario_{{_id}}`)
+                        .set(`api:funcionarios|{{_id}}`)
                         .withResultOfMethod(service.incluirFuncionario, input)
                         .expireOn(3600);
 
@@ -81,7 +82,7 @@ const root = ({ get }) => {
         const _id = funcionario._id;
         delete funcionario._id;
         return await cache
-                        .set(`get_funcionario_${_id}`)
+                        .set(`api:funcionarios|${_id}`)
                         .withResultOfMethod(service.atualizarFuncionario, [ _id, funcionario ])
                         .expireOn(3600);
 
@@ -96,7 +97,7 @@ const root = ({ get }) => {
 
         validarEntrada({ _id });
         return await cache
-                        .remove(`get_funcionario_${_id}`)
+                        .remove(`api:funcionarios|${_id}`)
                         .afterMethod(service.removerFuncionario, _id);
 
     }
@@ -106,11 +107,12 @@ const root = ({ get }) => {
      * @param {object} pesquisa 
      * @return {array} lista de funcionarios
      */
-    async function pesquisarFuncionarios(pesquisa) {
+    async function pesquisarFuncionarios(pesquisa, { headers }) {
 
         validarEntrada(pesquisa);
         return await cache
-                        .get(`get_funcionarios_${JSON.stringify(pesquisa)}`)
+                        .get(`api:funcionarios|${JSON.stringify(pesquisa)}`)
+                        .resetCache((headers['x-cache-reset'] === 'true')? true: false)
                         .orElseSetResultOfMethod(service.pesquisarFuncionarios, pesquisa)
                         .expireOn(600);
 

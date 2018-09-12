@@ -16,7 +16,7 @@ module.exports.route = () => {
     return {
         controller: 'rest',
         method: 'get',
-        uri: '/v1/funcionarios/:id'
+        uri: '/v1/funcionarios/:_id'
     }
 };
 /**
@@ -44,9 +44,9 @@ module.exports.controller = async ({ headers, params, query }, res, next, { get,
 
     try {
         const ret = await cache
-                            .get(`get_funcionario_${params.id}`)
+                            .get(`api:funcionarios|${params._id}`)
                             .resetCache((headers['x-cache-reset'] === 'true')? true: false)
-                            .orElseSetResultOfMethod(service.obterFuncionario, params.id)
+                            .orElseSetResultOfMethod(service.obterFuncionario, params._id)
                             .expireOn(3600);
         if (_.isEmpty(ret)) {
             return res.status(404).send();
