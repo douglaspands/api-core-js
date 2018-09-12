@@ -22,15 +22,59 @@ Para iniciar a utilização desse motor de APIs, é necessario 2 coisas:
 No diretorio **src/main/api** existem 2 pastas: **rest** e **graphql** (as APIs estão nelas respectivamente).  
 No diretorio de cada API, contem a pasta de *test*, onde contem os testes utilizando os frameworks *mocha* para validação e o *nyc* para mostrar a cobertura teste numa forma visual.
 
-### API REST
+### Objeto de contexto
 
--- Documentação em desenvolvimento   
--- Testes em desenvolvimento
-
-### API GraphQL
-
--- Documentação em desenvolvimento   
--- Testes em desenvolvimento
+Praticamente todos os modulos utilizam o objeto "Context", ele contem as seguintes funções:
+```yaml
+## Objeto de apoio
+Context:
+  ## "get" é o nó principal 
+  get:
+    ## nó que informa que o modulo é local.
+    self: 
+      ## nó que informa que o modulo local precisa do Context.
+      context: 
+        ## funcao onde é passado a pasta e o nome do modulo e executa a funcao primaria passando o Context. Ex service/funcionario
+        module: 
+      ## funcao onde é passado a pasta e o nome do modulo
+      module:
+    ## funcao onde é passado o nome da variavel que quer obter do servidor 
+    server: 
+    ## funcao igual o comando "require" nativo
+    module: 
+```
+Exemplo de camadas:
+```javascript
+//// conector do mongo
+const mongo = context.get.server('mongo');
+//// conector do redis 
+const redis = context.get.server('redis');
+//// logger 
+const logger = context.get.server('logger');
+//// obtendo framework do node_modules
+const _ = context.get.module('lodash');
+//// chamando um modulo simples
+// /service/funcionario.js
+module.exports.consultar = function(id) {
+  return 123;
+}
+// /controller.js
+const service = context.get.self.module('/service/funcionario');
+service.consultar(123);
+//// chamando um modulo que precisa do context
+// /service/funcionario.js
+module.exports = (context) => {
+  const consultar = function(id) {
+    const logger = context.get.server('logger');
+    logger.info('executando a consulta');
+    return 123;
+  }
+  return { consultar };
+}
+// /controller.js
+const service = context.get.self.context.module('/service/funcionario');
+service.consultar(123);
+```
 
 ## Configuração Inicial
 
@@ -70,21 +114,34 @@ $ npm start
 ## Log de Inicialização
 
 Ao executar, vai aparecer no console conforme a demonstração abaixo:
-```console
-[info] 2018-08-31 19.25.42.772 mongodb-connect - MongoDB ativado com sucesso na url: mongodb://mongodb:27017
-[info] 2018-08-31 19.25.42.928 server - Executando "core-api-js@2.2.5" em http://localhost:3000 (production)
-[info] 2018-08-31 19.25.42.929 server - REST registrado....: /v1/funcionarios [get]
-[info] 2018-08-31 19.25.42.930 server - REST registrado....: /v1/funcionarios/:id [delete]
-[info] 2018-08-31 19.25.42.930 server - REST registrado....: /v1/funcionarios/:id [get]
-[info] 2018-08-31 19.25.42.931 server - REST registrado....: /v1/funcionarios/:id [put]
-[info] 2018-08-31 19.25.42.931 server - REST registrado....: /v1/funcionarios [post]
-[info] 2018-08-31 19.25.42.931 server - GraphQL registrado.: obterFuncionario
-[info] 2018-08-31 19.25.42.932 server - GraphQL registrado.: criarFuncionario
-[info] 2018-08-31 19.25.42.932 server - GraphQL registrado.: listarFuncionarios
-[info] 2018-08-31 19.25.42.933 server - GraphQL registrado.: atualizarFuncionario
-[info] 2018-08-31 19.25.42.933 server - GraphQL registrado.: removerFuncionario
-[info] 2018-08-31 19.25.42.933 server - GraphQL registrado.: pesquisarFuncionarios
-[info] 2018-08-31 19.25.42.934 health-check - Health-Check registrado: http://localhost:3001
+```bash
+[info] 2018-09-12 20.34.15.299 express-cache - Redis (cache) ativado com sucesso na url: redis://localhost:6379
+[info] 2018-09-12 20.34.15.316 express-mongodb - MongoDB ativado com sucesso na url: mongodb://localhost:27017
+[debug] 2018-09-12 20.34.16.488 graphql-funcionarios - Foi solicitado o modulo "services/funcionario-service".
+[debug] 2018-09-12 20.34.16.489 graphql-funcionarios - Foi solicitado o modulo "utils/mongodb-crud".
+[debug] 2018-09-12 20.34.16.490 graphql-funcionarios - Foi solicitado a variavel "mongodb" do servidor.
+[debug] 2018-09-12 20.34.16.490 graphql-funcionarios - Foi solicitado o modulo "modules/validador-opcional".
+[debug] 2018-09-12 20.34.16.491 graphql-funcionarios - Foi solicitado o modulo "utils/validator".
+[debug] 2018-09-12 20.34.16.491 graphql-funcionarios - Foi solicitado o modulo "modules/validador-insert".
+[debug] 2018-09-12 20.34.16.492 graphql-funcionarios - Foi solicitado o modulo "utils/validator".
+[debug] 2018-09-12 20.34.16.492 graphql-funcionarios - Foi solicitado o modulo "modules/validador-update".
+[debug] 2018-09-12 20.34.16.493 graphql-funcionarios - Foi solicitado o modulo "utils/validator".
+[debug] 2018-09-12 20.34.16.493 graphql-funcionarios - Foi solicitado o modulo "utils/cache-crud".
+[debug] 2018-09-12 20.34.16.494 graphql-funcionarios - Foi solicitado a variavel "cache" do servidor.
+[info] 2018-09-12 20.34.16.518 server - Executando "api-core-js@2.7.1" em http://localhost:3000 (develop) (pid:32632) 
+[debug] 2018-09-12 20.34.16.519 server - GraphQL IDE disponivel em http://localhost:3000/graphql
+[debug] 2018-09-12 20.34.16.519 server - REST registrado....: /v1/funcionarios [get]
+[debug] 2018-09-12 20.34.16.519 server - REST registrado....: /v1/funcionarios/:_id [delete]
+[debug] 2018-09-12 20.34.16.520 server - REST registrado....: /v1/funcionarios/:_id [get]
+[debug] 2018-09-12 20.34.16.520 server - REST registrado....: /v1/funcionarios/:id [put]
+[debug] 2018-09-12 20.34.16.521 server - REST registrado....: /v1/funcionarios [post]
+[debug] 2018-09-12 20.34.16.521 server - GraphQL registrado.: obterFuncionario
+[debug] 2018-09-12 20.34.16.522 server - GraphQL registrado.: criarFuncionario
+[debug] 2018-09-12 20.34.16.522 server - GraphQL registrado.: atualizarFuncionario
+[debug] 2018-09-12 20.34.16.523 server - GraphQL registrado.: removerFuncionario
+[debug] 2018-09-12 20.34.16.523 server - GraphQL registrado.: pesquisarFuncionarios
+[info] 2018-09-12 20.34.16.525 health-check - Rota registrada: http://localhost:3001 (pid:32632)
+
 ```
 
 ## Exemplos de request utilizando API GraphQL

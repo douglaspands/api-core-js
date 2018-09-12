@@ -30,7 +30,11 @@ const route = () => {
     }
 };
 /**
- *  Root do servidor GraphQL 
+ * Root do servidor GraphQL 
+ * @param {object} context
+ * @returns {object} 
+ * - root
+ * - route
  */
 const root = ({ get }) => {
 
