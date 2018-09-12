@@ -7,7 +7,7 @@
 /** 
  * Configuracoes da rota
  * @returns {object} Retorna os campos:
- * controller: tipo de api (rest|graphql)
+ * controller: tipo de api (rest:graphql)
  * method: verbo http que esta sendo executado
  * uri: rota 
  * graphql: nome do arquivo .gql
@@ -37,7 +37,7 @@ module.exports.controller = async ({ params }, res, next, { get }) => {
 
     try {
         const ret = await cache
-                            .remove(`api:funcionarios|${params._id}`)
+                            .remove(`api:funcionarios:${params._id}`)
                             .afterMethod(service.removerFuncionario, params._id);
         res.status(200).send({ data: ret });
     } catch (error) {

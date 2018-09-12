@@ -7,7 +7,7 @@
 /** 
  * Configuracoes da rota
  * @returns {object} Retorna os campos:
- * controller: tipo de api (rest|graphql)
+ * controller: tipo de api (rest:graphql)
  * method: verbo http que esta sendo executado
  * uri: rota 
  * graphql: nome do arquivo .gql
@@ -38,7 +38,7 @@ module.exports.controller = async ({ headers, query }, res, next, { get }) => {
 
     try {
         const ret = await cache
-                            .get(`api:funcionarios|${JSON.stringify(pesquisa)}`)
+                            .get(`api:funcionarios:search:${JSON.stringify(pesquisa)}`)
                             .resetCache((headers['x-cache-reset'] === 'true')? true: false)
                             .orElseSetResultOfMethod(service.pesquisarFuncionarios, query)
                             .expireOn(600);        
