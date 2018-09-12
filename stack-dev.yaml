@@ -3,15 +3,15 @@
 # Disponibiliza a interface GraphiQL e todos acessos aos servidores.
 version: '3.5'
 services:
-    core-api-js:
+    api-core-js:
         build:
             dockerfile: ./Dockerfile
             context: ./src
-        image: douglaspands/core-api-js:2.6.2
+        image: douglaspands/api-core-js:2.6.2
         container_name: apicore-app
         environment:
-            - MONGO=mongo-db:27017
-            - REDIS_CACHE=redis-cache:6379
+            - MONGO_URL=mongo-db:27017
+            - REDIS_URL=redis-cache:6379
             - PORT=3000
             - NODE_ENV=development
         volumes: 

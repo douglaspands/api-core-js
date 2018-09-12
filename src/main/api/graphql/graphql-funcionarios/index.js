@@ -18,7 +18,7 @@
 /** 
  * Configuracoes da rota
  * @returns {object} Retorna os campos:
- * controller: tipo de api (rest|graphql)
+ * controller: tipo de api (rest:graphql)
  * method: verbo http que esta sendo executado
  * uri: rota 
  * graphql: nome do arquivo .gql
@@ -26,7 +26,7 @@
 const route = () => {
     return {
         controller: 'graphql',
-        graphql: 'funcionario.gql'
+        graphql: 'funcionario.graphql'
     }
 };
 /**
@@ -42,14 +42,18 @@ const root = ({ get }) => {
 
     /**
      * Obter funcionario atraves do id
-     * @param {object} input Objeto com _id (unico campo usado)
+     * @param {object} body Objeto com _id (unico campo usado)
+     * @param {*} req Objeto do framework express.js
      * @return {object} funcionario
      */
-    async function obterFuncionario({ _id }, { headers }) {
+    async function obterFuncionario(body, req) {
+
+        const { _id } = body;
+        const { headers } = req; 
 
         validarEntrada({ _id });
         return await cache
-                        .get(`api:funcionarios|${_id}`)
+                        .get(`api:funcionarios:${_id}`)
                         .resetCache((headers['x-cache-reset'] === 'true')? true: false)
                         .orElseSetResultOfMethod(service.obterFuncionario, _id)
                         .expireOn(3600);
@@ -57,14 +61,16 @@ const root = ({ get }) => {
 
     /**
      * Incluir funcionario
-     * @param {object} input funcionario que será cadastrado.
+     * @param {object} body funcionario que será cadastrado.
      * @return {object} funcionario criado 
      */
-    async function criarFuncionario({ input }) {
+    async function criarFuncionario(body, req) {
+
+        const { input } = body;
 
         validarEntradaInclusao(input);
         return await cache
-                        .set(`api:funcionarios|{{_id}}`)
+                        .set(`api:funcionarios:{{_id}}`)
                         .withResultOfMethod(service.incluirFuncionario, input)
                         .expireOn(3600);
 
@@ -72,48 +78,55 @@ const root = ({ get }) => {
 
     /**
      * Atualizar funcionario
-     * @param {string} funcionario Dados do funcionario.
+     * @param {string} body Dados do funcionario.
+     * @param {*} req Objeto do framework express.js
      * @return {string} status 
      */
-    async function atualizarFuncionario(funcionario) {
+    async function atualizarFuncionario(body, req) {
 
-        validarEntradaAtualizacao(funcionario);
+        validarEntradaAtualizacao(body);
 
-        const _id = funcionario._id;
-        delete funcionario._id;
+        const _id = body._id;
+        delete body._id;
         return await cache
-                        .set(`api:funcionarios|${_id}`)
-                        .withResultOfMethod(service.atualizarFuncionario, [ _id, funcionario ])
+                        .set(`api:funcionarios:${_id}`)
+                        .withResultOfMethod(service.atualizarFuncionario, [ _id, body ])
                         .expireOn(3600);
 
     }
 
     /**
      * Remover funcionario
-     * @param {string} _id 
+     * @param {string} body Dados do funcionario.
+     * @param {*} req Objeto do framework express.js
      * @return {object} status 
      */
-    async function removerFuncionario({ _id }) {
+    async function removerFuncionario(body, req) {
+
+        const { _id } = body;
 
         validarEntrada({ _id });
         return await cache
-                        .remove(`api:funcionarios|${_id}`)
+                        .remove(`api:funcionarios:${_id}`)
                         .afterMethod(service.removerFuncionario, _id);
 
     }
 
     /**
      * Pesquisar funcionarios
-     * @param {object} pesquisa 
+     * @param {string} body Dados do funcionario.
+     * @param {*} req Objeto do framework express.js
      * @return {array} lista de funcionarios
      */
-    async function pesquisarFuncionarios(pesquisa, { headers }) {
+    async function pesquisarFuncionarios(body, req) {
 
-        validarEntrada(pesquisa);
+        const { headers } = req;
+
+        validarEntrada(body);
         return await cache
-                        .get(`api:funcionarios|${JSON.stringify(pesquisa)}`)
+                        .get(`api:funcionarios:search:${JSON.stringify(body)}`)
                         .resetCache((headers['x-cache-reset'] === 'true')? true: false)
-                        .orElseSetResultOfMethod(service.pesquisarFuncionarios, pesquisa)
+                        .orElseSetResultOfMethod(service.pesquisarFuncionarios, body)
                         .expireOn(600);
 
     }

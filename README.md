@@ -24,12 +24,12 @@ No diretorio de cada API, contem a pasta de *test*, onde contem os testes utiliz
 
 ### API REST
 
--- Documentação em desenvolvimento
+-- Documentação em desenvolvimento   
 -- Testes em desenvolvimento
 
 ### API GraphQL
 
--- Documentação em desenvolvimento
+-- Documentação em desenvolvimento   
 -- Testes em desenvolvimento
 
 ## Configuração Inicial

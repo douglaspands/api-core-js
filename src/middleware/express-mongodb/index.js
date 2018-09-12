@@ -6,7 +6,7 @@
 'use strict';
 const { MongoClient } = require('mongodb');
 const { source, uri, database } = require('./config');
-const URL_MONGO = `mongodb://${(process.env.MONGO || uri)}`;
+const URL_MONGO = `mongodb://${(process.env.MONGO_URL || uri)}`;
 
 /**
  * Obter conexão com o MongoDB

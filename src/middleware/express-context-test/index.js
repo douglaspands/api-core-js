@@ -8,6 +8,10 @@
 const path = require('path');
 const config = require('./config');
 const regexFolderLimit = new RegExp(config.folderLimit);
+const winston = require('winston');
+let serverMock = {};
+let moduleMock = {};
+
 /**
  * Class de contexto da API
  * @class Context
@@ -19,7 +23,21 @@ function Context(modulePath, app) {
     const _app = app;
     const _modulePath = path.join(modulePath, '..');
     const _moduleName = (_modulePath.split(/[\\\/]/g)).pop();
-    const _logger = app.get('logger');
+    const _logger = winston.createLogger({
+        transports: [
+            new winston.transports.Console({
+                level: 'silly',
+                format: winston.format.combine(
+                    winston.format.colorize(),
+                    winston.format.label({ label: 'server' }),
+                    winston.format.timestamp(),
+                    winston.format.printf(info => `[${info.level}] ${info.timestamp} ${(info.source || info.label)} - ${info.message}`)
+                )
+            })
+        ]
+    });
+
+    serverMock['logger'] = _logger;
 
     /**
      * Obter variaveis do servidor
@@ -31,6 +49,10 @@ function Context(modulePath, app) {
             source: _moduleName,
             message: `Foi solicitado a variavel "${name}" do servidor.`
         });
+        //-- mock
+        let mock = serverMock[name];
+        if (mock) return mock;
+        //--
         let _mod = _app.get(name);
         if (!_mod) {
             _logger.error({
@@ -44,7 +66,7 @@ function Context(modulePath, app) {
     /**
      * Obter modulos locais.
      * @param {string} name Nome do modulo
-     * @param {boolean} self "true" - Executa a primeira função passando o "this".
+     * @param {object} self Recebe o this.
      * @return {object} Conexão com o MongoDB
      */
     function getModule(name, self) {
@@ -66,13 +88,26 @@ function Context(modulePath, app) {
             } catch (error) {
                 const newModulePath = path.join(modulePath, '..');
                 return getLocalModule(newModulePath, name);
+            } s
+        }
+
+        //-- mock
+        let mock = moduleMock[_name];
+        if (mock) {
+            if (_self && typeof mock === 'function') {
+                return mock(self);
+            } else {
+                return mock;
             }
         }
+        //--
 
         let _mod = getLocalModule(_modulePath, _name);
 
         if (_mod) {
-            if (_self && typeof _mod === 'function') _mod = _mod(self);
+            if (_self && typeof _mod === 'function') {
+                _mod = _mod(self);
+            }
         } else {
             _logger.error({
                 source: _moduleName,
@@ -82,6 +117,28 @@ function Context(modulePath, app) {
 
         return _mod;
 
+    }
+
+    /**
+     * Inserir mock nas variaveis do servidor
+     * @param {string} name Nome da variavel
+     * @param {any} behavior Comportamento
+     */
+    function setServerMock(name, behavior) {
+        if (typeof name === 'string' && name.length > 0) {
+            serverMock[name] = behavior;
+        }
+    }
+
+    /**
+     * Inserir mock nos modulos
+     * @param {string} name Nome do modulo
+     * @param {any} behavior Comportamento
+     */
+    function setModuleMock(name, behavior) {
+        if (typeof name === 'string' && name.length > 0) {
+            moduleMock[name] = behavior;
+        }
     }
 
     /**
@@ -105,7 +162,7 @@ function Context(modulePath, app) {
             _logger.debug({
                 source: _moduleName,
                 message: `Foi solicitado o modulo "${moduleName}" do node_modules.`
-            });    
+            });
             return require(moduleName);
         }
     }
@@ -114,6 +171,17 @@ function Context(modulePath, app) {
      * Modulo de log
      */
     this.logger = _logger;
+
+    this.set = {
+        mock: {
+            module: (name, behavior) => {
+                setModuleMock(name, behavior)
+            },
+            server: (name, behavior) => {
+                setServerMock(name, behavior)
+            }
+        }
+    }
 
     if (this instanceof Context) {
         Object.freeze(this);

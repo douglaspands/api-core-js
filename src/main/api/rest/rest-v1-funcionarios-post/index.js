@@ -37,7 +37,7 @@ module.exports.controller = async ({ body }, res, next, { get }) => {
 
     try {
         const ret = await cache
-                            .set(`get_funcionario_{{_id}}`)
+                            .set(`api:funcionarios:{{_id}}`)
                             .withResultOfMethod(service.incluirFuncionario, body)
                             .expireOn(3600);
         res.status(201).send({ data: ret });
