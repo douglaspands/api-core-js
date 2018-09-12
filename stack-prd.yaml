@@ -9,7 +9,7 @@ services:
         image: douglaspands/core-api-js:2.6.2
         container_name: apicore-app
         environment:
-            - MONGO=mongodb:27017
+            - MONGO=mongo-db:27017
             - REDIS_CACHE=redis-cache:6379
             - LOG=info
             - PORT=3000
@@ -21,9 +21,9 @@ services:
         networks:
             - production-network
         depends_on:
-            - "mongodb"
+            - "mongo-db"
             - "redis-cache"
-    mongodb:
+    mongo-db:
         image: mongo:4.0.1
         container_name: apicore-db
         volumes: 
