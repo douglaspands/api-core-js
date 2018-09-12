@@ -163,7 +163,14 @@ function Context(modulePath, app) {
                 source: _moduleName,
                 message: `Foi solicitado o modulo "${moduleName}" do node_modules.`
             });
-            return require(moduleName);
+            //-- mock
+            let mock = moduleMock[moduleName];
+            if (mock) {
+                return mock;
+            } else {
+                return require(moduleName);
+            }
+            //--
         }
     }
 
