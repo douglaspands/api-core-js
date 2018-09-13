@@ -6,7 +6,7 @@ services:
         image: mongo:4.0.1
         container_name: apicore-mongo
         volumes: 
-            - "./mongo_data:/data/db"
+            - mongo-data:/data/db
         ports:
             - "27017:27017"
     redis:
@@ -14,7 +14,7 @@ services:
         container_name: apicore-redis
         command: ["redis-server", "--appendonly", "yes"]
         volumes: 
-            - "./redis_data:/data"
+            - redis-data:/data
         ports:
             - "6379:6379"
     elasticsearch:
@@ -23,13 +23,22 @@ services:
         environment: 
             - "discovery.type=single-node"
         volumes:
-            - "./elastic_data:/usr/share/elasticsearch/data"
+            - es-data:/usr/share/elasticsearch/data
         ports:
-            - "9200:9200"
+            - "9200:9200" 
+            - "9300:9300"
     kibana:
         image: docker.elastic.co/kibana/kibana:6.4.0
         container_name: apicore-kibana
         ports:
             - "5601:5601"
         depends_on:
-            - "elasticsearch"
+            - "elasticsearch"      
+volumes:
+  mongo-data:
+    driver: local
+  redis-data:
+    driver: local
+  es-data:
+    driver: local
+
