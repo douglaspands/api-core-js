@@ -1,19 +1,35 @@
 # file: stack-db.yaml 
-# description: Executar uma instancias de banco de dados mongo e redis.
-version: '3.1'
+# description: Executar uma instancias de banco:  mongo, redis e elaticsearch/kibana.
+version: '3.5'
 services:
     mongodb:
         image: mongo:4.0.1
-        container_name: apicore-db
+        container_name: apicore-mongo
         volumes: 
-            - "./data:/data/db"
+            - "./mongo_data:/data/db"
         ports:
             - "27017:27017"
-    redis-cache:
+    redis:
         image: redis:4.0.11-alpine
-        container_name: apicore-cache
-        #command: ["redis-server", "--appendonly", "yes"]
-        #volumes: 
-        #    - "./cache:/data"
+        container_name: apicore-redis
+        command: ["redis-server", "--appendonly", "yes"]
+        volumes: 
+            - "./redis_data:/data"
         ports:
             - "6379:6379"
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
+        container_name: apicore-elastic
+        environment: 
+            - "discovery.type=single-node"
+        volumes:
+            - "./elastic_data:/usr/share/elasticsearch/data"
+        ports:
+            - "9200:9200"
+    kibana:
+        image: docker.elastic.co/kibana/kibana:6.4.0
+        container_name: apicore-kibana
+        ports:
+            - "5601:5601"
+        depends_on:
+            - "elasticsearch"

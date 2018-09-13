@@ -22,8 +22,8 @@ services:
         networks:
             - production-network
         depends_on:
-            - "mongo-db"
-            - "redis-cache"
+            - "mongo"
+            - "redis"
             - "elasticsearch"
     mongo:
         image: mongo:4.0.1
