@@ -118,7 +118,7 @@ function inspection(objeto) {
             if (!flgValidation) return this;
 
             const regex = new RegExp(constant.REGEX.PHONE);
-            const ret = regex.test(elemento.toString());
+            const ret = regex.test(elemento);
             if (!ret && !flgErro) {
                 listaErros.push(new InspectFail(propriedade, elemento, mensagemErro));
                 flgErro = true;

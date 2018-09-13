@@ -20,7 +20,6 @@ module.exports = ({ get }) => {
         const { checkField, checkReportForREST } = validator(funcionario);
 
         checkField('_id', 'ID invalido')
-            .isOptional()
             .isMongoId();
 
         checkField('nome', 'Nome invalido')
