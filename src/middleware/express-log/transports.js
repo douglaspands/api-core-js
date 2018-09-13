@@ -67,7 +67,7 @@ module.exports = (app) => {
             options: { flags: 'a+', encoding: 'utf8' },
             maxsize: 10240,
             maxFiles: 10,
-            filename: path.join(logFolder, `${pack.name}.log`),
+            filename: path.join(logFolder, `${pack.name}_v${pack.version}.log`),
             format: combine(
                 label({ label: 'server' }),
                 timestamp(),
