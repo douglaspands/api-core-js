@@ -9,8 +9,9 @@ services:
         image: douglaspands/api-core-js:2.7.1
         container_name: apicore-app
         environment:
-            - MONGO_URL=mongo-db:27017
-            - REDIS_URL=redis-cache:6379
+            - MONGO_URL=mongo:27017
+            - REDIS_URL=redis:6379
+            - ELASTIC_URL=elasticsearch:9200
             - LOG_LEVEL=info
             - PORT=3000
         volumes: 
@@ -23,22 +24,45 @@ services:
         depends_on:
             - "mongo-db"
             - "redis-cache"
-    mongo-db:
+            - "elasticsearch"
+    mongo:
         image: mongo:4.0.1
-        container_name: apicore-db
+        container_name: apicore-mongo
         volumes: 
-            - "./data:/data/db"
+            - "./mongo_data:/data/db"
         ports:
             - "27017:27017"
         networks: 
             - production-network
-    redis-cache:
+    redis:
         image: redis:4.0.11-alpine
-        container_name: apicore-cache
+        container_name: apicore-redis
         ports:
             - "6379:6379"
         networks: 
             - production-network
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
+        container_name: apicore-elastic
+        environment: 
+            - "discovery.type=single-node"
+        volumes:
+            - "./elastic_data:/usr/share/elasticsearch/data"
+        ports:
+            - "9200:9200"
+        networks:
+            - production-network
+    kibana:
+        image: docker.elastic.co/kibana/kibana:6.4.0
+        container_name: apicore-kibana
+        environment: 
+            - "ELASTICSEARCH_URL:elasticsearch:9200"
+        ports:
+            - "5601:5601"
+        networks:
+            - production-network
+        depends_on:
+            - "elasticsearch"
 networks: 
     production-network:
         driver: bridge
