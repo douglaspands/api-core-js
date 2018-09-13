@@ -14,13 +14,15 @@ const app_health = require('express')();
 app.set('root', __dirname);
 app.set('package', require('./package'));
 // Configurando log
-const logger = require('./middleware/express-log')(app);
+const { logger } = require('./middleware/express-log')(app);
 // Executando modulos sincronamente
 (async () => {
+    // Incluindo middleware de conexão com o Elastic search
+    const esClient = await require('./middleware/express-elastic-search')(app);
     // Incluindo middleware do Express
     require('./middleware/express-modules')(app);
     // Inicializando cache
-    require('./middleware/express-cache')(app);
+    require('./middleware/express-redis')(app);
     // Inicializando banco de dados
     await require('./middleware/express-mongodb')(app);
     // Registrando APIs

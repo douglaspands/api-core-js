@@ -1,0 +1,5 @@
+{
+    "source": "express-elastic-search",
+    "uri": "localhost:9200",
+    "database": "api-core-js"
+}

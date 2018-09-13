@@ -1,5 +1,5 @@
 {
-    "source": "express-cache",
+    "source": "express-redis",
     "uri": "localhost:6379",
     "time_default": 3600
 }

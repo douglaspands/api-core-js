@@ -91,10 +91,11 @@ module.exports = app => {
             url: REDIS_URL
         }
         app.set('cache', _cache);
+        app.set('redis', cache);
         logger.log({
             level: 'info',
             source: source,
-            message: `Redis (cache) ativado com sucesso na url: ${REDIS_URL}`
+            message: `Redis ativado com sucesso na url: ${REDIS_URL}`
         });
     });
 

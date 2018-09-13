@@ -98,6 +98,7 @@ module.exports = app => {
     // Incluindo gerador de log pelo Express
     app.use(expressLogger);
 
-    return logger;
-
+    return {
+        logger
+    }
 }
