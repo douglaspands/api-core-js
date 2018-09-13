@@ -20,32 +20,7 @@ module.exports = ({ get }) => {
         const { checkField, checkReportForREST } = validator(funcionario);
 
         checkField('_id', 'ID invalido')
-            .isOptional()
             .isMongoId();
-
-        checkField('nome', 'Nome invalido')
-            .isOptional()
-            .notEmpty();
-
-        checkField('sobrenome', 'Sobrenome invalido')
-            .isOptional()
-            .notEmpty();
-
-        checkField('cidade', 'Cidade invalida')
-            .isOptional()
-            .notEmpty();
-
-        checkField('estado', 'Estado invalido')
-            .isOptional()
-            .isUF();
-
-        checkField('telefone', 'Telefone invalido')
-            .isOptional()
-            .isPhoneNumber();
-
-        checkField('empresa', 'Empresa invalida')
-            .isOptional()
-            .notEmpty();
 
         return checkReportForREST();
 

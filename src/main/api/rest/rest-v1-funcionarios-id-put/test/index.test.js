@@ -8,8 +8,8 @@ const path = require('path');
 const assert = require('assert');
 const _ = require('lodash');
 
-const Context = require('../../../lib/context-app-test');
-const pathApp = path.join(__dirname, '..');
+const Context = require('../../../../../middleware/express-context-test');
+const pathApp = path.join(__dirname);
 
 
 describe('# ./index.js', () => {
@@ -19,6 +19,11 @@ describe('# ./index.js', () => {
     beforeEach(() => {
 
         context = new Context(pathApp);
+        context.set.mock.server('cache', {
+            get: () => new Promise(resolve => resolve(null)),
+            set: (key, value, seconds) => value,
+            del: () => { }
+        });
 
     });
 
@@ -27,14 +32,14 @@ describe('# ./index.js', () => {
         const { route } = require('../index');
         const res = route();
         assert.equal(res.method, 'put');
-        assert.equal(res.uri, '/v1/funcionarios/:id');
+        assert.equal(res.uri, '/v1/funcionarios/:_id');
         done();
 
     });
 
     it(`${++i} - controller() - Execução com sucesso (statusCode: 200)`, (done) => {
 
-        context.setMock('services/funcionario-service', {
+        context.set.mock.module('services/funcionario-service', {
             atualizarFuncionario: () => {
                 return new Promise((resolved) => {
                     resolved({
@@ -48,7 +53,7 @@ describe('# ./index.js', () => {
 
         const req = {
             params: {
-                id: '123456789012345678901234'
+                _id: '123456789012345678901234'
             },
             body: {
                 empresa: 'XXXXXXX'
@@ -72,15 +77,16 @@ describe('# ./index.js', () => {
 
         const { controller } = require('../index');
 
-        controller(req, res, null, context);
+        controller(req, res, null, context)
+            .then().catch(erro => done(erro));
 
     });
 
-    it(`${++i} - controller() - Execução com erro (statusCode: 204)`, (done) => {
+    it(`${++i} - controller() - Execução com erro (statusCode: 404)`, (done) => {
 
-        context.setMock('services/funcionario-service', {
+        context.set.mock.module('services/funcionario-service', {
             atualizarFuncionario: () => {
-                return new Promise((_, reject) => {
+                return new Promise((resolve, reject) => {
                     reject({});
                 });
             }
@@ -88,7 +94,7 @@ describe('# ./index.js', () => {
 
         const req = {
             params: {
-                id: '123456789012345678901234'
+                _id: '123456789012345678901234'
             },
             body: {
                 empresa: 'XXXXXXX'
@@ -102,22 +108,23 @@ describe('# ./index.js', () => {
                 return this;
             }
             this.send = (result) => {
-                assert.equal(statusCode, 204);
+                assert.equal(statusCode, 404);
                 done();
             }
         })();
 
         const { controller } = require('../index');
 
-        controller(req, res, null, context);
+        controller(req, res, null, context)
+            .then().catch(erro => done(erro));
 
     });
 
     it(`${++i} - controller() - Execução com erro (statusCode: 400)`, (done) => {
 
-        context.setMock('services/funcionario-service', {
-            criarFuncionario: () => {
-                return new Promise((_, reject) => {
+        context.set.mock.module('services/funcionario-service', {
+            atualizarFuncionario: () => {
+                return new Promise((resolve, reject) => {
                     reject({});
                 });
             }
@@ -125,7 +132,7 @@ describe('# ./index.js', () => {
 
         const req = {
             params: {
-                id: '123456789012345678901234'
+                _id: 'zzzzzzzzzzzzz'
             },
             body: {
                 empresa: 123456
@@ -147,7 +154,8 @@ describe('# ./index.js', () => {
 
         const { controller } = require('../index');
 
-        controller(req, res, null, context);
+        controller(req, res, null, context)
+            .then().catch(erro => done(erro));
 
     });
 
