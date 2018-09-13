@@ -39,7 +39,7 @@ module.exports.controller = async ({ headers, params, query }, res, next, { get,
     const queryFields = (query['fields']) ? query['fields'] : '';
     delete query.fields;
 
-    const errors = validarEntrada({ _id: params.id });
+    const errors = validarEntrada({ _id: params._id });
     if (errors) return res.status(400).send(errors);
 
     try {

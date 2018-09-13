@@ -16,7 +16,7 @@ module.exports.route = () => {
     return {
         controller: 'rest',
         method: 'put',
-        uri: '/v1/funcionarios/:id'
+        uri: '/v1/funcionarios/:_id'
     }
 };
 /**
@@ -33,7 +33,7 @@ module.exports.controller = async ({ params, body }, res, next, { get }) => {
     const cache = get.self.context.module('utils/cache-crud');
 
     let input = body;
-    input._id = params.id;
+    input._id = params._id;
     const errors = validarEntrada(input);
 
     if (errors) return res.status(400).send(errors);

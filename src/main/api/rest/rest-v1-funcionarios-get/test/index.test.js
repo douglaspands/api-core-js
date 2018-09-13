@@ -8,7 +8,7 @@ const path = require('path');
 const assert = require('assert');
 const _ = require('lodash');
 
-const Context = require('../../../lib/context-app-test');
+const Context = require('../../../../../middleware/express-context-test');
 const pathApp = path.join(__dirname, '..');
 
 
@@ -19,6 +19,11 @@ describe('# ./index.js', () => {
     beforeEach(() => {
 
         context = new Context(pathApp);
+        context.set.mock.server('cache', {
+            get: () => new Promise(resolve => resolve(null)),
+            set: (key, value, seconds) => value,
+            del: () => { }
+        });
 
     });
 
@@ -34,7 +39,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com sucesso (statusCode: 200)`, (done) => {
 
-        context.setMock('services/funcionario-service', {
+        context.set.mock.module('services/funcionario-service', {
             pesquisarFuncionarios: () => {
                 return new Promise((resolved) => {
                     resolved([{
@@ -51,7 +56,10 @@ describe('# ./index.js', () => {
             }
         });
 
-        const req = {};
+        const req = {
+            headers: {},
+            query: {}
+        };
 
         const res = new (function Response() {
             let statusCode;
@@ -73,21 +81,26 @@ describe('# ./index.js', () => {
 
         const { controller } = require('../index');
 
-        controller(req, res, null, context);
+        controller(req, res, null, context)   
+            .then()
+            .catch(error => done(error));    
 
     });
 
     it(`${++i} - controller() - Execução com sucesso (statusCode: 204)`, (done) => {
 
-        context.setMock('services/funcionario-service', {
+        context.set.mock.module('services/funcionario-service', {
             pesquisarFuncionarios: () => {
-                return new Promise((_, reject) => {
-                    reject({});
+                return new Promise(resolve => {
+                    resolve([]);
                 });
             }
         });
 
-        const req = {};
+        const req = {
+            headers: {},
+            query: {}
+        };
 
         const res = new (function Response() {
             let statusCode;
@@ -104,8 +117,10 @@ describe('# ./index.js', () => {
 
         const { controller } = require('../index');
 
-        controller(req, res, null, context);
-
+        controller(req, res, null, context)
+            .then()
+            .catch(error => done(error));    
+        
     });
 
 });

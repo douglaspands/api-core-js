@@ -8,8 +8,8 @@ const path = require('path');
 const assert = require('assert');
 const _ = require('lodash');
 
-const Context = require('../../../lib/context-app-test');
-const pathApp = path.join(__dirname, '..');
+const Context = require('../../../../../middleware/express-context-test');
+const pathApp = path.join(__dirname);
 
 
 describe('# ./index.js', () => {
@@ -19,6 +19,11 @@ describe('# ./index.js', () => {
     beforeEach(() => {
 
         context = new Context(pathApp);
+        context.set.mock.server('cache', {
+            get: () => new Promise(resolve => resolve(null)),
+            set: (key, value, seconds) => value,
+            del: () => { }
+        });
 
     });
 
@@ -27,24 +32,24 @@ describe('# ./index.js', () => {
         const { route } = require('../index');
         const res = route();
         assert.equal(res.method, 'delete');
-        assert.equal(res.uri, '/v1/funcionarios/:id');
+        assert.equal(res.uri, '/v1/funcionarios/:_id');
         done();
 
     });
 
     it(`${++i} - controller() - Execução com sucesso (statusCode: 200)`, (done) => {
 
-        context.setMock('services/funcionario-service', {
+        context.set.mock.module('services/funcionario-service', {
             removerFuncionario: () => {
-                return new Promise((resolved) => {
-                    resolved('Foi/Foram removido(s) 1 registro(s)!');
+                return new Promise((resolve) => {
+                    resolve('Foi/Foram removido(s) 1 registro(s)!');
                 });
             }
         });
 
         const req = {
             params: {
-                id: '123456789012345678901234'
+                _id: '5b9431cce7fdee3fd5db0b77'
             }
         };
 
@@ -56,20 +61,21 @@ describe('# ./index.js', () => {
             }
             this.send = (result) => {
                 assert.equal(statusCode, 200);
-                assert.equal(result.data, 'Foi/Foram removido(s) 1 registro(s)!');
                 done();
             }
         })();
 
         const { controller } = require('../index');
 
-        controller(req, res, null, context);
+        controller(req, res, null, context)
+            .then()
+            .catch(erro => done(erro));
 
     });
 
-    it(`${++i} - controller() - Execução com sucesso (statusCode: 204)`, (done) => {
+    it(`${++i} - controller() - Execução com sucesso (statusCode: 404)`, (done) => {
 
-        context.setMock('services/funcionario-service', {
+        context.set.mock.module('services/funcionario-service', {
             removerFuncionario: () => {
                 return new Promise((_, reject) => {
                     reject('Foi/Foram removido(s) 0 registro(s)!');
@@ -79,7 +85,7 @@ describe('# ./index.js', () => {
 
         const req = {
             params: {
-                id: '123456789012345678901234'
+                _id: '5b9431cce7fdee3fd5db0b77'
             }
         };
 
@@ -90,51 +96,54 @@ describe('# ./index.js', () => {
                 return this;
             }
             this.send = (result) => {
-                assert.equal(statusCode, 204);
-                assert.equal(_.isEmpty(result), true);
+                assert.equal(statusCode, 404);
                 done();
             }
         })();
 
         const { controller } = require('../index');
 
-        controller(req, res, null, context);
+        controller(req, res, null, context)
+            .then()
+            .catch(erro => done(erro));
 
     });
 
     it(`${++i} - controller() - Execução com erro (statusCode: 400)`, (done) => {
-        
-                context.setMock('services/funcionario-service', {
-                    removerFuncionario: () => {
-                        return new Promise((_, reject) => {
-                            reject({});
-                        });
-                    }
+
+        context.set.mock.module('services/funcionario-service', {
+            removerFuncionario: () => {
+                return new Promise((_, reject) => {
+                    reject({});
                 });
-        
-                const req = {
-                    params: {
-                        id: 'ZZZZZZZZZZZZZZZZZZ'
-                    }
-                };
-        
-                const res = new (function Response() {
-                    let statusCode;
-                    this.status = (arg) => {
-                        statusCode = arg;
-                        return this;
-                    }
-                    this.send = (result) => {
-                        assert.equal(statusCode, 400);
-                        assert.equal(!_.isEmpty(result), true);
-                        done();
-                    }
-                })();
-        
-                const { controller } = require('../index');
-        
-                controller(req, res, null, context);
-        
-            });        
+            }
+        });
+
+        const req = {
+            params: {
+                id: 'ZZZZZZZZZZZZZZZZZZ'
+            }
+        };
+
+        const res = new (function Response() {
+            let statusCode;
+            this.status = (arg) => {
+                statusCode = arg;
+                return this;
+            }
+            this.send = (result) => {
+                assert.equal(statusCode, 400);
+                assert.equal(!_.isEmpty(result), true);
+                done();
+            }
+        })();
+
+        const { controller } = require('../index');
+
+        controller(req, res, null, context)
+            .then()
+            .catch(erro => done(erro));
+
+    });
 
 });
