@@ -5,8 +5,8 @@
  */
 'use strict'
 const _ = require('lodash');
+const source = (__dirname).split('/').pop();
 const { buildSchema } = require('graphql');
-const config = require('./config');
 
 /**
  * Modulo de validação de log
@@ -26,7 +26,7 @@ const utils = logger => {
         } catch (error) {
             logger.log({
                 level: 'warn',
-                source: config.source,
+                source: source,
                 message: `buildSchema.: ${error}`
             });
             return false;
@@ -46,7 +46,7 @@ const utils = logger => {
             if (_.includes(r, fn)) {
                 logger.log({
                     level: 'warn',
-                    source: config.source,
+                    source: source,
                     message: `Função "${fn}" já existe no root do GraphQL`
                 });
                 duplicate = true;

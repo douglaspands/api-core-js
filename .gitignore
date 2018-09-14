@@ -59,6 +59,7 @@ typings/
 
 # Personal
 .vscode
-data/*
-cache/*
+mongo_data/*
+redis_data/*
+elastic_data/*
 *.sh

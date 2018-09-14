@@ -26,26 +26,28 @@ module.exports.route = () => {
  * @param {object} context Objeto de contexto da API
  * @return {void} 
  */
-module.exports.controller = async ({ headers, query }, res, next, { get }) => {
+module.exports.controller = async (req, res, next, { get }) => {
 
     const _ = get.module('lodash');
+    const qs = get.module('querystring');
     const service = get.self.context.module('services/funcionario-service');
     const cache = get.self.context.module('utils/cache-crud');
 
+    const { headers, query } = req;
     const fields = get.self.module('utils/fields');
     const queryFields = (query['fields']) ? query['fields'] : '';
     delete query.fields;
 
     try {
         const ret = await cache
-                            .get(`api:funcionarios:search:${JSON.stringify(query)}`)
-                            .resetCache((headers['x-cache-reset'] === 'true')? true: false)
-                            .orElseSetResultOfMethod(service.pesquisarFuncionarios, query)
-                            .expireOn(600);        
+            .get(`api:funcionarios:search:${qs.stringify(query)}`)
+            .resetCache((headers['x-cache-reset'] === 'true') ? true : false)
+            .orElseSetResultOfMethod(service.pesquisarFuncionarios, query)
+            .expireOn(600);
         if (_.isEmpty(ret)) {
             res.status(204).send();
         } else {
-            const _ret = (queryFields && _.isArray(ret)) ? _.map(ret, o => fields(o, queryFields)) : ret;            
+            const _ret = (queryFields && _.isArray(ret)) ? _.map(ret, o => fields(o, queryFields)) : ret;
             res.status(200).send({ data: _ret });
         }
     } catch (error) {
