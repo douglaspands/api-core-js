@@ -5,7 +5,8 @@
  */
 'use strict';
 const redis = require("redis");
-const { source, uri, database, time_default } = require('./config');
+const source = (__dirname).split('/').pop();
+const { uri, database, time_default } = require('./config');
 const [REDIS_HOST, REDIS_PORT] = (process.env.REDIS_URL || uri).split(':');
 const REDIS_URL = `redis://${REDIS_HOST}:${REDIS_PORT}`;
 

@@ -30,7 +30,7 @@ const searchController = filesList => {
      * @param {object} route Representa os parametros minimos pra cadastrar a rota.
      * @return {boolean} Retorna 'true' se a rota tiver o minimo necessario
      */
-    const verifyRestRoute = route => {
+    const verifyRest = route => {
         return route.controller && route.controller.length > 0 &&
             route.method && route.method.length > 0 && _.includes(config.methods, route.method) &&
             route.uri && route.uri.length > 0;
@@ -56,7 +56,7 @@ const searchController = filesList => {
                             route['file'] = file;
                             routes.push(route);
                         }
-                    } else if (verifyRestRoute(route)) {
+                    } else if (verifyRest(route)) {
                         route['file'] = file;
                         routes.push(route);
                     }

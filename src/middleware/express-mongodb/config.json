@@ -1,5 +1,4 @@
 {
-    "source": "express-mongodb",
     "uri": "localhost:27017",
     "database": "api-core-js"
 }

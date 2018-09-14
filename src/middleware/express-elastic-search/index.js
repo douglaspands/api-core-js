@@ -5,7 +5,8 @@
  */
 'use strict';
 const elasticsearch = require('elasticsearch');
-const { source, uri, database } = require('./config');
+const source = (__dirname).split('/').pop();
+const { uri } = require('./config');
 const ELASTIC_URL = (process.env.ELASTIC_URL || uri);
 
 /**
@@ -13,12 +14,13 @@ const ELASTIC_URL = (process.env.ELASTIC_URL || uri);
  * @param {function} app Servidor Express.
  * @return {Promise.<object>} Retorna a conexão do Elastic. 
  */
-const esConnect = app => {
+const connect = app => {
     const logger = app.get('logger');
     return new Promise((resolve, reject) => {
         const client = new elasticsearch.Client({
             host: ELASTIC_URL
-        });        
+        });
+        client.url = ELASTIC_URL;
         client.ping({
             // ping usually has a 3000ms timeout
             requestTimeout: 1000
@@ -43,4 +45,4 @@ const esConnect = app => {
     });
 }
 
-module.exports = esConnect;
+module.exports = connect;

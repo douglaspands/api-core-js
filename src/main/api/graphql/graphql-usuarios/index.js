@@ -8,12 +8,11 @@
  * Construtor da função.
  * @param {object} context Objeto de contexto da API
  * @return {object.<function>} 
- * - obterFuncionario : Obter funcionario através do ID
- * - criarFuncionario: Criar o funcionario
- * - listarFuncionarios: Listar funcionarios
- * - atualizarFuncionario: Atualizar funcionario
- * - removerFuncionario: Remover funcionarios
- * - pesquisarFuncionarios: Pesquisar funcionario atraves de qualquer parametro do recurso 
+ * - obterUsuario : Obter funcionario através do ID
+ * - criarUsuario: Criar o funcionario
+ * - atualizarUsuario: Atualizar funcionario
+ * - removerUsuario: Remover funcionarios
+ * - pesquisarUsuario: Pesquisar funcionario atraves de qualquer parametro do recurso 
  */
 /** 
  * Configuracoes da rota
@@ -26,7 +25,7 @@
 const route = () => {
     return {
         controller: 'graphql',
-        graphql: 'funcionario.graphql'
+        graphql: 'usuario.graphql'
     }
 };
 /**
@@ -50,14 +49,14 @@ const root = ({ get }) => {
      * @param {*} req Objeto do framework express.js
      * @return {object} funcionario
      */
-    async function obterFuncionario(body, req) {
+    async function obterUsuario(body, req) {
 
         const { _id } = body;
         const { headers } = req;
 
         validarEntrada({ _id });
         return await cache
-            .get(`api:funcionarios:${_id}`)
+            .get(`api:usuarios:${_id}`)
             .resetCache((headers['x-cache-reset'] === 'true') ? true : false)
             .orElseSetResultOfMethod(service.obterFuncionario, _id)
             .expireOn(3600);
@@ -68,13 +67,13 @@ const root = ({ get }) => {
      * @param {object} body funcionario que será cadastrado.
      * @return {object} funcionario criado 
      */
-    async function criarFuncionario(body, req) {
+    async function criarUsuario(body, req) {
 
         const { input } = body;
 
         validarEntradaInclusao(input);
         return await cache
-            .set(`api:funcionarios:{{_id}}`)
+            .set(`api:usuarios:{{_id}}`)
             .withResultOfMethod(service.incluirFuncionario, input)
             .expireOn(3600);
 
@@ -86,14 +85,14 @@ const root = ({ get }) => {
      * @param {*} req Objeto do framework express.js
      * @return {string} status 
      */
-    async function atualizarFuncionario(body, req) {
+    async function atualizarUsuario(body, req) {
 
         validarEntradaAtualizacao(body);
 
         const _id = body._id;
         delete body._id;
         return await cache
-            .set(`api:funcionarios:${_id}`)
+            .set(`api:usuarios:${_id}`)
             .withResultOfMethod(service.atualizarFuncionario, [_id, body])
             .expireOn(3600);
 
@@ -105,13 +104,13 @@ const root = ({ get }) => {
      * @param {*} req Objeto do framework express.js
      * @return {object} status 
      */
-    async function removerFuncionario(body, req) {
+    async function removerUsuario(body, req) {
 
         const { _id } = body;
 
         validarEntrada({ _id });
         return await cache
-            .remove(`api:funcionarios:${_id}`)
+            .remove(`api:usuarios:${_id}`)
             .afterMethod(service.removerFuncionario, _id);
 
     }
@@ -122,13 +121,13 @@ const root = ({ get }) => {
      * @param {*} req Objeto do framework express.js
      * @return {array} lista de funcionarios
      */
-    async function pesquisarFuncionarios(body, req) {
+    async function pesquisarUsuarios(body, req) {
 
         const { headers } = req;
 
         validarEntrada(body);
         return await cache
-            .get(`api:funcionarios:search:${JSON.stringify(body)}`)
+            .get(`api:usuarios:search:${JSON.stringify(body)}`)
             .resetCache((headers['x-cache-reset'] === 'true') ? true : false)
             .orElseSetResultOfMethod(service.pesquisarFuncionarios, body)
             .expireOn(600);
@@ -136,11 +135,11 @@ const root = ({ get }) => {
     }
 
     return {
-        obterFuncionario,
-        pesquisarFuncionarios,
-        criarFuncionario,
-        atualizarFuncionario,
-        removerFuncionario
+        obterUsuario,
+        pesquisarUsuarios,
+        criarUsuario,
+        atualizarUsuario,
+        removerUsuario
     }
 }
 
