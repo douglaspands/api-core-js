@@ -85,7 +85,7 @@ Foi gerado 3 scripts yaml para rodar com o *docker-compose*
 - **stack-db-only.yaml**: Esse script baixa e executa o MongoDB e o Redis configurado para uma melhor utilização no desenvolvimento do projeto.   Utilizando esse script, é necessario baixar as dependencias e executar o server em Node.js;
 - **stack-dev.yaml**: Esse script baixa e executa o MongoDB, Redis, Elastic-Search e o Kibana configurado para uma melhor utilização no desenvolvimento do projeto. Utilizando esse script, é necessario baixar as dependencias e executar o server em Node.js;
 - **stack-prd.yaml** **(stack completa)**: Esse script baixa e executa o MongoDB, Redis, Elastic-Search e o Kibana, baixa o Node.js e cria uma imagem e container com o server dentro. Utiliza as configurações para execução em produção;
-- **stack-prd-without-lk** **(Sem Elasticsearch/Kibana)**: Esse script baixa e executa o MongoDB, Redis, porem não executa Elastic-Search e o Kibana, baixa o Node.js e cria uma imagem e container com o server dentro. Utiliza as configurações para execução em produção. Essa configuração foi criada devido ao consumo de hardware excessivo que a stack completa tem;
+- **stack-prd-without-ek** **(Sem Elasticsearch/Kibana)**: Esse script baixa e executa o MongoDB, Redis, porem não executa Elastic-Search e o Kibana, baixa o Node.js e cria uma imagem e container com o server dentro. Utiliza as configurações para execução em produção. Essa configuração foi criada devido ao consumo de hardware excessivo que a stack completa tem;
 
 Eu criei esses scripts para ajudar em cada fase do desenvolvimento.
 
@@ -101,7 +101,11 @@ Primeiro vamos iniciar a imagem e o container do MongoDB e do Redis, utilizando 
 ```console
 $ docker-compose -f ./stack-db-only.yaml up
 ```
-Feito isso ele vai subir uma instancia do MongoDB, e vai armazenar o volume do banco de dados na pasta: "**./data**". Assim, sempre que precisar criar uma nova instancia do MongoDB, ele sempre vai utilizar a mesma estrutura e dados criado.   
+Feito isso ele vai subir uma instancia do MongoDB, e vai armazenar no volume do Docker. Assim, a proxima vez que for subir o script do docker-compose, os dados estarão persistidos.   
+Para excluir os dados do volume do Docker:
+```console
+$ docker-compose -f ./stack-db-only.yaml down -v
+```
 
 Como todo projeto em Node.js, é necessario instalar as dependencias antes:
 ```console
