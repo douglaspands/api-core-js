@@ -5,8 +5,8 @@
  * @version 1.3.0
  */
 'use strict';
-
 const { ObjectID } = require('mongodb');
+const source = (__dirname).split('/').pop();
 
 module.exports = ({ get, logger }) => {
 
@@ -32,18 +32,27 @@ module.exports = ({ get, logger }) => {
         //const query = ((key && typeof key === 'object') ? key : {});
         const query = {};
 
-        (Object.keys(((key && typeof key === 'object') ? key : {}))).forEach(prop => {
-            if (prop === '_id') {
-                if (isValidID(key['_id'])) {
-                    query['_id'] = ObjectID(key['_id']);
-                }
-            } else {
-                query[prop] = new RegExp(key[prop], 'gi');
-            }
-        });
-
         return new Promise((resolve, reject) => {
 
+            if (!db) {
+                const message = 'Sem conexão com o MongoDB';
+                logger.error({
+                    source: source,
+                    message: message
+                });
+                reject(message);
+            }
+
+            (Object.keys(((key && typeof key === 'object') ? key : {}))).forEach(prop => {
+                if (prop === '_id') {
+                    if (isValidID(key['_id'])) {
+                        query['_id'] = ObjectID(key['_id']);
+                    }
+                } else {
+                    query[prop] = new RegExp(key[prop], 'gi');
+                }
+            });
+        
             try {
                 db.collection(collection)
                     .find(query)
@@ -51,7 +60,7 @@ module.exports = ({ get, logger }) => {
                     .then(data => resolve(data))
                     .catch(err => {
                         logger.error({
-                            source: 'utils/mongodb-crud',
+                            source: source,
                             message: err
                         });
                         reject(err);
@@ -76,11 +85,20 @@ module.exports = ({ get, logger }) => {
 
         return new Promise((resolve, reject) => {
 
+            if (!db) {
+                const message = 'Sem conexão com o MongoDB';
+                logger.error({
+                    source: source,
+                    message: message
+                });
+                reject(message);
+            }
+
             if (isValidID(_id)) {
                 query['_id'] = ObjectID(_id);
             } else {
                 logger.error({
-                    source: 'utils/mongodb-crud',
+                    source: source,
                     message: '[find] Campo _id invalido!'
                 });
                 reject({});
@@ -93,7 +111,7 @@ module.exports = ({ get, logger }) => {
                     .then(data => resolve(data[0]))
                     .catch(err => {
                         logger.error({
-                            source: 'utils/mongodb-crud',
+                            source: source,
                             message: `[find] ${err}`
                         });
                         reject(err);
@@ -118,12 +136,21 @@ module.exports = ({ get, logger }) => {
 
         return new Promise((resolve, reject) => {
 
+            if (!db) {
+                const message = 'Sem conexão com o MongoDB';
+                logger.error({
+                    source: source,
+                    message: message
+                });
+                reject(message);
+            }
+
             if (isValidID(_id)) {
                 query['_id'] = ObjectID(_id);
             } else {
                 logger.log({
                     level: 'error',
-                    source: 'utils/mongodb-crud',
+                    source: source,
                     message: '[remove] Campo _id invalido!'
                 });
                 reject({});
@@ -136,7 +163,7 @@ module.exports = ({ get, logger }) => {
                     .catch(err => {
                         logger.log({
                             level: 'error',
-                            source: 'utils/mongodb-crud',
+                            source: source,
                             message: `[remove] ${err}`
                         });
                         reject(err);
@@ -159,12 +186,21 @@ module.exports = ({ get, logger }) => {
 
         return new Promise((resolve, reject) => {
 
+            if (!db) {
+                const message = 'Sem conexão com o MongoDB';
+                logger.error({
+                    source: source,
+                    message: message
+                });
+                reject(message);
+            }
+
             if (typeof body === 'object') {
                 if (body._id) delete body._id;
             } else {
                 logger.log({
                     level: 'error',
-                    source: 'utils/mongodb-crud',
+                    source: source,
                     message: '[insert] Objeto de inclusão invalido!'
                 });
                 reject({});
@@ -177,7 +213,7 @@ module.exports = ({ get, logger }) => {
                     .catch(err => {
                         logger.log({
                             level: 'error',
-                            source: 'utils/mongodb-crud',
+                            source: source,
                             message: `[insert] ${err}`
                         });
                         reject(err);
@@ -203,12 +239,21 @@ module.exports = ({ get, logger }) => {
 
         return new Promise((resolve, reject) => {
 
+            if (!db) {
+                const message = 'Sem conexão com o MongoDB';
+                logger.error({
+                    source: source,
+                    message: message
+                });
+                reject(message);
+            }
+
             if (isValidID(_id)) {
                 query['_id'] = ObjectID(_id);
             } else {
                 logger.log({
                     level: 'error',
-                    source: 'utils/mongodb-crud',
+                    source: source,
                     message: '[update] Campo _id invalido!'
                 });
                 reject({});
@@ -220,7 +265,7 @@ module.exports = ({ get, logger }) => {
             } else {
                 logger.log({
                     level: 'error',
-                    source: 'utils/mongodb-crud',
+                    source: source,
                     message: '[update] Objeto de atualização invalido!'
                 });
                 reject({});
@@ -233,7 +278,7 @@ module.exports = ({ get, logger }) => {
                     .catch(err => {
                         logger.log({
                             level: 'error',
-                            source: 'utils/mongodb-crud',
+                            source: source,
                             message: `[update] ${err}`
                         });
                         reject(err);

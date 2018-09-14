@@ -2,6 +2,7 @@
  * @file Motor de APIs em Node.js com GraphQL e MongoDB.
  * @author @douglaspands
  * @since 2017-12-26
+ * @version 1.8.20180913
  */
 'use strict';
 // Obtendo informações do servidor
@@ -14,32 +15,37 @@ const app_health = require('express')();
 app.set('root', __dirname);
 app.set('package', require('./package'));
 // Configurando log
-const logger = require('./middleware/express-log')(app);
+const { logger, addLogElasticSeach } = require('./middleware/express-log')(app);
 // Executando modulos sincronamente
 (async () => {
+    // Incluindo middleware de conexão com o Elastic search
+    await require('./middleware/express-elastic-search')(app);
+    // Incluir log no Elastic Search
+    addLogElasticSeach();
     // Incluindo middleware do Express
     require('./middleware/express-modules')(app);
     // Inicializando cache
-    require('./middleware/express-cache')(app);
+    require('./middleware/express-redis')(app);
     // Inicializando banco de dados
     await require('./middleware/express-mongodb')(app);
     // Registrando APIs
-    const routes = await require('./middleware/express-register-routes')(app);
-    return routes;
+    return require('./middleware/express-register-apis')(app);
 })().then(({ rest, graphql }) => {
     // Inicializando o servidor
     const server = http.createServer(app).listen((process.env.PORT || 3000), () => {
-        let environment = process.env.NODE_ENV || 'develop';
+        const environment = process.env.NODE_ENV || 'develop';
         // Log da inicialização do servidor
-        logger.info(`Executando "${name}@${version}" em http://localhost:${server.address().port} (${environment}) (pid:${process.pid}) `);
-        // Caso seja o ambiente de desenvolvimento, disponibilizar interface para teste do GraphQL
-        if (environment !== 'production' && graphql.length > 0) {
-            logger.debug(`GraphQL IDE disponivel em http://localhost:${server.address().port}/graphql`);
-        }
+        logger.info(`Executando "${name}@${version}" em http://localhost:${server.address().port} (${environment}) (pid:${process.pid})`);
         // Lista todas as APIs REST encontradas
         rest.forEach(route => logger.debug(`REST registrado....: ${route.uri} [${route.method}]`));
-        // Lista todas as APIs GraphQL encontradas
-        graphql.forEach(service => logger.debug(`GraphQL registrado.: ${service}`));
+        if (graphql.length > 0) {
+            // Lista todas as APIs GraphQL encontradas
+            graphql.forEach(resolve => logger.debug(`GraphQL registrado.: ${resolve}`));
+            // Caso seja o ambiente de desenvolvimento, disponibilizar interface para teste do GraphQL
+            if (environment !== 'production') {
+                logger.debug(`GraphiQL disponivel em http://localhost:${server.address().port}/graphql (${environment})`);
+            }
+        }
         // Criando health-check
         const server_health = http.createServer(app_health).listen(((parseInt(process.env.PORT) + 1) || 3001), () => {
             logger.log({
@@ -47,7 +53,7 @@ const logger = require('./middleware/express-log')(app);
                 source: 'health-check',
                 message: `Rota registrada: http://localhost:${server_health.address().port} (pid:${process.pid})`
             });
-            require('./middleware/express-health-check')(app, rest, graphql, server, app_health);
+            require('./middleware/express-health-check')(app, app_health, server);
         });
     });
 }).catch(error => {

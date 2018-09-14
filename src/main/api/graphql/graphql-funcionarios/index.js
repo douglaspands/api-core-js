@@ -53,14 +53,14 @@ const root = ({ get }) => {
     async function obterFuncionario(body, req) {
 
         const { _id } = body;
-        const { headers } = req; 
+        const { headers } = req;
 
         validarEntrada({ _id });
         return await cache
-                        .get(`api:funcionarios:${_id}`)
-                        .resetCache((headers['x-cache-reset'] === 'true')? true: false)
-                        .orElseSetResultOfMethod(service.obterFuncionario, _id)
-                        .expireOn(3600);
+            .get(`api:funcionarios:${_id}`)
+            .resetCache((headers['x-cache-reset'] === 'true') ? true : false)
+            .orElseSetResultOfMethod(service.obterFuncionario, _id)
+            .expireOn(3600);
     }
 
     /**
@@ -74,9 +74,9 @@ const root = ({ get }) => {
 
         validarEntradaInclusao(input);
         return await cache
-                        .set(`api:funcionarios:{{_id}}`)
-                        .withResultOfMethod(service.incluirFuncionario, input)
-                        .expireOn(3600);
+            .set(`api:funcionarios:{{_id}}`)
+            .withResultOfMethod(service.incluirFuncionario, input)
+            .expireOn(3600);
 
     }
 
@@ -93,9 +93,9 @@ const root = ({ get }) => {
         const _id = body._id;
         delete body._id;
         return await cache
-                        .set(`api:funcionarios:${_id}`)
-                        .withResultOfMethod(service.atualizarFuncionario, [ _id, body ])
-                        .expireOn(3600);
+            .set(`api:funcionarios:${_id}`)
+            .withResultOfMethod(service.atualizarFuncionario, [_id, body])
+            .expireOn(3600);
 
     }
 
@@ -111,8 +111,8 @@ const root = ({ get }) => {
 
         validarEntrada({ _id });
         return await cache
-                        .remove(`api:funcionarios:${_id}`)
-                        .afterMethod(service.removerFuncionario, _id);
+            .remove(`api:funcionarios:${_id}`)
+            .afterMethod(service.removerFuncionario, _id);
 
     }
 
@@ -124,23 +124,24 @@ const root = ({ get }) => {
      */
     async function pesquisarFuncionarios(body, req) {
 
+        const qs = get.module('querystring');
         const { headers } = req;
 
         validarEntrada(body);
         return await cache
-                        .get(`api:funcionarios:search:${JSON.stringify(body)}`)
-                        .resetCache((headers['x-cache-reset'] === 'true')? true: false)
-                        .orElseSetResultOfMethod(service.pesquisarFuncionarios, body)
-                        .expireOn(600);
+            .get(`api:funcionarios:search:${qs.stringify(body)}`)
+            .resetCache((headers['x-cache-reset'] === 'true') ? true : false)
+            .orElseSetResultOfMethod(service.pesquisarFuncionarios, body)
+            .expireOn(600);
 
     }
 
     return {
         obterFuncionario,
+        pesquisarFuncionarios,
         criarFuncionario,
         atualizarFuncionario,
-        removerFuncionario,
-        pesquisarFuncionarios
+        removerFuncionario
     }
 }
 

@@ -18,11 +18,10 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "localhost:3000",
+					"raw": "{{server}}",
 					"host": [
-						"localhost"
-					],
-					"port": "3000"
+						"{{server}}"
+					]
 				}
 			},
 			"response": []
@@ -42,11 +41,10 @@
 					"raw": "{\n    \"nome\": \"Joao\",\n    \"sobrenome\": \"Da Silva\",\n    \"cidade\": \"Sorocaba\",\n    \"estado\": \"SP\",\n    \"telefone\": \"1599999999\",\n    \"email\": \"joao.silva@enterprise.com\"\n}"
 				},
 				"url": {
-					"raw": "localhost:3000/v1/funcionarios",
+					"raw": "{{server}}/v1/funcionarios",
 					"host": [
-						"localhost"
+						"{{server}}"
 					],
-					"port": "3000",
 					"path": [
 						"v1",
 						"funcionarios"
@@ -146,13 +144,23 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "{{server}}/v1/funcionarios",
+					"raw": "{{server}}/v1/funcionarios?estado=SP&email=com",
 					"host": [
 						"{{server}}"
 					],
 					"path": [
 						"v1",
 						"funcionarios"
+					],
+					"query": [
+						{
+							"key": "estado",
+							"value": "SP"
+						},
+						{
+							"key": "email",
+							"value": "com"
+						}
 					]
 				}
 			},
@@ -170,14 +178,13 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"query\": \"mutation { criarFuncionario(input:{ nome: \\\"Victor\\\" sobrenome: \\\"Silva\\\" cidade: \\\"São Paulo\\\" estado: \\\"SP\\\" telefone: \\\"1166666666\\\" email: \\\"victor.silva@enterprise.com\\\" }) { _id nome sobrenome } }\"\n}\n"
+					"raw": "{\n\t\"query\": \"mutation { criarFuncionario(input:{ nome: \\\"Douglas\\\" sobrenome: \\\"Silva\\\" cidade: \\\"São Paulo\\\" estado: \\\"SP\\\" telefone: \\\"1188888888\\\" email: \\\"douglas.silva@enterprise.com\\\" }) { _id nome sobrenome } }\"\n}\n"
 				},
 				"url": {
-					"raw": "localhost:3000/graphql",
+					"raw": "{{server}}/graphql",
 					"host": [
-						"localhost"
+						"{{server}}"
 					],
-					"port": "3000",
 					"path": [
 						"graphql"
 					]
@@ -200,11 +207,10 @@
 					"raw": "{\n\t\"query\": \" query { obterFuncionario(_id: \\\"5b93611e274f7b4c5130990f\\\") { _id nome sobrenome cidade estado telefone email } }\"\n}\n"
 				},
 				"url": {
-					"raw": "localhost:3000/graphql",
+					"raw": "{{server}}/graphql",
 					"host": [
-						"localhost"
+						"{{server}}"
 					],
-					"port": "3000",
 					"path": [
 						"graphql"
 					]
@@ -224,14 +230,13 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"query\": \" query { pesquisarFuncionarios(estado: \\\"sp\\\") { _id nome sobrenome cidade estado telefone email } }\"\n}\n"
+					"raw": "{\n\t\"query\": \"query { pesquisarFuncionarios(estado: \\\"sp\\\", cidade: \\\"São Paulo\\\") { _id nome sobrenome cidade estado telefone email } }\"\n}\n"
 				},
 				"url": {
-					"raw": "localhost:3000/graphql",
+					"raw": "{{server}}/graphql",
 					"host": [
-						"localhost"
+						"{{server}}"
 					],
-					"port": "3000",
 					"path": [
 						"graphql"
 					]
@@ -254,11 +259,10 @@
 					"raw": "{\n\t\"query\": \" mutation { removerFuncionario(_id: \\\"5b9420eb523b6d2ae5651368\\\") }\"\n}\n"
 				},
 				"url": {
-					"raw": "localhost:3000/graphql",
+					"raw": "{{server}}/graphql",
 					"host": [
-						"localhost"
+						"{{server}}"
 					],
-					"port": "3000",
 					"path": [
 						"graphql"
 					]
@@ -281,14 +285,35 @@
 					"raw": "{\n\t\"query\": \" mutation { atualizarFuncionario(_id: \\\"5b9431cce7fdee3fd5db0b77\\\" sobrenome: \\\"Cerqueira\\\") { _id nome sobrenome cidade estado telefone email } }\"\n}\n"
 				},
 				"url": {
-					"raw": "localhost:3000/graphql",
+					"raw": "{{server}}/graphql",
 					"host": [
-						"localhost"
+						"{{server}}"
 					],
-					"port": "3000",
 					"path": [
 						"graphql"
 					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "health-check",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "localhost:3001",
+					"host": [
+						"localhost"
+					],
+					"port": "3001"
 				}
 			},
 			"response": []

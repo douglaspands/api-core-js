@@ -1,0 +1,24 @@
+# file: stack-db-only.yaml 
+# description: Executar uma instancias de banco: mongo e redis.
+version: '3.5'
+services:
+    mongodb:
+        image: mongo:4.0.1
+        container_name: apicore-mongo
+        volumes: 
+            - mongo-data:/data/db
+        ports: 
+            - 27017:27017
+    redis:
+        image: redis:4.0.11-alpine
+        container_name: apicore-redis
+        command: ["redis-server", "--appendonly", "yes"]
+        volumes: 
+            - redis-data:/data
+        ports: 
+            - 6379:6379
+volumes:
+  mongo-data:
+    driver: local
+  redis-data:
+    driver: local

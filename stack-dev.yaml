@@ -1,45 +1,43 @@
 # file: stack-dev.yaml 
-# description: Criar container da aplicação (desenvolvimento).
-# Disponibiliza a interface GraphiQL e todos acessos aos servidores.
+# description: Executar uma instancias de banco: mongo, redis e elaticsearch/kibana.
 version: '3.5'
 services:
-    api-core-js:
-        build:
-            dockerfile: ./Dockerfile
-            context: ./src
-        image: douglaspands/api-core-js:2.7.1
-        container_name: apicore-app
-        environment:
-            - MONGO_URL=mongo-db:27017
-            - REDIS_URL=redis-cache:6379
-            - PORT=3000
-            - NODE_ENV=development
-        volumes: 
-            - "./logs:/var/www/logs"
-        ports:
-            - "3000:3000"
-            - "3001:3001"
-        networks:
-            - develop-network
-        depends_on:
-            - "mongo-db"
-            - "redis-cache"
-    mongo-db:
+    mongodb:
         image: mongo:4.0.1
-        container_name: apicore-db
+        container_name: apicore-mongo
         volumes: 
-            - "./data:/data/db"
-        networks: 
-            - develop-network
-        ports:
-            - "27017:27017"
-    redis-cache:
+            - mongo-data:/data/db
+        ports: 
+            - 27017:27017
+    redis:
         image: redis:4.0.11-alpine
-        container_name: apicore-cache
-        networks: 
-            - develop-network
+        container_name: apicore-redis
+        command: ["redis-server", "--appendonly", "yes"]
+        volumes: 
+            - redis-data:/data
+        ports: 
+            - 6379:6379
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
+        container_name: apicore-elastic
+        environment: 
+            - discovery.type=single-node
+        volumes: 
+            - es-data:/usr/share/elasticsearch/data
         ports:
-            - "6379:6379"
-networks: 
-    develop-network:
-        driver: bridge
+            - 9200:9200 
+            - 9300:9300
+    kibana:
+        image: docker.elastic.co/kibana/kibana:6.4.0
+        container_name: apicore-kibana
+        ports: 
+            - 5601:5601
+        depends_on: 
+            - elasticsearch      
+volumes:
+  mongo-data:
+    driver: local
+  redis-data:
+    driver: local
+  es-data:
+    driver: local

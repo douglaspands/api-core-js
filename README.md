@@ -1,6 +1,7 @@
-# Node.js Core REST/GraphQL API com NoSQL MongoDB e cache utilizando Redis
+# API REST/GraphQL CORE JS
 
-Motor de API REST/GraphQL com MongoDB e Redis em Node.js.
+Motor de API REST/GraphQL em Node.js com MongoDB e Redis.   
+Foi incluido o Elastic-Search e o Kibana para consulta de log (opcional).
 
 ## Objetivo  
 
@@ -81,9 +82,10 @@ service.consultar(123);
 ### 1. Docker-Compose
 
 Foi gerado 3 scripts yaml para rodar com o *docker-compose*
-- **stack-db.yaml**: Esse script baixa e executa o MongoDB e o Redis configurado para uma melhor utilização no desenvolvimento do projeto.   Utilizando esse script, é necessario baixar as dependencias e executar o server em Node.js;
-- **stack-dev.yaml**: Esse script baixa e executa o MongoDB e o Redis, baixa o Node.js e cria uma imagem e container com o server dentro. Utiliza as configurações para uma melhor utilização no desenvolvimento do projeto. Tambem é disponibilzado a interface GraphiQL, para querys e mutations de APIs GraphQL.;
-- **stack-prd.yaml**: Esse script baixa e executa o MongoDB e o Redis, baixa o Node.js e cria uma imagem e container com o server dentro. Utiliza as configurações para execução em produção;
+- **stack-db-only.yaml**: Esse script baixa e executa o MongoDB e o Redis configurado para uma melhor utilização no desenvolvimento do projeto.   Utilizando esse script, é necessario baixar as dependencias e executar o server em Node.js;
+- **stack-dev.yaml**: Esse script baixa e executa o MongoDB, Redis, Elastic-Search e o Kibana configurado para uma melhor utilização no desenvolvimento do projeto. Utilizando esse script, é necessario baixar as dependencias e executar o server em Node.js;
+- **stack-prd.yaml** **(stack completa)**: Esse script baixa e executa o MongoDB, Redis, Elastic-Search e o Kibana, baixa o Node.js e cria uma imagem e container com o server dentro. Utiliza as configurações para execução em produção;
+- **stack-prd-without-lk** **(Sem Elasticsearch/Kibana)**: Esse script baixa e executa o MongoDB, Redis, porem não executa Elastic-Search e o Kibana, baixa o Node.js e cria uma imagem e container com o server dentro. Utiliza as configurações para execução em produção. Essa configuração foi criada devido ao consumo de hardware excessivo que a stack completa tem;
 
 Eu criei esses scripts para ajudar em cada fase do desenvolvimento.
 
@@ -97,7 +99,7 @@ $ docker-compose -f ./stack-prd.yaml up
 
 Primeiro vamos iniciar a imagem e o container do MongoDB e do Redis, utilizando um script que esta na raiz do projeto chamado de **stack-db.yaml**.
 ```console
-$ docker-compose -f ./compose-db.yaml up
+$ docker-compose -f ./stack-db-only.yaml up
 ```
 Feito isso ele vai subir uma instancia do MongoDB, e vai armazenar o volume do banco de dados na pasta: "**./data**". Assim, sempre que precisar criar uma nova instancia do MongoDB, ele sempre vai utilizar a mesma estrutura e dados criado.   
 
