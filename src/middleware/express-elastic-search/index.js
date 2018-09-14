@@ -25,14 +25,14 @@ const connect = app => {
             keepAlive: false,
             sniffOnStart: true,
             sniffInterval: 60000,
-            log: (process.env.NODE_ENV !== 'production') ? 'trace' : undefined
+            log: (process.env.ELASTICSEARCH_DEBUG === 'true') ? 'trace' : undefined
         });
         client.ping({ requestTimeout: 3000 }, error => {
             if (error) {
                 logger.log({
                     level: 'warn',
                     source: source,
-                    message: `Elastic Search não esta ativado na url: ${ELASTIC_URL.join(',')}`
+                    message: `Elastic Search não esta ativo na(s) url(s): ${ELASTIC_URL.join(', ')}`
                 });
                 resolve(null);
             } else {

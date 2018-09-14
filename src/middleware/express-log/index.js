@@ -102,7 +102,7 @@ module.exports = app => {
             logger.log({
                 level: 'warn',
                 source: source,
-                request: 'Não foi possivel incluir log no Elastic Search'
+                message: 'Não será possivel incluir log no Elastic Search'
             });
         }
     }
