@@ -42,6 +42,8 @@ module.exports = app => {
             source: source,
             message: error
         });
+        app.set('cache', null);
+        app.set('redis', null);
     });
 
     /**

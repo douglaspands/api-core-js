@@ -27,7 +27,7 @@ module.exports = (context) => {
 
         if (!(this instanceof Get)) {
             return new Get(key)
-        } 
+        }
 
         let _key = key;
         let _value = null;
@@ -41,11 +41,11 @@ module.exports = (context) => {
          */
         this.expireOn = async (seconds = sendError('seconds to expire')) => {
             if (!_value) {
-                _value = (!_resetCache)? await cache.get(_key): null;
+                _value = (!_resetCache && cache) ? await cache.get(_key) : null;
                 if (_value) _value = JSON.parse(_value);
                 else {
-                    _value = await ((Array.isArray(_args))? _method(..._args) : _method(_args));
-                    if (_value) cache.set(_key, _value, seconds);
+                    _value = await ((Array.isArray(_args)) ? _method(..._args) : _method(_args));
+                    if (_value && cache) cache.set(_key, _value, seconds);
                 }
             }
             return _value;
@@ -78,7 +78,7 @@ module.exports = (context) => {
          * @returns {this}
          */
         this.resetCache = (reset) => {
-            _resetCache = (reset === true)? true: false;
+            _resetCache = (reset === true) ? true : false;
             return this;
         }
     }
@@ -93,7 +93,7 @@ module.exports = (context) => {
 
         if (!(this instanceof Set)) {
             return new Set(key)
-        } 
+        }
 
         let _key = key;
         let _value = null;
@@ -107,12 +107,14 @@ module.exports = (context) => {
          * @returns {Promise<object>} Retorna objeto do banco de dados
          */
         this.expireOn = async (seconds = sendError('seconds to expire')) => {
-            if (!_value) _value = (Array.isArray(_args))? await _method(..._args) : await _method(_args);
+            if (!_value) _value = (Array.isArray(_args)) ? await _method(..._args) : await _method(_args);
             try {
-                const [ key ] = _key.match(EXTRACT_KEY); 
-                return (_value) ? cache.set(_key.replace(REPLACE_KEY, _value[key]), _value, seconds) : null;               
+                const [key] = _key.match(EXTRACT_KEY);
+                if (_value && cache) cache.set(_key.replace(REPLACE_KEY, _value[key]), _value, seconds);
+                return _value;
             } catch (error) {
-                return (_value) ? cache.set(_key, _value, seconds) : null;               
+                if (_value && cache) cache.set(_key, _value, seconds);
+                return _value;
             }
         }
         /**
@@ -144,12 +146,12 @@ module.exports = (context) => {
      * - now
      * - afterMethod
      */
-    function Remove (key = sendError('cache key')) {
-        
+    function Remove(key = sendError('cache key')) {
+
         if (!(this instanceof Remove)) {
             return new Remove(key)
-        } 
-        
+        }
+
         let _key = key;
         let _method = null;
         let _args = null;
@@ -160,8 +162,8 @@ module.exports = (context) => {
          */
         this.now = async () => {
             if (_method) _value = await _method(_args)
-            cache.del(_key);
-            return (_value)? _value : true;
+            if (cache) cache.del(_key);
+            return (_value) ? _value : true;
         }
         /**
          * Armazenar no cache o resultado da consulta do banco de dados

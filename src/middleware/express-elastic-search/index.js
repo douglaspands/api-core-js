@@ -25,16 +25,27 @@ const connect = app => {
             keepAlive: false,
             sniffOnStart: true,
             sniffInterval: 60000,
-            log: (process.env.NODE_ENV !== 'production')? 'trace': undefined
+            log: (process.env.NODE_ENV !== 'production') ? 'trace' : undefined
         });
-        client.url = ELASTIC_URL;
-        app.set('es', client)
-        logger.log({
-            level: 'info',
-            source: source,
-            message: `Elastic Search ativado com sucesso na url: ${ELASTIC_URL.join(',')}`
+        client.ping({ requestTimeout: 3000 }, error => {
+            if (error) {
+                logger.log({
+                    level: 'warn',
+                    source: source,
+                    message: `Elastic Search não esta ativado na url: ${ELASTIC_URL.join(',')}`
+                });
+                resolve(null);
+            } else {
+                client.url = ELASTIC_URL;
+                app.set('es', client)
+                logger.log({
+                    level: 'info',
+                    source: source,
+                    message: `Elastic Search ativado com sucesso na url: ${ELASTIC_URL.join(',')}`
+                });
+                resolve(client);
+            }
         });
-        resolve(client);
     });
 }
 
