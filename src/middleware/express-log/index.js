@@ -104,6 +104,7 @@ module.exports = app => {
                 source: source,
                 message: 'Não será possivel incluir log no Elastic Search'
             });
+            logger.add(transports.customConsole());
         }
     }
 
