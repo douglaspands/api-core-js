@@ -1,4 +1,4 @@
 {
-    "uri": "localhost:9200",
-    "database": "api-core-js"
+    "uri": "localhost",
+    "database": "apicore"
 }

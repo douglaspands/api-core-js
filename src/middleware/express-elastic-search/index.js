@@ -7,7 +7,10 @@
 const elasticsearch = require('elasticsearch');
 const source = (__dirname).split('/').pop();
 const { uri } = require('./config');
-const ELASTIC_URL = (process.env.ELASTIC_URL || uri);
+const ELASTIC_URL = [
+    `${(process.env.ELASTIC_URL || uri)}:9200`,
+    `${(process.env.ELASTIC_URL || uri)}:9300`
+];
 
 /**
  * Obter conexão com o Elastic
@@ -18,30 +21,20 @@ const connect = app => {
     const logger = app.get('logger');
     return new Promise((resolve, reject) => {
         const client = new elasticsearch.Client({
-            host: ELASTIC_URL
+            hosts: ELASTIC_URL,
+            keepAlive: false,
+            sniffOnStart: true,
+            sniffInterval: 60000,
+            log: (process.env.NODE_ENV !== 'production')? 'trace': undefined
         });
         client.url = ELASTIC_URL;
-        client.ping({
-            // ping usually has a 3000ms timeout
-            requestTimeout: 1000
-        }, (error) => {
-            if (error) {
-                logger.log({
-                    level: 'warn',
-                    source: source,
-                    message: error
-                });
-                resolve(null);
-            } else {
-                app.set('es', client)
-                logger.log({
-                    level: 'info',
-                    source: source,
-                    message: `Elastic Search ativado com sucesso na url: ${ELASTIC_URL}`
-                });
-                resolve(client);
-            }
+        app.set('es', client)
+        logger.log({
+            level: 'info',
+            source: source,
+            message: `Elastic Search ativado com sucesso na url: ${ELASTIC_URL.join(',')}`
         });
+        resolve(client);
     });
 }
 
