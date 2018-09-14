@@ -5,8 +5,10 @@
  */
 'use strict';
 const winston = require('winston');
+const source = (__dirname).split('/').pop();
 const { createLogger } = winston;
 const uuid = require('uuid/v4');
+const config = require('./config');
 
 /**
  * Função que disponibiliza o modulo de log pra cadastro no express.js
@@ -27,7 +29,7 @@ module.exports = app => {
     if (process.env.NODE_ENV !== 'production') {
         logger.add(transports.customConsole());
     };
-    
+
     /**
      * Função de geração de log no express.
      * @param {object} req Request (express) 
@@ -78,18 +80,31 @@ module.exports = app => {
             } /*else if (res.statusMessage) {
                 dataLog.response.body = res.statusMessage;
             }*/
-
             logger.log({
                 level: 'info',
-                source: 'express-log',
+                source: config.request.name,
                 request: dataLog
             });
-
             app.set('id', '');
-
         };
-
         next();
+    }
+
+    /**
+     * Inclui log no Elastic Search
+     * @return {void}
+     */
+    function addLogElasticSeach() {
+        const es = app.get('es');
+        if (es) {
+            logger.add(transports.customElasticSearch());
+        } else {
+            logger.log({
+                level: 'warn',
+                source: source,
+                request: 'Não foi possivel incluir log no Elastic Search'
+            });
+        }
     }
 
     // Armazenando logger no servidor
@@ -99,6 +114,7 @@ module.exports = app => {
     app.use(expressLogger);
 
     return {
-        logger
+        logger,
+        addLogElasticSeach
     }
 }

@@ -124,11 +124,12 @@ const root = ({ get }) => {
      */
     async function pesquisarFuncionarios(body, req) {
 
+        const qs = get.module('querystring');
         const { headers } = req;
 
         validarEntrada(body);
         return await cache
-            .get(`api:funcionarios:search:${JSON.stringify(body)}`)
+            .get(`api:funcionarios:search:${qs.stringify(body)}`)
             .resetCache((headers['x-cache-reset'] === 'true') ? true : false)
             .orElseSetResultOfMethod(service.pesquisarFuncionarios, body)
             .expireOn(600);

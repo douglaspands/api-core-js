@@ -28,6 +28,7 @@
     "mongodb": "^3.0.4",
     "redis": "^2.8.0",
     "uuid": "^3.2.1",
-    "winston": "^3.0.0-rc1"
+    "winston": "^3.0.0-rc1",
+    "winston-elasticsearch": "^0.7.4"
   }
 }

@@ -86,9 +86,25 @@ module.exports = (app) => {
 
     }
 
+   /**
+     * Customização da geração de log para o Elastic Search
+     * @return {object} Objeto de transport do Winston. 
+     */
+    const customElasticSearch = () => {
+
+        const Elasticsearch = require('winston-elasticsearch');
+
+        return new Elasticsearch({
+            level: LEVEL,
+            indexPrefix: 'apicore-logs',
+            client: app.get('es')
+        });
+    }
+
     return {
         customConsole,
-        customFile
+        customFile,
+        customElasticSearch
     }
 
 }

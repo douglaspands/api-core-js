@@ -24,7 +24,6 @@ module.exports = app => {
     const cache = redis.createClient({
         host: REDIS_HOST,
         port: REDIS_PORT,
-        db: database,
         detect_buffers: true
     });
 

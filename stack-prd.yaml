@@ -2,11 +2,11 @@
 # description: Criar container da aplicação (producao). 
 version: '3.5'
 services:
-    api-core-js:
+    apicore:
         build:
             dockerfile: ./Dockerfile
             context: ./src
-        image: douglaspands/api-core-js:2.7.1
+        image: douglaspands/apicorejs:2.7.1
         container_name: apicore-app
         environment:
             - MONGO_URL=mongo:27017
