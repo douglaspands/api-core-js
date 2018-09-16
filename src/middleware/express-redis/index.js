@@ -31,7 +31,6 @@ module.exports = app => {
      * Em caso de erro no acesso ao cache.
      */
     cache.on("error", error => {
-        app.set('cache', null);
         logger.log({
             level: 'warn',
             source: source,
