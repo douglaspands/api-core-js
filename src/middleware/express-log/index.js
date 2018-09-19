@@ -79,6 +79,7 @@ module.exports = app => {
                 source: config.request.name,
                 request: dataLog
             });
+            app.set('id', '');
         };
         next();
     }
@@ -96,7 +97,6 @@ module.exports = app => {
                 source: source,
                 message: 'Não será possivel incluir log no Elastic Search'
             });
-            logger.add(transports.customConsole());
         }
     }
 

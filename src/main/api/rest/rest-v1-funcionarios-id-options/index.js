@@ -16,7 +16,7 @@ module.exports.route = () => {
     return {
         controller: 'rest',
         method: 'options',
-        uri: '/v1/funcionarios/:_id'
+        uri: '/v1/funcionarios'
     }
 };
 /**
@@ -28,7 +28,7 @@ module.exports.route = () => {
  */
 module.exports.controller = async (req, res, next, context) => {
 
-    res.setHeader('Allow', 'DELETE, GET, PATCH, POST, PUT');
+    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, PUT, DELETE, OPTIONS');
     return res.status(200).send();
 
 };

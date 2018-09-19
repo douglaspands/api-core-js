@@ -12,9 +12,7 @@ module.exports = ({ get }) => {
     const promisify = get.self.module('utils/module-promisify');
     const mongo = promisify(get.self.context.module('utils/mongo-crud'));
     const redis = promisify(get.server('redis'));
-    const headers = get.server('headers');
-    const cacheReset = (headers['x-cache-reset'] === 'true') ? true : false;
-    const config = get.module('../config');
+    const config = get.module('./config');
 
     /**
      * Consultar no DB
@@ -24,6 +22,7 @@ module.exports = ({ get }) => {
      * @return {Promise.<array>} retorna lista de recursos pesquisado
      */
     const scan = async (collection, key, seconds = config.cache.seconds) => {
+        const cacheReset = ((get.server('headers'))['x-cache-reset'] === 'true') ? true : false;
         let result = null;
         if (!cacheReset) {
             // chave do cache
@@ -47,6 +46,7 @@ module.exports = ({ get }) => {
      * @return {Promise.<obejct>} retorna o recurso pesquisado
      */
     const find = async (collection, _id, seconds = config.cache.seconds) => {
+        const cacheReset = ((get.server('headers'))['x-cache-reset'] === 'true') ? true : false;
         let result = null;
         if (!cacheReset) {
             // chave do cache
