@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "e3892afa-737a-49fd-9414-5e164e93b306",
+		"_postman_id": "0f982fc9-c1e3-4246-b9c6-820060dc8423",
 		"name": "core-api-js",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -16,7 +16,10 @@
 						"disabled": true
 					}
 				],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{server}}",
 					"host": [
@@ -64,7 +67,10 @@
 						"disabled": true
 					}
 				],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{server}}/v1/funcionarios/5b9420eb523b6d2ae5651368",
 					"host": [
@@ -83,6 +89,38 @@
 			"name": "Funcionario (REST) - Atualizar ID",
 			"request": {
 				"method": "PUT",
+				"header": [
+					{
+						"key": "x-cache-reset",
+						"value": " true"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nome\": \"Joao\",\n    \"sobrenome\": \"Da Silva\",\n    \"cidade\": \"Taboao da Serra\",\n    \"estado\": \"SP\",\n    \"telefone\": \"1599999999\",\n    \"email\": \"joao.silva@enterprise.com\"\n}"
+				},
+				"url": {
+					"raw": "{{server}}/v1/funcionarios/5b9420eb523b6d2ae5651368",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"v1",
+						"funcionarios",
+						"5b9420eb523b6d2ae5651368"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionario (REST) - Atualizar ID",
+			"request": {
+				"method": "PATCH",
 				"header": [
 					{
 						"key": "x-cache-reset",
@@ -116,7 +154,10 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{server}}/v1/funcionarios/5b941bd1857543236409160f",
 					"host": [
@@ -142,7 +183,10 @@
 						"disabled": true
 					}
 				],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{server}}/v1/funcionarios?estado=SP&email=com",
 					"host": [
@@ -307,13 +351,43 @@
 						"disabled": true
 					}
 				],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "localhost:3001",
 					"host": [
 						"localhost"
 					],
 					"port": "3001"
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionarios (REST) - OPTIONS",
+			"request": {
+				"method": "OPTIONS",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"nome\": \"Douglas\",\n\t\"sobrenome\": \"Panhota\",\n\t\"cidade\": \"Sao Paulo\",\n\t\"estado\": \"SP\",\n\t\"telefone\": \"1199999999\",\n\t\"email\": \"douglas.panhota@empresa.com\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/v1/funcionarios",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"funcionarios"
+					]
 				}
 			},
 			"response": []

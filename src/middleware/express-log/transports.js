@@ -6,12 +6,12 @@
 'use strict';
 const pack = require('../../package.json');
 const winston = require('winston');
+const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 const moment = require('moment');
 const formatDate = 'YYYY-MM-DD HH.mm.ss.SSS';
-const formatDateFile = 'YYYYMMDDHHmmssSSS';
-const ID_BOOT = require('uuid/v4')();
+const BOOT_ID = require('uuid/v4')();
 
 /**
  * Customização dos transports do moduloe winstonjs 
@@ -38,8 +38,10 @@ module.exports = (app) => {
                 label({ label: 'server' }),
                 timestamp(),
                 printf(info => {
-                    if (info.request) {
-                        return `[${info.level}] ${moment().format(formatDate)} ${(info.source || info.label)} :\n${JSON.stringify(info.request, null, 4)}`;
+                    if (info.request || _.get(info, 'message.request', null)) {
+                        const requestLog = _.get(info, 'message.request', info.request);
+                        const sourceLog = (_.get(info, 'message.source', info.source) || info.label);
+                        return `[${info.level}] ${moment().format(formatDate)} ${sourceLog} :\n${JSON.stringify(requestLog, null, 4)}`;
                     } else {
                         return `[${info.level}] ${moment().format(formatDate)} ${(info.source || info.label)} - ${info.message}`;
                     }
@@ -67,17 +69,19 @@ module.exports = (app) => {
             options: { flags: 'a+', encoding: 'utf8' },
             maxsize: 10240,
             maxFiles: 10,
-            filename: path.join(logFolder, `${pack.name}_v${pack.version}.log`),
+            filename: path.join(logFolder, `${pack.name}_v${pack.version}_.log`),
             format: combine(
                 label({ label: 'server' }),
                 timestamp(),
                 printf(info => {
+                    const requestLog = (_.get(info, 'message.request', info.request) || info.message);
+                    const sourceLog = (_.get(info, 'message.source', info.source) || info.label);
                     const data = {
-                        source: (info.source || info.label),
-                        'correlation-id': (app.get('id') || ID_BOOT),
+                        source: sourceLog,
+                        'correlation-id': (app.get('id') || BOOT_ID),
                         level: info.level,
                         timestamp: moment().format(formatDate),
-                        message: (info.request || info.message)
+                        message: requestLog
                     };
                     return JSON.stringify(data);
                 })
@@ -86,10 +90,10 @@ module.exports = (app) => {
 
     }
 
-   /**
-     * Customização da geração de log para o Elastic Search
-     * @return {object} Objeto de transport do Winston. 
-     */
+    /**
+      * Customização da geração de log para o Elastic Search
+      * @return {object} Objeto de transport do Winston. 
+      */
     const customElasticSearch = () => {
 
         const Elasticsearch = require('winston-elasticsearch');
