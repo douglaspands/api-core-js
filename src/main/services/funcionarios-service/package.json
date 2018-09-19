@@ -1,6 +1,6 @@
 {
   "name": "funcionarios-service",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Service funcionarios",
   "scripts": {
     "test": "mocha --full-trace test/*.test.js test/**/*.test.js",

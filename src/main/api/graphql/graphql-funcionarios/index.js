@@ -2,6 +2,7 @@
  * @file Controller
  * @author douglaspands
  * @since 2017-11-22
+ * @version 1.1.20180917
  */
 'use strict';
 /**
@@ -38,11 +39,10 @@ const route = () => {
  */
 const root = ({ get }) => {
 
-    const service = get.self.context.module('services/funcionario-service');
+    const service = get.self.context.module('services/funcionarios-service');
     const validarEntrada = get.self.context.module('modules/validador-opcional');
     const validarEntradaInclusao = get.self.context.module('modules/validador-insert');
     const validarEntradaAtualizacao = get.self.context.module('modules/validador-update');
-    const cache = get.self.context.module('utils/cache-crud');
 
     /**
      * Obter funcionario atraves do id
@@ -53,7 +53,6 @@ const root = ({ get }) => {
     async function obterFuncionario(body, req) {
 
         const { _id } = body;
-        const { headers } = req;
 
         validarEntrada({ _id });
         return await service.obterFuncionario(_id);
@@ -67,6 +66,7 @@ const root = ({ get }) => {
     async function criarFuncionario(body, req) {
 
         const { input } = body;
+        validarEntradaInclusao(input);
         return await service.incluirFuncionario(input);
 
     }

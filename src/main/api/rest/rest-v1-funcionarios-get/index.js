@@ -29,21 +29,15 @@ module.exports.route = () => {
 module.exports.controller = async (req, res, next, { get }) => {
 
     const _ = get.module('lodash');
-    const qs = get.module('querystring');
-    const service = get.self.context.module('services/funcionario-service');
-    const cache = get.self.context.module('utils/cache-crud');
+    const service = get.self.context.module('services/funcionarios-service');
 
-    const { headers, query } = req;
-    const fields = get.self.module('utils/fields');
+    const { query } = req;
+    const fields = get.self.module('utils/rest-fields');
     const queryFields = (query['fields']) ? query['fields'] : '';
     delete query.fields;
 
     try {
-        const ret = await cache
-            .get(`api:funcionarios:search:${qs.stringify(query)}`)
-            .resetCache((headers['x-cache-reset'] === 'true') ? true : false)
-            .orElseSetResultOfMethod(service.pesquisarFuncionarios, query)
-            .expireOn(600);
+        const ret = await service.pesquisarFuncionarios(query);
         if (_.isEmpty(ret)) {
             res.status(204).send();
         } else {
@@ -51,11 +45,11 @@ module.exports.controller = async (req, res, next, { get }) => {
             res.status(200).send({ data: _ret });
         }
     } catch (error) {
-        let err = (error.constructor.name === 'TypeError') ? {
+        const err = (error.constructor.name === 'TypeError') ? {
             code: error.message,
             message: (error.stack).toString().split('\n')
         } : error;
-        res.status(500).send(err);
+        res.status(error.statusCode || 500).send(err);
     }
 
 };

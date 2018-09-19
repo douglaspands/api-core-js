@@ -39,7 +39,7 @@ module.exports = app => {
             const handlersList = functionsList.reduce((handlers, fn) => {
                 function createHandler(fn) {
                     function handler() {
-                        let args = Array.prototype.slice.call(arguments);
+                        let args = [].slice.call(arguments);
                         args.push(context);
                         fn.apply(this, args);
                     }

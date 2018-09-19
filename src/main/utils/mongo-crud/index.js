@@ -17,9 +17,7 @@ module.exports = ({ get, logger }) => {
      * @param {string} id
      * @return {boolean} 'true' o ID é valido. 
      */
-    function isValidID(id) {
-        return ObjectID.isValid(id);
-    }
+    const isValidID = id => ObjectID.isValid(id);
 
     /**
      * Consultar no MongoDB
@@ -28,7 +26,7 @@ module.exports = ({ get, logger }) => {
      * @param {function} callback
      * @return {void}
      */
-    function scan(collection, key, callback) {
+    const scan = (collection, key, callback) => {
 
         const query = {};
 
@@ -72,7 +70,7 @@ module.exports = ({ get, logger }) => {
      * @param {function} callback
      * @return {void}
      */
-    function find(collection, _id, callback) {
+    const find = (collection, _id, callback) => {
 
         const query = {};
 
@@ -117,7 +115,7 @@ module.exports = ({ get, logger }) => {
      * @param {function} callback
      * @return {void}
      */
-    function remove(collection, _id, callback) {
+    const remove = (collection, _id, callback) => {
 
         const query = {};
 
@@ -162,7 +160,7 @@ module.exports = ({ get, logger }) => {
      * @param {function} callback
      * @return {void}
      */
-    function insert(collection, body, callback) {
+    const insert = (collection, body, callback) => {
 
         if (!db) {
             const message = 'Sem conexão com o MongoDB';
@@ -188,9 +186,7 @@ module.exports = ({ get, logger }) => {
 
         db.collection(collection)
             .insertOne(body)
-            .then(data => {
-                callback(null, data);
-            })
+            .then(data => callback(null, data))
             .catch(err => {
                 logger.error({
                     source: source,
@@ -209,7 +205,7 @@ module.exports = ({ get, logger }) => {
      * @param {function} callback
      * @return {void}
      */
-    function update(collection, _id, set, callback) {
+    const update = (collection, _id, set, callback) => {
 
         const query = {}, update = {};
 

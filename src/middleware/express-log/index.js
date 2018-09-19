@@ -36,11 +36,10 @@ module.exports = app => {
      * @param {object} res Response (express)
      * @param {function} next Next (express)
      */
-    function expressLogger(req, res, next) {
+    const expressLogger = (req, res, next) => {
 
         const correlationId = uuid();
         app.set('id', correlationId);
-        app.set('headers', req.headers);
 
         res.setHeader('X-Correlation-Id', correlationId);
 
@@ -67,7 +66,6 @@ module.exports = app => {
                     body: {}
                 }
             };
-
             if (chunk) {
                 try {
                     let _chunk = chunk.toString();
@@ -75,20 +73,12 @@ module.exports = app => {
                     dataLog.response.body = _body;
                 } catch (error) {
                     // When the body not some json file (GraphQL)
-                    //console.log(chunk);
-                    //console.error(error);
                 }
-            } /*else if (res.statusMessage) {
-                dataLog.response.body = res.statusMessage;
-            }*/
-            logger.log({
-                level: 'info',
+            }
+            logger.info({
                 source: config.request.name,
                 request: dataLog
             });
-            app.set('id', '');
-            app.set('headers', {});
-
         };
         next();
     }
@@ -97,13 +87,12 @@ module.exports = app => {
      * Inclui log no Elastic Search
      * @return {void}
      */
-    function addLogElasticSeach() {
+    const addLogElasticSeach = () => {
         const es = app.get('es');
         if (es) {
             logger.add(transports.customElasticSearch());
         } else {
-            logger.log({
-                level: 'warn',
+            logger.warn({
                 source: source,
                 message: 'Não será possivel incluir log no Elastic Search'
             });

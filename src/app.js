@@ -28,8 +28,11 @@ const { logger, addLogElasticSeach } = require('./middleware/express-log')(app);
     require('./middleware/express-redis')(app);
     // Inicializando banco de dados
     await require('./middleware/express-mongodb')(app);
+    // Execução antes da API
+    require('./middleware/express-pre-api')(app);
     // Registrando APIs
-    return require('./middleware/express-register-apis')(app);
+    const apis = require('./middleware/express-register-apis')(app);
+    return apis;
 })().then(({ rest, graphql }) => {
     // Inicializando o servidor
     const server = http.createServer(app).listen((process.env.PORT || 3000), () => {

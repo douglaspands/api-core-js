@@ -2,6 +2,7 @@
  * @file Conexão com o Redis
  * @author douglaspands
  * @since 2018-09-03
+ * @version 1.1.20180917
  */
 'use strict';
 const redis = require("redis");
@@ -12,7 +13,7 @@ const REDIS_URL = `redis://${REDIS_HOST}:${REDIS_PORT}`;
 
 /**
  * Obter conexão com o Redis
- * @param {function} app Servidor Express.
+ * @param {object} app Servidor Express.
  */
 module.exports = app => {
 
@@ -21,80 +22,33 @@ module.exports = app => {
     /**
      * Criando conexão.
      */
-    const cache = redis.createClient({
+    const client = redis.createClient({
         host: REDIS_HOST,
         port: REDIS_PORT,
         detect_buffers: true
     });
 
-    app.set('redis', cache);
+    app.set('redis', client);
 
     /**
-     * Em caso de erro no acesso ao cache.
+     * Em caso de erro no acesso ao Redis.
      */
-    cache.on("error", error => {
-        logger.log({
-            level: 'warn',
+    client.on("error", error => {
+        logger.warn({
             source: source,
             message: `Tentando conectar na url: ${REDIS_URL}...`
         });
-        logger.log({
-            level: 'warn',
+        logger.warn({
             source: source,
             message: error
         });
-        app.set('cache', null);
     });
 
     /**
      * Em caso de conexão com sucesso.
      */
-    cache.on("connect", () => {
-        let _cache = {
-            get: (key) => {
-                return new Promise(resolve => {
-                    cache.get(key, (error, data) => {
-                        if (error) {
-                            logger.log({
-                                level: 'debug',
-                                source: source,
-                                message: `cache.get(key=${key}): error=${error}`
-                            });                    
-                            return resolve(null);
-                        } else {
-                            logger.log({
-                                level: 'debug',
-                                source: source,
-                                message: `cache.get(key=${key}): value=${data}`
-                            });                    
-                            return resolve(data);
-                        }
-                    });
-                });
-            },
-            set: (key, value, time = time_default) => {
-                const _value = (typeof value === 'object')? JSON.stringify(value): value.toString();
-                cache.set(key, _value, 'EX', time);
-                logger.log({
-                    level: 'debug',
-                    source: source,
-                    message: `cache.set(key=${key}, value=${_value}, 'EX', seconds=${time})`
-                });                    
-                return value;
-            },
-            del: (key) => {
-                cache.del(key);
-                logger.log({
-                    level: 'debug',
-                    source: source,
-                    message: `cache.del(key=${key})`
-                });                    
-            },
-            url: REDIS_URL
-        }
-        app.set('cache', _cache);
-        logger.log({
-            level: 'info',
+    client.on("connect", () => {
+        logger.info({
             source: source,
             message: `Redis ativado com sucesso na url: ${REDIS_URL}`
         });
