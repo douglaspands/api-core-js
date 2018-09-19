@@ -48,8 +48,7 @@ const { logger, addLogElasticSeach } = require('./middleware/express-log')(app);
         }
         // Criando health-check
         const server_health = http.createServer(app_health).listen(((parseInt(process.env.PORT) + 1) || 3001), () => {
-            logger.log({
-                level: 'info',
+            logger.info({
                 source: 'health-check',
                 message: `Rota registrada: http://localhost:${server_health.address().port} (pid:${process.pid})`
             });

@@ -40,6 +40,7 @@ module.exports = app => {
 
         const correlationId = uuid();
         app.set('id', correlationId);
+        app.set('headers', req.headers);
 
         res.setHeader('X-Correlation-Id', correlationId);
 
@@ -86,6 +87,8 @@ module.exports = app => {
                 request: dataLog
             });
             app.set('id', '');
+            app.set('headers', {});
+
         };
         next();
     }

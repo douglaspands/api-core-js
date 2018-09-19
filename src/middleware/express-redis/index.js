@@ -27,6 +27,8 @@ module.exports = app => {
         detect_buffers: true
     });
 
+    app.set('redis', cache);
+
     /**
      * Em caso de erro no acesso ao cache.
      */
@@ -42,7 +44,6 @@ module.exports = app => {
             message: error
         });
         app.set('cache', null);
-        app.set('redis', null);
     });
 
     /**
@@ -92,7 +93,6 @@ module.exports = app => {
             url: REDIS_URL
         }
         app.set('cache', _cache);
-        app.set('redis', cache);
         logger.log({
             level: 'info',
             source: source,

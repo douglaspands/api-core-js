@@ -56,11 +56,7 @@ const root = ({ get }) => {
         const { headers } = req;
 
         validarEntrada({ _id });
-        return await cache
-            .get(`api:funcionarios:${_id}`)
-            .resetCache((headers['x-cache-reset'] === 'true') ? true : false)
-            .orElseSetResultOfMethod(service.obterFuncionario, _id)
-            .expireOn(3600);
+        return await service.obterFuncionario(_id);
     }
 
     /**
@@ -71,12 +67,7 @@ const root = ({ get }) => {
     async function criarFuncionario(body, req) {
 
         const { input } = body;
-
-        validarEntradaInclusao(input);
-        return await cache
-            .set(`api:funcionarios:{{_id}}`)
-            .withResultOfMethod(service.incluirFuncionario, input)
-            .expireOn(3600);
+        return await service.incluirFuncionario(input);
 
     }
 
@@ -89,13 +80,9 @@ const root = ({ get }) => {
     async function atualizarFuncionario(body, req) {
 
         validarEntradaAtualizacao(body);
-
         const _id = body._id;
         delete body._id;
-        return await cache
-            .set(`api:funcionarios:${_id}`)
-            .withResultOfMethod(service.atualizarFuncionario, [_id, body])
-            .expireOn(3600);
+        return await service.atualizarFuncionario(_id, body);
 
     }
 
@@ -110,9 +97,7 @@ const root = ({ get }) => {
         const { _id } = body;
 
         validarEntrada({ _id });
-        return await cache
-            .remove(`api:funcionarios:${_id}`)
-            .afterMethod(service.removerFuncionario, _id);
+        return await service.removerFuncionario(_id);
 
     }
 
@@ -128,11 +113,7 @@ const root = ({ get }) => {
         const { headers } = req;
 
         validarEntrada(body);
-        return await cache
-            .get(`api:funcionarios:search:${qs.stringify(body)}`)
-            .resetCache((headers['x-cache-reset'] === 'true') ? true : false)
-            .orElseSetResultOfMethod(service.pesquisarFuncionarios, body)
-            .expireOn(600);
+        return await service.pesquisarFuncionarios(body);
 
     }
 
