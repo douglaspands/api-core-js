@@ -50,7 +50,7 @@ const root = ({ get }) => {
      * @param {*} req Objeto do framework express.js
      * @return {object} funcionario
      */
-    async function obterFuncionario(body, req) {
+    async function obterFuncionario(body) {
 
         const { _id } = body;
 
@@ -63,7 +63,7 @@ const root = ({ get }) => {
      * @param {object} body funcionario que será cadastrado.
      * @return {object} funcionario criado 
      */
-    async function criarFuncionario(body, req) {
+    async function criarFuncionario(body) {
 
         const { input } = body;
         validarEntradaInclusao(input);
@@ -77,11 +77,10 @@ const root = ({ get }) => {
      * @param {*} req Objeto do framework express.js
      * @return {string} status 
      */
-    async function atualizarFuncionario(body, req) {
+    async function atualizarFuncionario(body) {
 
         validarEntradaAtualizacao(body);
         const _id = body._id;
-        delete body._id;
         return await service.atualizarFuncionario(_id, body);
 
     }
