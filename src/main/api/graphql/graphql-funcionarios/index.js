@@ -46,82 +46,100 @@ const root = ({ get }) => {
 
     /**
      * Obter funcionario atraves do id
-     * @param {object} body Objeto com _id (unico campo usado)
-     * @param {*} req Objeto do framework express.js
-     * @return {object} funcionario
+     * @param {object} parent contem o resultado de um resolve anterior.
+     * @param {object} args argumentos passado, no caso "funcionario".
+     * @param {object} context contem objetos compartilhados.
+     * @param {object} info contem informações da execução. 
+     * @return {Promise.<object>} recurso funcionario
      */
-    async function obterFuncionario(body) {
+    async function obterFuncionario(root, args, context, info) {
 
-        const { _id } = body;
-
-        validarEntrada({ _id });
-        return await service.obterFuncionario(_id);
+        validarEntrada({ _id: args._id });
+        return await service.obterFuncionario(args._id);
     }
 
     /**
      * Incluir funcionario
-     * @param {object} body funcionario que será cadastrado.
-     * @return {object} funcionario criado 
+     * @param {object} parent contem o resultado de um resolve anterior.
+     * @param {object} args argumentos passado, no caso "funcionario".
+     * @param {object} context contem objetos compartilhados.
+     * @param {object} info contem informações da execução.     
+     * @return {Promise.<object>} funcionario criado 
      */
-    async function criarFuncionario(body) {
+    async function criarFuncionario(root, args, context, info) {
 
-        const { input } = body;
-        validarEntradaInclusao(input);
-        return await service.incluirFuncionario(input);
+        validarEntradaInclusao(args);
+        return await service.incluirFuncionario(args);
 
     }
 
     /**
      * Atualizar funcionario
-     * @param {string} body Dados do funcionario.
-     * @param {*} req Objeto do framework express.js
-     * @return {string} status 
+     * @param {object} parent contem o resultado de um resolve anterior.
+     * @param {object} args argumentos passado, no caso "funcionario".
+     * @param {object} context contem objetos compartilhados.
+     * @param {object} info contem informações da execução.
+     * @return {Promise.<object>} recurso funcionario atualizado 
      */
-    async function atualizarFuncionario(body) {
+    async function atualizarFuncionario(root, args, context, info) {
 
-        validarEntradaAtualizacao(body);
-        const _id = body._id;
-        return await service.atualizarFuncionario(_id, body);
+        validarEntradaAtualizacao(args);
+        return await service.atualizarFuncionario(args._id, args);
 
     }
 
     /**
      * Remover funcionario
-     * @param {string} body Dados do funcionario.
-     * @param {*} req Objeto do framework express.js
-     * @return {object} status 
+     * @param {object} parent contem o resultado de um resolve anterior.
+     * @param {object} args argumentos passado, no caso "funcionario".
+     * @param {object} context contem objetos compartilhados.
+     * @param {object} info contem informações da execução.
+     * @return {Promise.<string>} status 
      */
-    async function removerFuncionario(body, req) {
+    async function removerFuncionario(root, args, context, info) {
 
-        const { _id } = body;
-
-        validarEntrada({ _id });
-        return await service.removerFuncionario(_id);
+        validarEntrada({ _id: args._id });
+        return await service.removerFuncionario(args._id);
 
     }
 
     /**
      * Pesquisar funcionarios
-     * @param {string} body Dados do funcionario.
-     * @param {*} req Objeto do framework express.js
-     * @return {array} lista de funcionarios
+     * @param {object} parent contem o resultado de um resolve anterior.
+     * @param {object} args argumentos passado, no caso "funcionario".
+     * @param {object} context contem objetos compartilhados.
+     * @param {object} info contem informações da execução.   
+     * @return {Promise.<array>} lista de funcionarios
      */
-    async function pesquisarFuncionarios(body, req) {
+    async function pesquisarFuncionarios(root, args, context, info) {
 
-        const qs = get.module('querystring');
-        const { headers } = req;
-
-        validarEntrada(body);
-        return await service.pesquisarFuncionarios(body);
+        validarEntrada(args);
+        return await service.pesquisarFuncionarios(args);
 
     }
 
+    /**
+     * Funções de transformação do resultado
+     */
+    const transforms = {
+        Funcionario: {
+            nome_completo: (result) => {
+                return `${result.nome} ${result.sobrenome}`;
+            }
+        }
+    }
+
     return {
-        obterFuncionario,
-        pesquisarFuncionarios,
-        criarFuncionario,
-        atualizarFuncionario,
-        removerFuncionario
+        Query: {
+            obterFuncionario,
+            pesquisarFuncionarios
+        },
+        Mutation: {
+            criarFuncionario,
+            atualizarFuncionario,
+            removerFuncionario
+        },
+        ...transforms
     }
 }
 

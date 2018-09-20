@@ -43,10 +43,13 @@ const { logger, addLogElasticSeach } = require('./middleware/express-log')(app);
         rest.forEach(route => logger.debug(`REST registrado....: ${route.uri} [${route.method}]`));
         if (graphql.length > 0) {
             // Lista todas as APIs GraphQL encontradas
-            graphql.forEach(resolve => logger.debug(`GraphQL registrado.: ${resolve}`));
+            graphql.forEach(resolve => {
+                //if (resolve)
+                logger.debug(`GraphQL registrado.: ${resolve}`);
+            });
             // Caso seja o ambiente de desenvolvimento, disponibilizar interface para teste do GraphQL
             if (environment !== 'production') {
-                logger.debug(`GraphiQL disponivel em http://localhost:${server.address().port}/graphql (${environment})`);
+                logger.debug(`GraphiQL disponivel em http://localhost:${server.address().port}/graphiql (${environment})`);
             }
         }
         // Criando health-check

@@ -24,40 +24,16 @@ const utils = logger => {
             buildSchema(source);
             return true;
         } catch (error) {
-            logger.log({
-                level: 'warn',
+            logger.warn({
                 source: source,
                 message: `buildSchema.: ${error}`
             });
             return false;
         }
     }
-    /**
-     * Verifica se existem duplicidades nas funções.
-     * @param {object} root Objeto root do GraphQL 
-     * @param {object} resolvedFunction Funções da api
-     * @return {boolean} Retorna 'true' se houver duplicidade. 
-     */
-    const duplicateFunctions = (root, resolvedFunction) => {
-        const rfn = Object.keys(resolvedFunction);
-        const r = Object.keys(root);
-        let duplicate = false;
-        rfn.forEach((fn) => {
-            if (_.includes(r, fn)) {
-                logger.log({
-                    level: 'warn',
-                    source: source,
-                    message: `Função "${fn}" já existe no root do GraphQL`
-                });
-                duplicate = true;
-            }
-        })
-        return duplicate;
-    }
     // Exportar funções
     return {
-        graphqlSchemaIsValid,
-        duplicateFunctions
+        graphqlSchemaIsValid
     };
 }
 

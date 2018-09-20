@@ -8,8 +8,8 @@
 const _ = require('lodash');
 const fs = require('fs');
 const source = (__dirname).split('/').pop();
-const { buildSchema } = require('graphql');
-const graphqlHTTP = require('express-graphql');
+const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
+const { makeExecutableSchema } = require('graphql-tools');
 const { mergeTypes } = require('merge-graphql-schemas');
 // Objeto de contexto
 const Context = require('../../middleware/express-context');
@@ -30,17 +30,18 @@ module.exports = app => {
      * +- method: metodo pra execução 
      */
     const register = graphqlList => {
-        const { graphqlSchemaIsValid, duplicateFunctions } = require('./utils')(logger);
-        let root = {};
+        const { graphqlSchemaIsValid } = require('./utils')(logger);
+        let resolvers = {};
         let schemas = [];
         let graphqlServer = null;
+        let graphiqlServer = null;
         // Pra cada api na lista, sera feito o registro dela
         graphqlList.forEach(route => {
             try {
                 const resolverFunction = require(route.file).root(new Context(route.file, app));
                 const stringSchema = fs.readFileSync(route.graphql, 'utf8');
-                if (graphqlSchemaIsValid(stringSchema) && !duplicateFunctions(root, resolverFunction)) {
-                    Object.assign(root, resolverFunction);
+                if (graphqlSchemaIsValid(stringSchema)) {
+                    Object.assign(resolvers, resolverFunction);
                     schemas.push(stringSchema);
                 } else {
                     logger.error({
@@ -59,24 +60,39 @@ module.exports = app => {
                 });
             }
         });
-        if (!_.isEmpty(root) && schemas.length > 0) {
+        if (!_.isEmpty(resolvers) && schemas.length > 0) {
             try {
-                const schemaMerge = mergeTypes(schemas);
-                const schemaBin = buildSchema(schemaMerge);
-                graphqlServer = graphqlHTTP({
-                    schema: schemaBin,
-                    rootValue: root,
-                    graphiql: (process.env.NODE_ENV !== 'production')
+                const typeDefs = mergeTypes(schemas);
+                const schema = makeExecutableSchema({ typeDefs, resolvers });
+                graphqlServer = graphqlExpress(async (req, res) => {
+                    return {
+                        schema,
+                        context: {
+                            logger: app.get('logger'),
+                            mongo: app.get('mongodb'),
+                            cache: app.get('cache'),
+                            headers: req.headers
+                        }
+                    }
                 });
+                if (process.env.NODE_ENV !== 'production') {
+                    graphiqlServer = graphiqlExpress({ endpointURL: '/graphql', });
+                }
             } catch (error) {
                 logger.error({
                     source: source,
                     message: error.stack
                 });
-                root = {};
+                resolvers = {};
             }
-        }
-        return { graphqlHTTP: graphqlServer, list: Object.keys(root) };
+        } 
+        const listResolvers = (Object.keys(resolvers)).reduce((list, fn) => {
+            if (fn === 'Query' || fn === 'Mutation') {
+                Object.keys(resolvers[fn]).forEach(i => list.push(i));
+            }
+            return list;
+        }, []);
+        return { graphqlHTTP: graphqlServer, list: listResolvers, graphiqlHTTP: graphiqlServer };
     }
     return { register };
 };
