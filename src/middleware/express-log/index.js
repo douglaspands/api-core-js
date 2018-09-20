@@ -2,6 +2,7 @@
  * @file Modulo de configurações de Log no Express
  * @author douglaspands
  * @since 2017-12-06
+ * @version 1.2.20180919
  */
 'use strict';
 const winston = require('winston');
@@ -44,13 +45,32 @@ module.exports = app => {
         res.setHeader('X-Correlation-Id', correlationId);
 
         // Capturando send 
-        let end = res.end;
-        res.end = function (chunk, encoding, callback) {
+        const oldWrite = res.write;
+        const oldEnd = res.end;
+        let chunks = [];
 
-            res.end = end;
-            res.end(chunk, encoding, callback);
+        res.write = function (chunk) {
+            chunks.push(chunk);
+            oldWrite.apply(res, arguments);
+        };
 
-            let dataLog = {
+        res.end = function (chunk) {
+            
+            if (chunk) chunks.push(chunk);
+
+            let body = null; 
+            try {
+                body = Buffer.concat(chunks).toString('utf8');
+                body = JSON.parse(body);
+            } catch (e1) {
+                try {
+                    body = JSON.parse(chunks[0]);
+                } catch (e2) {
+                    body = {};
+                }
+            }
+
+            const dataLog = {
                 'x-correlation-id': correlationId,
                 method: req.method,
                 url: req.originalUrl,
@@ -63,24 +83,19 @@ module.exports = app => {
                 response: {
                     statusCode: res.statusCode,
                     headers: res._headers,
-                    body: {}
+                    body: body
                 }
             };
-            if (chunk) {
-                try {
-                    let _chunk = chunk.toString();
-                    let _body = JSON.parse(_chunk);
-                    dataLog.response.body = _body;
-                } catch (error) {
-                    // When the body not some json file (GraphQL)
-                }
-            }
+    
             logger.info({
                 source: config.request.name,
                 request: dataLog
             });
             app.set('id', '');
+    
+            oldEnd.apply(res, arguments);
         };
+
         next();
     }
 

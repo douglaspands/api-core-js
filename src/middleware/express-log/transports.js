@@ -67,7 +67,7 @@ module.exports = (app) => {
         return new transports.File({
             level: LEVEL,
             options: { flags: 'a+', encoding: 'utf8' },
-            maxsize: 10240,
+            maxsize: 1024 * 1024 * 10, // 10MB,
             maxFiles: 10,
             filename: path.join(logFolder, `${pack.name}_v${pack.version}_.log`),
             format: combine(
