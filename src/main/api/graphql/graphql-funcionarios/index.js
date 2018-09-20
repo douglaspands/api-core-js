@@ -117,11 +117,15 @@ const root = ({ get }) => {
     }
 
     return {
-        obterFuncionario,
-        pesquisarFuncionarios,
-        criarFuncionario,
-        atualizarFuncionario,
-        removerFuncionario
+        Query: {
+            obterFuncionario,
+            pesquisarFuncionarios
+        },
+        Mutation: {
+            criarFuncionario,
+            atualizarFuncionario,
+            removerFuncionario
+        }
     }
 }
 

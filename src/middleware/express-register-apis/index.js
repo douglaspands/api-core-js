@@ -6,6 +6,7 @@
 'use strict';
 const path = require('path');
 const config = require('./config');
+const bodyParser = require('body-parser');
 const searchFiles = require('../search-files');
 const searchController = require('../search-controllers');
 
@@ -30,7 +31,10 @@ const registerAPIs = app => {
     const graphql = require('../express-register-graphql')(app).register(graphqlList);
 
     if (rest.list.length > 0) app.use(rest.router);
-    if (graphql.list.length > 0) app.use('/graphql', graphql.graphqlHTTP);
+    if (graphql.list.length > 0) {
+        app.use('/graphql', bodyParser.json(), graphql.graphqlHTTP);
+        if (graphql.graphiqlHTTP) app.use('/graphiql', graphql.graphiqlHTTP);
+    }
 
     app.set('rest_list', rest.list);
     app.set('graphql_list', graphql.list);
