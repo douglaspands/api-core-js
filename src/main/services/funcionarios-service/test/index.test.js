@@ -8,7 +8,7 @@ const path = require('path');
 const assert = require('assert');
 const _ = require('lodash');
 
-const Context = require('../../../middleware/express-context-test');
+const Context = require('../../../../middleware/express-context-test');
 const pathApp = path.join(__dirname);
 
 
@@ -82,11 +82,9 @@ describe('# ./services/funcionario-service.js', () => {
         context.set.mock.module('utils/db-crud', {
             insert: () => new Promise((resolve) => {
                 resolve({
-                    ops: [{
-                        _id: '123456789012345678901234',
-                        nome: 'Joao',
-                        empresa: 'CPMGFHJKL'
-                    }]
+                    _id: '123456789012345678901234',
+                    nome: 'Joao',
+                    empresa: 'CPMGFHJKL'
                 });
             })
         });
@@ -245,9 +243,6 @@ describe('# ./services/funcionario-service.js', () => {
 
         context.set.mock.module('utils/db-crud', {
             update: () => new Promise((resolve) => {
-                resolve('Foi/Foram atualizado(s) 1 registro(s)!');
-            }),
-            find: () => new Promise((resolve) => {
                 resolve({
                     _id: '123456789012345678901234',
                     nome: 'Joao',

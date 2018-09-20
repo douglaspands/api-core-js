@@ -19,11 +19,6 @@ describe('# ./index.js', () => {
     beforeEach(() => {
 
         context = new Context(pathApp);
-        context.set.mock.server('cache', {
-            get: () => new Promise(resolve => resolve(null)),
-            set: (key, value, seconds) => value,
-            del: () => { }
-        });
 
     });
 
@@ -31,7 +26,7 @@ describe('# ./index.js', () => {
 
         const { route } = require('../index');
         const res = route();
-        assert.equal(res.method, 'put');
+        assert.equal(res.method, 'patch');
         assert.equal(res.uri, '/v1/funcionarios/:_id');
         done();
 
@@ -39,7 +34,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com sucesso (statusCode: 200)`, (done) => {
 
-        context.set.mock.module('services/funcionario-service', {
+        context.set.mock.module('services/funcionarios-service', {
             atualizarFuncionario: () => {
                 return new Promise((resolved) => {
                     resolved({
@@ -84,7 +79,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com erro (statusCode: 404)`, (done) => {
 
-        context.set.mock.module('services/funcionario-service', {
+        context.set.mock.module('services/funcionarios-service', {
             atualizarFuncionario: () => {
                 return new Promise((resolve, reject) => {
                     reject({});
@@ -122,7 +117,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com erro (statusCode: 400)`, (done) => {
 
-        context.set.mock.module('services/funcionario-service', {
+        context.set.mock.module('services/funcionarios-service', {
             atualizarFuncionario: () => {
                 return new Promise((resolve, reject) => {
                     reject({});

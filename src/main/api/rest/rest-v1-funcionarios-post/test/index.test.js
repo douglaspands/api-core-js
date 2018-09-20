@@ -19,11 +19,6 @@ describe('# ./index.js', () => {
     beforeEach(() => {
 
         context = new Context(pathApp);
-        context.set.mock.server('cache', {
-            get: () => new Promise(resolve => resolve(null)),
-            set: (key, value, seconds) => value,
-            del: () => { }
-        });
 
     });
 
@@ -39,7 +34,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com sucesso (statusCode: 201)`, (done) => {
 
-        context.set.mock.module('services/funcionario-service', {
+        context.set.mock.module('services/funcionarios-service', {
             incluirFuncionario: () => {
                 return new Promise((resolved) => {
                     resolved({
@@ -93,7 +88,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com erro (statusCode: 500)`, (done) => {
 
-        context.set.mock.module('services/funcionario-service', {
+        context.set.mock.module('services/funcionarios-service', {
             incluirFuncionario: () => {
                 return new Promise((resolve, reject) => {
                     reject({});
@@ -135,7 +130,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com erro (statusCode: 400)`, (done) => {
 
-        context.set.mock.module('services/funcionario-service', {
+        context.set.mock.module('services/funcionarios-service', {
             incluirFuncionario: () => {
                 return new Promise((_, reject) => {
                     reject({});

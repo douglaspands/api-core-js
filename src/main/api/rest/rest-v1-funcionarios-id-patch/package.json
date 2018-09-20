@@ -1,5 +1,5 @@
 {
-  "name": "rest-v1-funcionarios-id-put",
+  "name": "rest-v1-funcionarios-id-patch",
   "version": "1.0.0",
   "description": "REST-API Atualizar funcionario",
   "main": "index.js",
