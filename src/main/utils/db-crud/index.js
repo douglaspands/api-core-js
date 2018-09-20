@@ -112,7 +112,7 @@ module.exports = ({ get }) => {
      */
     const update = async (collection, _id, set, seconds = config.cache.seconds) => {
         // Remover id
-        delete body._id;
+        delete set._id;
         // Atualizar na base
         await mongo.updateAsync(collection, _id, set);
         // Consultar base
