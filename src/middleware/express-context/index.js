@@ -66,7 +66,7 @@ function Context(modulePath, app) {
             source: _moduleName,
             message: `Foi solicitado a variavel "${name}" do servidor.`
         });
-        let _mod = _app.get(name);
+        const _mod = _app.get(name);
         if (!_mod) {
             _logger.error({
                 source: _moduleName,
@@ -92,7 +92,7 @@ function Context(modulePath, app) {
         if (typeof name !== 'string') return null;
 
         const _name = name;
-        const _self = (self) ? self : false;
+        const _self = (self) ? self : null;
 
         function getLocalModule(modulePath, name) {
             if (!regexFolderLimit.test(modulePath)) return null;
@@ -108,7 +108,7 @@ function Context(modulePath, app) {
 
         if (_mod) {
             if (_self && (typeof _mod === 'function')) {
-                _mod = _mod(self);
+                _mod = _mod(_self);
             }
         } else {
             _logger.error({
