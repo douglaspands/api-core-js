@@ -11,10 +11,6 @@ const _ = require('lodash');
 const Context = require('../../../../../middleware/express-context-test');
 const pathApp = path.join(__dirname);
 
-const req = {
-    headers: {}
-}
-
 describe('# ./index.js', () => {
 
     let i = 0, context;
@@ -36,13 +32,13 @@ describe('# ./index.js', () => {
             }
         });
 
-        const { obterFuncionario } = require('../index').root(context);
+        const { obterFuncionario } = require('../index').root(context).Query;
 
         const input = {
             _id: '123456789012345678901234'
         };
 
-        let result = await obterFuncionario(input, req);
+        let result = await obterFuncionario(null, input, null, null);
 
         assert.equal(result.nome, 'Joao');
         assert.equal(result.empresa, 'CPMGFHJKL');
@@ -67,10 +63,9 @@ describe('# ./index.js', () => {
             }
         });
 
-        const { criarFuncionario } = require('../index').root(context);
+        const { criarFuncionario } = require('../index').root(context).Mutation;
 
         const input = {
-            input: {
                 nome: 'Joao',
                 sobrenome: 'Silva',
                 empresa: 'CPMGFHJKL',
@@ -78,10 +73,9 @@ describe('# ./index.js', () => {
                 email: 'joao.silva@lala.com',
                 cidade: 'sao paulo',
                 estado: 'sp'
-            }
         };
 
-        let result = await criarFuncionario(input, req);
+        let result = await criarFuncionario(null, input, null, null);
 
         assert.equal(result._id, '123456789012345678901234');
         assert.equal(result.nome, 'Joao');
@@ -97,13 +91,13 @@ describe('# ./index.js', () => {
             }
         });
 
-        const { removerFuncionario } = require('../index').root(context);
+        const { removerFuncionario } = require('../index').root(context).Mutation;
 
         const input = {
             _id: '123456789012345678901234'
         };
 
-        let result = await removerFuncionario(input, req);
+        let result = await removerFuncionario(null, input, null, null);
 
         assert.equal(result, 'Foi/Foram removido(s) 1 registro(s)!');
 
@@ -117,14 +111,14 @@ describe('# ./index.js', () => {
             }
         });
 
-        const { atualizarFuncionario } = require('../index').root(context);
+        const { atualizarFuncionario } = require('../index').root(context).Mutation;
 
         const input = {
             _id: '123456789012345678901234',
             empresa: 'JHGFRT'
         };
 
-        let result = await atualizarFuncionario(input, req);
+        let result = await atualizarFuncionario(null, input, null, null);
 
         assert.equal(result, 'Foi/Foram atualizado(s) 1 registro(s)!');
 
@@ -142,7 +136,7 @@ describe('# ./index.js', () => {
             }
         });
 
-        const { pesquisarFuncionarios } = require('../index').root(context);
+        const { pesquisarFuncionarios } = require('../index').root(context).Query;
 
         const input = {
             _id: '123456789012345678901234',
@@ -150,7 +144,7 @@ describe('# ./index.js', () => {
         };
 
         try {
-            var result = await pesquisarFuncionarios(input, req);
+            var result = await pesquisarFuncionarios(null, input, null, null);
         } catch (error) {
             console.error(error);
         }
