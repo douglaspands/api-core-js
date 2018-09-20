@@ -72,14 +72,14 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "{{server}}/v1/funcionarios/5b9420eb523b6d2ae5651368",
+					"raw": "{{server}}/v1/funcionarios/5ba2e34f65a4510f07f14425",
 					"host": [
 						"{{server}}"
 					],
 					"path": [
 						"v1",
 						"funcionarios",
-						"5b9420eb523b6d2ae5651368"
+						"5ba2e34f65a4510f07f14425"
 					]
 				}
 			},
@@ -104,14 +104,14 @@
 					"raw": "{\n    \"nome\": \"Joao\",\n    \"sobrenome\": \"Da Silva\",\n    \"cidade\": \"Taboao da Serra\",\n    \"estado\": \"SP\",\n    \"telefone\": \"1599999999\",\n    \"email\": \"joao.silva@enterprise.com\"\n}"
 				},
 				"url": {
-					"raw": "{{server}}/v1/funcionarios/5b9420eb523b6d2ae5651368",
+					"raw": "{{server}}/v1/funcionarios/5ba340707f9a991f4691ee33",
 					"host": [
 						"{{server}}"
 					],
 					"path": [
 						"v1",
 						"funcionarios",
-						"5b9420eb523b6d2ae5651368"
+						"5ba340707f9a991f4691ee33"
 					]
 				}
 			},
@@ -133,17 +133,17 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"cidade\": \"taboao da serra\"\n}"
+					"raw": "{\n\t\"cidade\": \"Mococa\"\n}"
 				},
 				"url": {
-					"raw": "{{server}}/v1/funcionarios/5b9420eb523b6d2ae5651368",
+					"raw": "{{server}}/v1/funcionarios/5ba340707f9a991f4691ee33",
 					"host": [
 						"{{server}}"
 					],
 					"path": [
 						"v1",
 						"funcionarios",
-						"5b9420eb523b6d2ae5651368"
+						"5ba340707f9a991f4691ee33"
 					]
 				}
 			},
@@ -159,14 +159,14 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "{{server}}/v1/funcionarios/5b941bd1857543236409160f",
+					"raw": "{{server}}/v1/funcionarios/5ba340707f9a991f4691ee33",
 					"host": [
 						"{{server}}"
 					],
 					"path": [
 						"v1",
 						"funcionarios",
-						"5b941bd1857543236409160f"
+						"5ba340707f9a991f4691ee33"
 					]
 				}
 			},
@@ -188,23 +188,40 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "{{server}}/v1/funcionarios?estado=SP&email=com",
+					"raw": "{{server}}/v1/funcionarios",
 					"host": [
 						"{{server}}"
 					],
 					"path": [
 						"v1",
 						"funcionarios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionarios (REST) - OPTIONS",
+			"request": {
+				"method": "OPTIONS",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"nome\": \"Douglas\",\n\t\"sobrenome\": \"Panhota\",\n\t\"cidade\": \"Sao Paulo\",\n\t\"estado\": \"SP\",\n\t\"telefone\": \"1199999999\",\n\t\"email\": \"douglas.panhota@empresa.com\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/v1/funcionarios",
+					"host": [
+						"{{url}}"
 					],
-					"query": [
-						{
-							"key": "estado",
-							"value": "SP"
-						},
-						{
-							"key": "email",
-							"value": "com"
-						}
+					"path": [
+						"v1",
+						"funcionarios"
 					]
 				}
 			},
@@ -222,7 +239,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"query\": \"mutation { criarFuncionario(input:{ nome: \\\"Douglas\\\" sobrenome: \\\"Silva\\\" cidade: \\\"São Paulo\\\" estado: \\\"SP\\\" telefone: \\\"1188888888\\\" email: \\\"douglas.silva@enterprise.com\\\" }) { _id nome sobrenome } }\"\n}\n"
+					"raw": "{\n\t\"query\": \"mutation { criarFuncionario(nome: \\\"Douglas\\\" sobrenome: \\\"Silva\\\" cidade: \\\"São Paulo\\\" estado: \\\"SP\\\" telefone: \\\"1188888888\\\" email: \\\"douglas.silva@enterprise.com\\\") { _id nome_completo } }\"\n}\n"
 				},
 				"url": {
 					"raw": "{{server}}/graphql",
@@ -248,7 +265,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"query\": \" query { obterFuncionario(_id: \\\"5b93611e274f7b4c5130990f\\\") { _id nome sobrenome cidade estado telefone email } }\"\n}\n"
+					"raw": "{\n\t\"query\": \" query { obterFuncionario(_id: \\\"5ba340707f9a991f4691ee33\\\") { _id nome sobrenome nome_completo cidade estado telefone email } }\"\n}\n"
 				},
 				"url": {
 					"raw": "{{server}}/graphql",
@@ -274,7 +291,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"query\": \"query { pesquisarFuncionarios(estado: \\\"sp\\\", cidade: \\\"São Paulo\\\") { _id nome sobrenome cidade estado telefone email } }\"\n}\n"
+					"raw": "{\n\t\"query\": \"query { pesquisarFuncionarios(estado: \\\"sp\\\") { _id nome sobrenome nome_completo cidade estado telefone email } }\"\n}\n"
 				},
 				"url": {
 					"raw": "{{server}}/graphql",
@@ -300,7 +317,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"query\": \" mutation { removerFuncionario(_id: \\\"5b9420eb523b6d2ae5651368\\\") }\"\n}\n"
+					"raw": "{\n\t\"query\": \" mutation { removerFuncionario(_id: \\\"5ba340707f9a991f4691ee33\\\") }\"\n}\n"
 				},
 				"url": {
 					"raw": "{{server}}/graphql",
@@ -326,7 +343,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"query\": \" mutation { atualizarFuncionario(_id: \\\"5b9431cce7fdee3fd5db0b77\\\" sobrenome: \\\"Cerqueira\\\") { _id nome sobrenome cidade estado telefone email } }\"\n}\n"
+					"raw": "{\n\t\"query\": \" mutation { atualizarFuncionario(_id: \\\"5ba340707f9a991f4691ee33\\\" sobrenome: \\\"Cerqueira\\\") { _id nome sobrenome nome_completo cidade estado telefone email } }\"\n}\n"
 				},
 				"url": {
 					"raw": "{{server}}/graphql",
@@ -356,37 +373,9 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "localhost:3001",
+					"raw": "{{server_health}}",
 					"host": [
-						"localhost"
-					],
-					"port": "3001"
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Funcionarios (REST) - OPTIONS",
-			"request": {
-				"method": "OPTIONS",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"nome\": \"Douglas\",\n\t\"sobrenome\": \"Panhota\",\n\t\"cidade\": \"Sao Paulo\",\n\t\"estado\": \"SP\",\n\t\"telefone\": \"1199999999\",\n\t\"email\": \"douglas.panhota@empresa.com\"\n}"
-				},
-				"url": {
-					"raw": "{{url}}/v1/funcionarios",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"v1",
-						"funcionarios"
+						"{{server_health}}"
 					]
 				}
 			},

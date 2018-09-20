@@ -6,6 +6,7 @@
  */
 'use strict';
 const winston = require('winston');
+const zlib = require('zlib');
 const source = (__dirname).split('/').pop();
 const { createLogger } = winston;
 const uuid = require('uuid/v4');
@@ -60,8 +61,10 @@ module.exports = app => {
 
             let body = null; 
             try {
-                body = Buffer.concat(chunks).toString('utf8');
-                body = JSON.parse(body);
+                const _compact = Buffer.concat(chunks);
+                const _buffer = zlib.gunzipSync(_compact);
+                const _text = _buffer.toString('utf8');
+                body = JSON.parse(_text);
             } catch (e1) {
                 try {
                     body = JSON.parse(chunks[0]);

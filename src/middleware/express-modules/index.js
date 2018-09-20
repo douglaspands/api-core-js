@@ -4,14 +4,14 @@
  * @since 2017-11-25 
  */
 'use strict';
-//const compression = require('compression'); //--> problema na geração da log
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const compression = require('compression');
 const cors = require('cors');
 
 module.exports = app => {
 
     // Inclusão de compressão de dados
-    //app.use(compression()); //--> problema na geração da log
+    app.use(compression()); 
 
     // CORS
     app.use(cors());

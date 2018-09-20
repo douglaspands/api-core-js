@@ -142,7 +142,14 @@ module.exports = ({ get, logger }) => {
 
         db.collection(collection)
             .deleteOne(query)
-            .then(data => callback(null, `Foi/Foram removido(s) ${data.deletedCount} registro(s)!`))
+            //.then(data => callback(null, `Foi/Foram removido(s) ${data.deletedCount} registro(s)!`))
+            .then(data => {
+                if (data.deletedCount === 0) {
+                    callback(`Não foi encontrado o registro solicitado!`);
+                } else {
+                    callback(null, `Registro removido com sucesso!`);
+                }
+            })
             .catch(err => {
                 logger.log({
                     level: 'error',
@@ -243,7 +250,14 @@ module.exports = ({ get, logger }) => {
 
         db.collection(collection)
             .updateOne(query, update)
-            .then(data => callback(null, `Foi/Foram atualizado(s) ${data.matchedCount} registro(s)!`))
+            //.then(data => callback(null, `Foi/Foram atualizado(s) ${data.matchedCount} registro(s)!`))
+            .then(data => {
+                if (data.matchedCount === 0) {
+                    callback(`Não foi encontrado o registro solicitado!`);
+                } else {
+                    callback(null, `Registro atualizado com sucesso!`);
+                }
+            })
             .catch(err => {
                 logger.error({
                     source: source,
