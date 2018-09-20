@@ -2,7 +2,7 @@
  * @file Modulo de apoio a API.
  * @author @douglaspands
  * @since 2018-09-08
- * @version 2.0.0
+ * @version 2.0.1
  */
 'use strict';
 const path = require('path');
@@ -16,10 +16,45 @@ const regexFolderLimit = new RegExp(config.folderLimit);
  */
 function Context(modulePath, app) {
 
+    if (!(this instanceof Context)) {
+        throw new Error('Class Context não foi instanciada!');
+    }
+
     const _app = app;
     const _modulePath = path.join(modulePath, '..');
     const _moduleName = (_modulePath.split(/[\\\/]/g)).pop();
     const _logger = app.get('logger');
+
+    /**
+     * Encapsulando em paradigmas funcionais
+     */
+    this.get = {
+        self: {
+            context: {
+                module: (moduleName) => {
+                    return getModule(moduleName, this);
+                }
+            },
+            module: (moduleName) => {
+                return getModule(moduleName, null);
+            }
+        },
+        server: (moduleName) => {
+            return getServer(moduleName);
+        },
+        module: (moduleName) => {
+            _logger.debug({
+                source: _moduleName,
+                message: `Foi solicitado o modulo "${moduleName}" do node_modules.`
+            });    
+            return require(moduleName);
+        }
+    }
+
+    /**
+     * Modulo de log
+     */
+    this.logger = _logger;
 
     /**
      * Obter variaveis do servidor
@@ -85,37 +120,6 @@ function Context(modulePath, app) {
         return _mod;
 
     }
-
-    /**
-     * Encapsulando em paradigmas funcionais
-     */
-    this.get = {
-        self: {
-            context: {
-                module: (moduleName) => {
-                    return getModule(moduleName, this);
-                }
-            },
-            module: (moduleName) => {
-                return getModule(moduleName, null);
-            }
-        },
-        server: (moduleName) => {
-            return getServer(moduleName);
-        },
-        module: (moduleName) => {
-            _logger.debug({
-                source: _moduleName,
-                message: `Foi solicitado o modulo "${moduleName}" do node_modules.`
-            });    
-            return require(moduleName);
-        }
-    }
-
-    /**
-     * Modulo de log
-     */
-    this.logger = _logger;
 
     if (this instanceof Context) {
         Object.freeze(this);
