@@ -5,7 +5,8 @@
  * @version 1.1.20180917
  */
 'use strict';
-const redis = require("redis");
+const redis = require('redis');
+const Cache = require('./Cache');
 const source = (__dirname).split('/').pop();
 const { uri, database, time_default } = require('./config');
 const [REDIS_HOST, REDIS_PORT] = (process.env.REDIS_URL || uri).split(':');
@@ -22,14 +23,14 @@ module.exports = app => {
     /**
      * Criando conexão.
      */
-    const client = redis.createClient({
+    const redisConfig = {
         host: REDIS_HOST,
         port: REDIS_PORT,
         detect_buffers: true
-    });
-
-    app.set('redis', client);
-
+    };
+    const client = redis.createClient(redisConfig);
+    app.set('redis-config', redisConfig);
+    app.set('cache', new Cache(client, logger));
     /**
      * Em caso de erro no acesso ao Redis.
      */

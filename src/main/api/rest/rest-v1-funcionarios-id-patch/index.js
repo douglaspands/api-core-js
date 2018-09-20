@@ -28,7 +28,7 @@ module.exports.route = () => {
  */
 module.exports.controller = async ({ params, body }, res, next, { get }) => {
 
-    const service = get.self.context.module('services/funcionario-service');
+    const service = get.self.context.module('services/funcionarios-service');
     const validarEntrada = get.self.context.module('modules/validador');
 
     let input = body;

@@ -11,8 +11,8 @@ module.exports = ({ get }) => {
     const qs = get.module('querystring');
     const promisify = get.self.module('utils/module-promisify');
     const mongo = promisify(get.self.context.module('utils/mongo-crud'));
-    const redis = promisify(get.server('redis'));
-    const config = get.module('./config');
+    const cache = get.server('cache');
+    const config = require('./config');
 
     /**
      * Consultar no DB
@@ -22,18 +22,24 @@ module.exports = ({ get }) => {
      * @return {Promise.<array>} retorna lista de recursos pesquisado
      */
     const scan = async (collection, key, seconds = config.cache.seconds) => {
+        // chave do cache
+        const cacheId = `${config.cache.prefix}:${collection}:${config.cache.search}:${qs.stringify(key)}`;
         const cacheReset = ((get.server('headers'))['x-cache-reset'] === 'true') ? true : false;
         let result = null;
         if (!cacheReset) {
-            // chave do cache
-            const cacheId = `${config.cache.prefix}:${collection}:${config.cache.search}:${qs.stringify(key)}`;
             // consulta no cache
-            result = await redis.getAsync(cacheId);
+            result = await cache.get(cacheId);
         }
         // se não encontrar, busca no mongodb e adiciona no cache
         if (!result) {
             result = await mongo.scanAsync(collection, key);
-            if (result) redis.set(cacheId, result, seconds);
+            if (result) {
+                try {
+                    cache.set(cacheId, result, seconds);
+                } catch (error) {
+                    console.error(error);
+                }
+            }
         }
         return result;
     };
@@ -46,18 +52,18 @@ module.exports = ({ get }) => {
      * @return {Promise.<obejct>} retorna o recurso pesquisado
      */
     const find = async (collection, _id, seconds = config.cache.seconds) => {
+        // chave do cache
+        const cacheId = `${config.cache.prefix}:${collection}:${_id}`;
         const cacheReset = ((get.server('headers'))['x-cache-reset'] === 'true') ? true : false;
         let result = null;
         if (!cacheReset) {
-            // chave do cache
-            const cacheId = `${config.cache.prefix}:${collection}:${_id}`;
             // consulta no cache
-            result = await redis.getAsync(cacheId);
+            result = await cache.get(cacheId);
         }
         // se não encontrar, busca no mongodb e adiciona no cache
         if (!result) {
             result = await mongo.findAsync(collection, _id);
-            if (result) redis.set(cacheId, result, seconds);
+            if (result) cache.set(cacheId, result, seconds);
         }
         return result;
     };
@@ -74,7 +80,7 @@ module.exports = ({ get }) => {
         // chave do cache
         const cacheId = `${config.cache.prefix}:${collection}:${_id}`;
         // remove do cache
-        redis.del(cacheId);
+        cache.del(cacheId);
         return result;
     };
 
@@ -93,7 +99,7 @@ module.exports = ({ get }) => {
         // chave do cache
         const cacheId = `${config.cache.prefix}:${collection}:${result._id}`;
         // incluir no cache
-        redis.set(cacheId, result, seconds);
+        cache.set(cacheId, result, seconds);
         return result;
     };
 
@@ -114,7 +120,7 @@ module.exports = ({ get }) => {
         // chave do cache
         const cacheId = `${config.cache.prefix}:${collection}:${result._id}`;
         // incluir no cache
-        redis.set(cacheId, result, seconds);
+        cache.set(cacheId, result, seconds);
         return result;
     };
 
