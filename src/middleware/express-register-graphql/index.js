@@ -79,8 +79,6 @@ module.exports = app => {
         const listResolvers = (Object.keys(resolvers)).reduce((list, fn) => {
             if (fn === 'Query' || fn === 'Mutation') {
                 Object.keys(resolvers[fn]).forEach(i => list.push(i));
-            } else {
-                list.push(fn);
             }
             return list;
         }, []);

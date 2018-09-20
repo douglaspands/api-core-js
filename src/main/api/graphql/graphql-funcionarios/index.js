@@ -108,12 +108,20 @@ const root = ({ get }) => {
      */
     async function pesquisarFuncionarios(body, req) {
 
-        const qs = get.module('querystring');
-        const { headers } = req;
-
         validarEntrada(body);
         return await service.pesquisarFuncionarios(body);
 
+    }
+
+    /**
+     * Funções de transformação do resultado
+     */
+    const transforms = {
+        Funcionario: {
+            nome_completo: (result) => {
+                return `${result.nome} ${result.sobrenome}`;
+            }
+        }
     }
 
     return {
@@ -125,7 +133,8 @@ const root = ({ get }) => {
             criarFuncionario,
             atualizarFuncionario,
             removerFuncionario
-        }
+        },
+        ...transforms
     }
 }
 

@@ -8,6 +8,8 @@ type Funcionario {
     nome: String
     "Sobrenome do funcionario"
     sobrenome: String
+    "Nome completo do funcionario"
+    nome_completo: String
     "Cidade onde o funcionario mora"
     cidade: String
     "Estado onde o funcionario mora"
@@ -25,6 +27,8 @@ input inputFuncionario {
     nome: String
     "Sobrenome do funcionario"
     sobrenome: String
+    "Nome completo do funcionario"
+    nome_completo: String
     "Cidade onde o funcionario mora"
     cidade: String
     "Estado onde o funcionario mora"
