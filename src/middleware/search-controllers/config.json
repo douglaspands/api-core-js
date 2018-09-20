@@ -12,6 +12,7 @@
         "put", 
         "post", 
         "patch", 
-        "delete"
+        "delete",
+        "options"
     ]
 }

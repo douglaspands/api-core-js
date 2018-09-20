@@ -15,7 +15,7 @@
 module.exports.route = () => {
     return {
         controller: 'rest',
-        method: 'put',
+        method: 'patch',
         uri: '/v1/funcionarios/:_id'
     }
 };

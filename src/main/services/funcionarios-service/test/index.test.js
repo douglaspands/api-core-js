@@ -8,7 +8,7 @@ const path = require('path');
 const assert = require('assert');
 const _ = require('lodash');
 
-const Context = require('../../../middleware/express-context-test');
+const Context = require('../../../../middleware/express-context-test');
 const pathApp = path.join(__dirname);
 
 
@@ -24,7 +24,7 @@ describe('# ./services/funcionario-service.js', () => {
 
     it(`${++i} - ObterFuncionario() - Execução com sucesso`, async () => {
 
-        context.set.mock.module('utils/mongodb-crud', {
+        context.set.mock.module('utils/db-crud', {
             find: () => new Promise((resolve) => {
                 resolve({
                     _id: 123,
@@ -34,7 +34,7 @@ describe('# ./services/funcionario-service.js', () => {
             })
         });
 
-        const { obterFuncionario } = require('../funcionario-service')(context);
+        const { obterFuncionario } = require('../index')(context);
 
         const req = {
             _id: '123456789012345678901234'
@@ -54,13 +54,13 @@ describe('# ./services/funcionario-service.js', () => {
 
     it(`${++i} - ObterFuncionario() - Execução com erro`, async () => {
 
-        context.set.mock.module('utils/mongodb-crud', {
+        context.set.mock.module('utils/db-crud', {
             find: () => new Promise((resolve, reject) => {
                 reject('ERRO');
             })
         });
 
-        const { obterFuncionario } = require('../funcionario-service')(context);
+        const { obterFuncionario } = require('../index')(context);
 
         const req = {
             _id: '123456789012345678901234'
@@ -79,19 +79,17 @@ describe('# ./services/funcionario-service.js', () => {
 
     it(`${++i} - incluirFuncionario() - Execução com sucesso`, async () => {
 
-        context.set.mock.module('utils/mongodb-crud', {
+        context.set.mock.module('utils/db-crud', {
             insert: () => new Promise((resolve) => {
                 resolve({
-                    ops: [{
-                        _id: '123456789012345678901234',
-                        nome: 'Joao',
-                        empresa: 'CPMGFHJKL'
-                    }]
+                    _id: '123456789012345678901234',
+                    nome: 'Joao',
+                    empresa: 'CPMGFHJKL'
                 });
             })
         });
 
-        const { incluirFuncionario } = require('../funcionario-service')(context);
+        const { incluirFuncionario } = require('../index')(context);
 
         const req = {
             input: {
@@ -115,13 +113,13 @@ describe('# ./services/funcionario-service.js', () => {
 
     it(`${++i} - incluirFuncionario() - Execução com erro`, async () => {
 
-        context.set.mock.module('utils/mongodb-crud', {
+        context.set.mock.module('utils/db-crud', {
             insert: () => new Promise((_, reject) => {
                 reject('ERRO');
             })
         });
 
-        const { incluirFuncionario } = require('../funcionario-service')(context);
+        const { incluirFuncionario } = require('../index')(context);
 
         const req = {
             input: {
@@ -143,7 +141,7 @@ describe('# ./services/funcionario-service.js', () => {
 
     it(`${++i} - pesquisarFuncionarios() - Execução com sucesso`, async () => {
 
-        context.set.mock.module('utils/mongodb-crud', {
+        context.set.mock.module('utils/db-crud', {
             scan: () => new Promise((resolve) => {
                 resolve([{
                     _id: '123456789012345678901234',
@@ -158,7 +156,7 @@ describe('# ./services/funcionario-service.js', () => {
             })
         });
 
-        const { pesquisarFuncionarios } = require('../funcionario-service')(context);
+        const { pesquisarFuncionarios } = require('../index')(context);
 
         const req = {};
 
@@ -175,13 +173,13 @@ describe('# ./services/funcionario-service.js', () => {
 
     it(`${++i} - pesquisarFuncionarios() - Execução com erro`, async () => {
 
-        context.set.mock.module('utils/mongodb-crud', {
+        context.set.mock.module('utils/db-crud', {
             scan: () => new Promise((_, reject) => {
                 reject('ERRO')
             })
         });
 
-        const { pesquisarFuncionarios } = require('../funcionario-service')(context);
+        const { pesquisarFuncionarios } = require('../index')(context);
 
         const req = {};
 
@@ -198,13 +196,13 @@ describe('# ./services/funcionario-service.js', () => {
 
     it(`${++i} - removerFuncionario() - Execução com sucesso`, async () => {
 
-        context.set.mock.module('utils/mongodb-crud', {
+        context.set.mock.module('utils/db-crud', {
             remove: () => new Promise((resolve) => {
                 resolve('Foi/Foram removido(s) 1 registro(s)!');
             })
         });
 
-        const { removerFuncionario } = require('../funcionario-service')(context);
+        const { removerFuncionario } = require('../index')(context);
 
         const req = {
             _id: '123456789012345678901234'
@@ -218,13 +216,13 @@ describe('# ./services/funcionario-service.js', () => {
 
     it(`${++i} - removerFuncionario() - Execução com erro`, async () => {
 
-        context.set.mock.module('utils/mongodb-crud', {
+        context.set.mock.module('utils/db-crud', {
             remove: () => new Promise((_, reject) => {
                 reject('ERRO');
             })
         });
 
-        const { removerFuncionario } = require('../funcionario-service')(context);
+        const { removerFuncionario } = require('../index')(context);
 
         const req = {
             _id: '123456789012345678901234'
@@ -243,11 +241,8 @@ describe('# ./services/funcionario-service.js', () => {
 
     it(`${++i} - atualizarFuncionario() - Execução com sucesso`, async () => {
 
-        context.set.mock.module('utils/mongodb-crud', {
+        context.set.mock.module('utils/db-crud', {
             update: () => new Promise((resolve) => {
-                resolve('Foi/Foram atualizado(s) 1 registro(s)!');
-            }),
-            find: () => new Promise((resolve) => {
                 resolve({
                     _id: '123456789012345678901234',
                     nome: 'Joao',
@@ -256,7 +251,7 @@ describe('# ./services/funcionario-service.js', () => {
             })
         });
 
-        const { atualizarFuncionario } = require('../funcionario-service')(context);
+        const { atualizarFuncionario } = require('../index')(context);
 
         const req = {
             _id: '123456789012345678901234',
@@ -273,13 +268,13 @@ describe('# ./services/funcionario-service.js', () => {
 
     it(`${++i} - atualizarFuncionario() - Execução com erro`, async () => {
 
-        context.set.mock.module('utils/mongodb-crud', {
+        context.set.mock.module('utils/db-crud', {
             update: () => new Promise((_, reject) => {
                 reject('ERRO');
             })
         });
 
-        const { atualizarFuncionario } = require('../funcionario-service')(context);
+        const { atualizarFuncionario } = require('../index')(context);
 
         const req = {
             _id: '123456789012345678901234',

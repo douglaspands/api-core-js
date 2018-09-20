@@ -21,18 +21,13 @@ describe('# ./index.js', () => {
 
     beforeEach(() => {
 
-        context = new Context(pathApp);
-        context.set.mock.server('cache', {
-            get: () => new Promise(resolve => resolve(null)),
-            set: (key, value, seconds) => value,
-            del: () => { }
-        });
+        context = new Context(pathApp);;
 
     });
 
     it(`${++i} - ObterFuncionario() - Execução com sucesso`, async () => {
 
-        context.set.mock.module('services/funcionario-service', {
+        context.set.mock.module('services/funcionarios-service', {
             obterFuncionario: () => {
                 return {
                     nome: 'Joao',
@@ -57,7 +52,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - criarFuncionario() - Execução com sucesso`, async () => {
 
-        context.set.mock.module('services/funcionario-service', {
+        context.set.mock.module('services/funcionarios-service', {
             incluirFuncionario: () => {
                 return {
                     _id: '123456789012345678901234',
@@ -96,7 +91,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - removerFuncionario() - Execução com sucesso`, async () => {
 
-        context.set.mock.module('services/funcionario-service', {
+        context.set.mock.module('services/funcionarios-service', {
             removerFuncionario: () => {
                 return 'Foi/Foram removido(s) 1 registro(s)!';
             }
@@ -116,7 +111,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - atualizarFuncionario() - Execução com sucesso`, async () => {
 
-        context.set.mock.module('services/funcionario-service', {
+        context.set.mock.module('services/funcionarios-service', {
             atualizarFuncionario: () => {
                 return 'Foi/Foram atualizado(s) 1 registro(s)!';
             }
@@ -137,7 +132,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - pesquisarFuncionarios() - Execução com sucesso`, async () => {
 
-        context.set.mock.module('services/funcionario-service', {
+        context.set.mock.module('services/funcionarios-service', {
             pesquisarFuncionarios: () => {
                 return [{
                     _id: '12345678901234567890abcd',

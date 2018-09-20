@@ -26,7 +26,7 @@ describe('# ./index.js', () => {
 
         const { route } = require('../index');
         const res = route();
-        assert.equal(res.method, 'delete');
+        assert.equal(res.method, 'patch');
         assert.equal(res.uri, '/v1/funcionarios/:_id');
         done();
 
@@ -35,16 +35,23 @@ describe('# ./index.js', () => {
     it(`${++i} - controller() - Execução com sucesso (statusCode: 200)`, (done) => {
 
         context.set.mock.module('services/funcionarios-service', {
-            removerFuncionario: () => {
-                return new Promise((resolve) => {
-                    resolve('Foi/Foram removido(s) 1 registro(s)!');
+            atualizarFuncionario: () => {
+                return new Promise((resolved) => {
+                    resolved({
+                        _id: '123456789012345678901234',
+                        nome: 'Joao',
+                        empresa: 'XXXXXXX'
+                    });
                 });
             }
         });
 
         const req = {
             params: {
-                _id: '5b9431cce7fdee3fd5db0b77'
+                _id: '123456789012345678901234'
+            },
+            body: {
+                empresa: 'XXXXXXX'
             }
         };
 
@@ -56,6 +63,9 @@ describe('# ./index.js', () => {
             }
             this.send = (result) => {
                 assert.equal(statusCode, 200);
+                assert.equal(result.data._id, '123456789012345678901234');
+                assert.equal(result.data.nome, 'Joao');
+                assert.equal(result.data.empresa, 'XXXXXXX');
                 done();
             }
         })();
@@ -63,24 +73,26 @@ describe('# ./index.js', () => {
         const { controller } = require('../index');
 
         controller(req, res, null, context)
-            .then()
-            .catch(erro => done(erro));
+            .then().catch(erro => done(erro));
 
     });
 
-    it(`${++i} - controller() - Execução com sucesso (statusCode: 404)`, (done) => {
+    it(`${++i} - controller() - Execução com erro (statusCode: 404)`, (done) => {
 
         context.set.mock.module('services/funcionarios-service', {
-            removerFuncionario: () => {
-                return new Promise((_, reject) => {
-                    reject('Foi/Foram removido(s) 0 registro(s)!');
+            atualizarFuncionario: () => {
+                return new Promise((resolve, reject) => {
+                    reject({});
                 });
             }
         });
 
         const req = {
             params: {
-                _id: '5b9431cce7fdee3fd5db0b77'
+                _id: '123456789012345678901234'
+            },
+            body: {
+                empresa: 'XXXXXXX'
             }
         };
 
@@ -99,16 +111,15 @@ describe('# ./index.js', () => {
         const { controller } = require('../index');
 
         controller(req, res, null, context)
-            .then()
-            .catch(erro => done(erro));
+            .then().catch(erro => done(erro));
 
     });
 
     it(`${++i} - controller() - Execução com erro (statusCode: 400)`, (done) => {
 
         context.set.mock.module('services/funcionarios-service', {
-            removerFuncionario: () => {
-                return new Promise((_, reject) => {
+            atualizarFuncionario: () => {
+                return new Promise((resolve, reject) => {
                     reject({});
                 });
             }
@@ -116,7 +127,10 @@ describe('# ./index.js', () => {
 
         const req = {
             params: {
-                id: 'ZZZZZZZZZZZZZZZZZZ'
+                _id: 'zzzzzzzzzzzzz'
+            },
+            body: {
+                empresa: 123456
             }
         };
 
@@ -136,8 +150,7 @@ describe('# ./index.js', () => {
         const { controller } = require('../index');
 
         controller(req, res, null, context)
-            .then()
-            .catch(erro => done(erro));
+            .then().catch(erro => done(erro));
 
     });
 

@@ -1,0 +1,28 @@
+{
+  "name": "rest-v1-funcionarios-id-patch",
+  "version": "1.0.0",
+  "description": "REST-API Atualizar funcionario",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha --full-trace test/*.test.js test/**/*.test.js",
+    "test-cover": "nyc --reporter=html --all mocha test/*.test.js test/**/*.test.js"
+  },
+  "keywords": [
+    "rest",
+    "funcionarios"
+  ],
+  "author": "douglaspands",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.17.5",
+    "moment": "^2.21.0",
+    "winston": "^3.0.0-rc1"
+  },
+  "devDependencies": {
+    "mocha": "^5.0.4",
+    "nyc": "^13.0.1"
+  }
+}

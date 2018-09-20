@@ -19,11 +19,6 @@ describe('# ./index.js', () => {
     beforeEach(() => {
 
         context = new Context(pathApp);
-        context.set.mock.server('cache', {
-            get: () => new Promise(resolve => resolve(null)),
-            set: (key, value, seconds) => value,
-            del: () => { }
-        });
 
     });
 
@@ -39,13 +34,18 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com sucesso (statusCode: 200)`, (done) => {
 
-        context.set.mock.module('services/funcionario-service', {
+        context.set.mock.module('services/funcionarios-service', {
             atualizarFuncionario: () => {
-                return new Promise((resolved) => {
-                    resolved({
+                return new Promise((resolve) => {
+                    resolve({
                         _id: '123456789012345678901234',
                         nome: 'Joao',
-                        empresa: 'XXXXXXX'
+                        sobrenome: 'Silva',
+                        empresa: 'CPMGFHJKL',
+                        telefone: '1188888888',
+                        email: 'joao.silva@lala.com',
+                        cidade: 'sao paulo',
+                        estado: 'sp'
                     });
                 });
             }
@@ -56,7 +56,13 @@ describe('# ./index.js', () => {
                 _id: '123456789012345678901234'
             },
             body: {
-                empresa: 'XXXXXXX'
+                nome: 'Joao',
+                sobrenome: 'Silva',
+                empresa: 'CPMGFHJKL',
+                telefone: '1188888888',
+                email: 'joao.silva@lala.com',
+                cidade: 'sao paulo',
+                estado: 'sp'
             }
         };
 
@@ -70,7 +76,7 @@ describe('# ./index.js', () => {
                 assert.equal(statusCode, 200);
                 assert.equal(result.data._id, '123456789012345678901234');
                 assert.equal(result.data.nome, 'Joao');
-                assert.equal(result.data.empresa, 'XXXXXXX');
+                assert.equal(result.data.empresa, 'CPMGFHJKL');
                 done();
             }
         })();
@@ -84,7 +90,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com erro (statusCode: 404)`, (done) => {
 
-        context.set.mock.module('services/funcionario-service', {
+        context.set.mock.module('services/funcionarios-service', {
             atualizarFuncionario: () => {
                 return new Promise((resolve, reject) => {
                     reject({});
@@ -97,7 +103,13 @@ describe('# ./index.js', () => {
                 _id: '123456789012345678901234'
             },
             body: {
-                empresa: 'XXXXXXX'
+                nome: 'Joao',
+                sobrenome: 'Silva',
+                empresa: 'CPMGFHJKL',
+                telefone: '1188888888',
+                email: 'joao.silva@lala.com',
+                cidade: 'sao paulo',
+                estado: 'sp'
             }
         };
 
@@ -122,7 +134,7 @@ describe('# ./index.js', () => {
 
     it(`${++i} - controller() - Execução com erro (statusCode: 400)`, (done) => {
 
-        context.set.mock.module('services/funcionario-service', {
+        context.set.mock.module('services/funcionarios-service', {
             atualizarFuncionario: () => {
                 return new Promise((resolve, reject) => {
                     reject({});

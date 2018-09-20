@@ -31,11 +31,10 @@ module.exports.controller = async ({ headers, params, query }, res, next, { get,
     const _ = get.module('lodash');
     logger.debug('Inicio da rota REST GET /v1/funcionarios');
 
-    const service = get.self.context.module('services/funcionario-service');
+    const service = get.self.context.module('services/funcionarios-service');
     const validarEntrada = get.self.context.module('modules/validador');
-    const cache = get.self.context.module('utils/cache-crud');
 
-    const fields = get.self.module('utils/fields');
+    const fields = get.self.module('utils/rest-fields');
     const queryFields = (query['fields']) ? query['fields'] : '';
     delete query.fields;
 
@@ -43,11 +42,7 @@ module.exports.controller = async ({ headers, params, query }, res, next, { get,
     if (errors) return res.status(400).send(errors);
 
     try {
-        const ret = await cache
-                            .get(`api:funcionarios:${params._id}`)
-                            .resetCache((headers['x-cache-reset'] === 'true')? true: false)
-                            .orElseSetResultOfMethod(service.obterFuncionario, params._id)
-                            .expireOn(3600);
+        const ret = await service.obterFuncionario(params._id);
         if (_.isEmpty(ret)) {
             return res.status(404).send();
         } else {
@@ -59,7 +54,7 @@ module.exports.controller = async ({ headers, params, query }, res, next, { get,
             code: error.message,
             message: (error.stack).toString().split('\n')
         } : error;
-        return res.status(500).send(err);
+        return res.status(error.statusCode || 500).send(err);
     }
 
 };

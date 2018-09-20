@@ -1,0 +1,7 @@
+{
+    "cache": {
+        "prefix": "cache",
+        "search": "search",
+        "seconds": 600
+    }
+}
