@@ -20,25 +20,6 @@ type Funcionario {
     email: String
 }
 """
-Objeto de inclusão do Funcionario
-"""
-input inputFuncionario {
-    "Nome do funcionario"
-    nome: String
-    "Sobrenome do funcionario"
-    sobrenome: String
-    "Nome completo do funcionario"
-    nome_completo: String
-    "Cidade onde o funcionario mora"
-    cidade: String
-    "Estado onde o funcionario mora"
-    estado: String
-    "Telefone do funcionario"
-    telefone: String
-    "Email do funcionario"
-    email: String
-}
-"""
 Funções de consulta
 """
 type Query {
@@ -76,8 +57,18 @@ type Mutation {
     Criar funcionario
     """
     criarFuncionario(
-        "Dados do Funcionario"
-        input: inputFuncionario
+        "Nome do funcionario"
+        nome: String
+        "Sobrenome do funcionario"
+        sobrenome: String
+        "Cidade onde o funcionario mora"
+        cidade: String
+        "Estado onde o funcionario mora"
+        estado: String
+        "Telefone do funcionario"
+        telefone: String
+        "Email do funcionario"
+        email: String
     ): Funcionario
     """
     Atualizar funcionario pelo ID

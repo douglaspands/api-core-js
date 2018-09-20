@@ -64,7 +64,17 @@ module.exports = app => {
             try {
                 const typeDefs = mergeTypes(schemas);
                 const schema = makeExecutableSchema({ typeDefs, resolvers });
-                graphqlServer = graphqlExpress({ schema });
+                graphqlServer = graphqlExpress(async (req, res) => {
+                    return {
+                        schema,
+                        context: {
+                            logger: app.get('logger'),
+                            mongo: app.get('mongodb'),
+                            cache: app.get('cache'),
+                            headers: req.headers
+                        }
+                    }
+                });
                 if (process.env.NODE_ENV !== 'production') {
                     graphiqlServer = graphiqlExpress({ endpointURL: '/graphql', });
                 }

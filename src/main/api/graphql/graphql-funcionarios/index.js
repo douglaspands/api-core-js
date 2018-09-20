@@ -60,14 +60,16 @@ const root = ({ get }) => {
 
     /**
      * Incluir funcionario
-     * @param {object} body funcionario que será cadastrado.
-     * @return {object} funcionario criado 
+     * @param {object} parent contem o resultado de um resolve anterior.
+     * @param {object} args argumentos passado, no caso "funcionario".
+     * @param {object} context contem objetos compartilhados.
+     * @param {object} info contem informações da execução.     
+     * @return {Promise.<object>} funcionario criado 
      */
-    async function criarFuncionario(body) {
+    async function criarFuncionario(root, args, context, info) {
 
-        const { input } = body;
-        validarEntradaInclusao(input);
-        return await service.incluirFuncionario(input);
+        validarEntradaInclusao(args);
+        return await service.incluirFuncionario(args);
 
     }
 

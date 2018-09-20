@@ -152,11 +152,11 @@ Ao executar, vai aparecer no console conforme a demonstração abaixo:
 
 ## Exemplos de request utilizando API GraphQL
 Os exemplos abaixo são executados no GraphiQL (interface grafica, disponivel apenas em desenvolvimento).
-GraphiQL disponivel na rota: http://localhost:3000/graphql
+GraphiQL disponivel na rota: http://localhost:3000/graphiql
 ```graphql
 # Inclusao de funcionario
 mutation example1 {
-  criarFuncionario(input:{
+  criarFuncionario(funcionario:{
     nome: "Douglas"
     sobrenome: "Silva"
     cidade: "São Paulo"
