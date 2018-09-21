@@ -14,9 +14,12 @@ const os = require('os');
 module.exports = (app, app_health, server) => {
 
     const mongo = app.get('mongodb');
+    const mongoConfig = app.get('mongodb-config');
     const redis = app.get('cache');
+    const redisConfig = app.get('redis-config');
     const pack = app.get('package');
     const es = app.get('es');
+    const esConfig = app.get('es-config');
 
     const rest = app.get('rest_list');
     const graphql = app.get('graphql_list');
@@ -37,15 +40,15 @@ module.exports = (app, app_health, server) => {
                 database: {
                     mongo: {
                         status: (mongo) ? 'enable' : 'disable',
-                        url: (mongo) ? mongo.url : ''
+                        url: (mongo) ? mongoConfig.url : undefined
                     },
                     redis: {
                         status: (redis) ? 'enable' : 'disable',
-                        url: (redis) ? redis.url : ''
+                        url: (redis) ? `redis://${redisConfig.host}:${redisConfig.port}` : undefined
                     },
                     elastic_search: {
                         status: (es) ? 'enable' : 'disable',
-                        url: (es) ? es.url : ''
+                        url: (es) ? esConfig.hosts : undefined
                     }
                 },
                 machine: {

@@ -19,14 +19,15 @@ const ELASTIC_URL = [
  */
 const connect = app => {
     const logger = app.get('logger');
-    return new Promise((resolve, reject) => {
-        const client = new elasticsearch.Client({
+    return new Promise((resolve) => {
+        const configClient = {
             hosts: ELASTIC_URL,
             keepAlive: false,
             sniffOnStart: true,
             sniffInterval: 60000,
             log: (process.env.ELASTICSEARCH_DEBUG === 'true') ? 'trace' : undefined
-        });
+        }
+        const client = new elasticsearch.Client(configClient);
         client.ping({ requestTimeout: 3000 }, error => {
             if (error) {
                 logger.log({
@@ -37,7 +38,8 @@ const connect = app => {
                 resolve(null);
             } else {
                 client.url = ELASTIC_URL;
-                app.set('es', client)
+                app.set('es', client);
+                app.set('es-config', configClient);
                 logger.log({
                     level: 'info',
                     source: source,

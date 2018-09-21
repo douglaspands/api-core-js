@@ -10,12 +10,11 @@ const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 const moment = require('moment');
-const formatDate = 'YYYY-MM-DD HH.mm.ss.SSS';
 const BOOT_ID = require('uuid/v4')();
+const config = require('./config');
 
 /**
  * Customização dos transports do moduloe winstonjs 
- * @param {object} winston Modulo winstonjs 
  * @param {object} app Modulo expressjs
  * @return {object} Retorna funções que representam transports customizados.
  */
@@ -23,7 +22,6 @@ module.exports = (app) => {
 
     const { transports, format } = winston;
     const { combine, timestamp, colorize, label, printf } = format;
-    const LEVEL = (process.env.LOG_LEVEL || 'silly');
 
     /**
      * Customização da geração de log pelo console
@@ -32,18 +30,18 @@ module.exports = (app) => {
     const customConsole = () => {
 
         return new transports.Console({
-            level: LEVEL,
+            level: config.console.level,
             format: combine(
                 colorize(),
-                label({ label: 'server' }),
+                label({ label: config.label }),
                 timestamp(),
                 printf(info => {
                     if (info.request || _.get(info, 'message.request', null)) {
                         const requestLog = _.get(info, 'message.request', info.request);
                         const sourceLog = (_.get(info, 'message.source', info.source) || info.label);
-                        return `[${info.level}] ${moment().format(formatDate)} ${sourceLog} :\n${JSON.stringify(requestLog, null, 4)}`;
+                        return `[${info.level}] ${moment().format(config.format_date)} ${sourceLog} :\n${JSON.stringify(requestLog, null, 4)}`;
                     } else {
-                        return `[${info.level}] ${moment().format(formatDate)} ${(info.source || info.label)} - ${info.message}`;
+                        return `[${info.level}] ${moment().format(config.format_date)} ${(info.source || info.label)} - ${info.message}`;
                     }
                 })
             )
@@ -58,20 +56,20 @@ module.exports = (app) => {
     const customFile = () => {
 
         const root = app.get('root');
-        const logFolder = path.join(root, 'logs');
+        const logFolder = path.join(root, config.file.folder);
 
         if (!fs.existsSync(logFolder) || !fs.lstatSync(logFolder).isDirectory()) {
             fs.mkdirSync(logFolder);
         }
 
         return new transports.File({
-            level: LEVEL,
-            options: { flags: 'a+', encoding: 'utf8' },
-            maxsize: 1024 * 1024 * 10, // 10MB,
-            maxFiles: 10,
+            level: (process.env.LOG_LEVEL || config.file.level),
+            options: { flags: config.file.flags, encoding: config.file.encoding },
+            maxsize: 1024 * 1024 * config.file.max_size, // config.file.max_size = MB 
+            maxFiles: config.file.max_files,
             filename: path.join(logFolder, `${pack.name}_v${pack.version}_.log`),
             format: combine(
-                label({ label: 'server' }),
+                label({ label: config.label }),
                 timestamp(),
                 printf(info => {
                     const requestLog = (_.get(info, 'message.request', info.request) || info.message);
@@ -80,7 +78,7 @@ module.exports = (app) => {
                         source: sourceLog,
                         'correlation-id': (app.get('id') || BOOT_ID),
                         level: info.level,
-                        timestamp: moment().format(formatDate),
+                        timestamp: moment().format(config.format_date),
                         message: requestLog
                     };
                     return JSON.stringify(data);
@@ -99,8 +97,8 @@ module.exports = (app) => {
         const Elasticsearch = require('winston-elasticsearch');
 
         return new Elasticsearch({
-            level: LEVEL,
-            indexPrefix: 'apicore-logs',
+            level: (process.env.LOG_LEVEL || config.elastic.level),
+            indexPrefix: config.elastic.index_prefix,
             client: app.get('es')
         });
     }
