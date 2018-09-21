@@ -22,6 +22,7 @@ const mongoConnect = async app => {
         db = client.db(database);
         db.url = URL_MONGO;
         app.set('mongodb', db);
+        app.set('mongodb-config', { url: URL_MONGO });
         logger.log({
             level: 'info',
             source: source,

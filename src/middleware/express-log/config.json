@@ -1,5 +1,22 @@
 {
     "request": {
         "name": "request-log"
+    },
+    "format_date": "YYYY-MM-DD HH.mm.ss.SSS",
+    "label": "server",
+    "file": {
+        "flags": "a+",
+        "folder": "logs",
+        "level": "info",
+        "max_size": 10,
+        "max_files": 10,
+        "encoding": "utf8"    
+    },
+    "console": {
+        "level": "silly"
+    },
+    "elastic": {
+        "level": "info",
+        "index_prefix": "apicore-logs"
     }
 }
