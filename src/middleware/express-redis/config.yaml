@@ -1,0 +1,9 @@
+# @file: Configurações do Redis
+# @author: @douglaspands
+# @date: 2018-09-21
+# @version: 1.0.0
+---
+# Url do servidor
+uri: "localhost:6379"
+# timeout default
+time_default: 3600

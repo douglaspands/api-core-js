@@ -2,23 +2,24 @@
  * @file Transports para uso no Winston
  * @author douglaspands
  * @since 2017-12-07
+ * @version 1.2.20180921
  */
 'use strict';
-const pack = require('../../package.json');
 const winston = require('winston');
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 const moment = require('moment');
 const BOOT_ID = require('uuid/v4')();
-const config = require('./config');
 
 /**
  * Customização dos transports do moduloe winstonjs 
  * @param {object} app Modulo expressjs
  * @return {object} Retorna funções que representam transports customizados.
  */
-module.exports = (app) => {
+module.exports = (app, config) => {
+
+    const pack = app.get('package');
 
     const { transports, format } = winston;
     const { combine, timestamp, colorize, label, printf } = format;
@@ -57,17 +58,20 @@ module.exports = (app) => {
 
         const root = app.get('root');
         const logFolder = path.join(root, config.file.folder);
+        const utils = require('../utils');
 
         if (!fs.existsSync(logFolder) || !fs.lstatSync(logFolder).isDirectory()) {
             fs.mkdirSync(logFolder);
         }
+
+        const filename = utils.replaceDoubleBraces(config.file.filename, { name: pack.name, version: pack.version });
 
         return new transports.File({
             level: (process.env.LOG_LEVEL || config.file.level),
             options: { flags: config.file.flags, encoding: config.file.encoding },
             maxsize: 1024 * 1024 * config.file.max_size, // config.file.max_size = MB 
             maxFiles: config.file.max_files,
-            filename: path.join(logFolder, `${pack.name}_v${pack.version}_.log`),
+            filename: path.join(logFolder, filename),
             format: combine(
                 label({ label: config.label }),
                 timestamp(),

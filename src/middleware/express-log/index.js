@@ -2,16 +2,15 @@
  * @file Modulo de configurações de Log no Express
  * @author douglaspands
  * @since 2017-12-06
- * @version 1.2.20180919
+ * @version 1.2.20180921
  */
 'use strict';
 const winston = require('winston');
 const zlib = require('zlib');
-const source = (__dirname).split('/').pop();
 const { createLogger } = winston;
 const uuid = require('uuid/v4');
-const config = require('./config');
-
+const utils = require('../utils');
+const config = utils.getYaml('config.yaml');
 /**
  * Função que disponibiliza o modulo de log pra cadastro no express.js
  * @param {object} app express().
@@ -20,7 +19,7 @@ const config = require('./config');
 module.exports = app => {
 
     // transports customizados
-    const transports = require('./transports')(app);
+    const transports = require('./transports')(app, config);
 
     const logger = createLogger({
         transports: [
@@ -29,9 +28,6 @@ module.exports = app => {
     });
 
     logger.add(transports.customConsole());
-    // if (process.env.NODE_ENV !== 'production') {
-    //     logger.add(transports.customConsole());
-    // };
 
     /**
      * Função de geração de log no express.
@@ -95,6 +91,7 @@ module.exports = app => {
                 source: config.request.name,
                 request: dataLog
             });
+
             app.set('id', '');
 
             oldEnd.apply(res, arguments);

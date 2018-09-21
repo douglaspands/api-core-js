@@ -1,14 +1,15 @@
 /**
  * @file Conexão com o MongoDB
  * @author douglaspands
- * @since 2017-11-21
+ * @since 2018-09-21
+ * @version 1.2.20180921
  */
 'use strict';
 const { MongoClient } = require('mongodb');
 const source = (__dirname).split('/').pop();
-const { uri, database } = require('./config');
+const utils = require('../utils');
+const { uri, database } = utils.getYaml('config.yaml');
 const URL_MONGO = `mongodb://${(process.env.MONGO_URL || uri)}`;
-
 /**
  * Obter conexão com o MongoDB
  * @param {function} app Servidor Express.

@@ -1,5 +1,5 @@
 # file: stack-db.yaml 
-# description: Criar container da aplicação (producao). 
+# description: Criar container dos bancos de dados. 
 version: '3.5'
 services:
     mongo:
@@ -9,19 +9,11 @@ services:
             - mongo-data:/data/db
         ports:
             - 27017:27017
-        networks: 
-            - production-network
     redis:
         image: redis:4.0.11-alpine
         container_name: apicore-redis
         ports:
             - 6379:6379
-        networks: 
-            - production-network
-networks: 
-    production-network:
-        driver: bridge
 volumes:
-    # /var/lib/docker/volumes/
     mongo-data:
         driver: local

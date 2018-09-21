@@ -1,12 +1,12 @@
 # file: stack-full.yaml 
-# description: Criar container da aplicação toda (producao). 
+# description: Criar container da aplicação toda. 
 version: '3.5'
 services:
     apicore:
         build:
             dockerfile: ./Dockerfile
             context: ./src
-        image: douglaspands/apicorejs:2.8.3
+        image: douglaspands/apicorejs:2.8.4
         container_name: apicore-app
         environment:
             - MONGO_URL=mongo:27017

@@ -8,8 +8,9 @@
 const redis = require('redis');
 const Cache = require('./Cache');
 const source = (__dirname).split('/').pop();
-const { uri, database, time_default } = require('./config');
-const [REDIS_HOST, REDIS_PORT] = (process.env.REDIS_URL || uri).split(':');
+const utils = require('../utils');
+const config = utils.getYaml('config.yaml');
+const [REDIS_HOST, REDIS_PORT] = (process.env.REDIS_URL || config.uri).split(':');
 const REDIS_URL = `redis://${REDIS_HOST}:${REDIS_PORT}`;
 
 /**
@@ -30,7 +31,7 @@ module.exports = app => {
     };
     const client = redis.createClient(redisConfig);
     app.set('redis-config', redisConfig);
-    app.set('cache', new Cache(client, logger));
+    app.set('cache', new Cache(client, config, logger));
     /**
      * Em caso de erro no acesso ao Redis.
      */

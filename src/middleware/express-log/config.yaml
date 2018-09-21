@@ -1,0 +1,33 @@
+# @file: Configurações de log do Winston
+# @author: @douglaspands
+# @date: 2018-09-21
+# @version: 1.0.0
+---
+# Parametros de log no request
+request:
+  # Nome da propriedade source da log
+  name: request-log
+# Formato de data na log
+format_date: "YYYY-MM-DD HH.mm.ss.SSS"
+# label default
+label: server
+# Configurações para log em arquivo
+file:
+  # flags
+  flags: a+
+  # Pasta da log
+  folder: logs
+  # Level padrão 
+  level: info
+  # Tamanho maximo do arquivo em MB
+  max_size: 10
+  # Quantidade maxima de arquivos de log
+  max_files: 10
+  # Encoding do arquivo
+  encoding: utf8
+  # Nome do arquivo de log
+  filename: "{{name}}_v{{version}}_.log"
+# Configurações para log na console
+console:
+  # Level padrão
+  level: silly

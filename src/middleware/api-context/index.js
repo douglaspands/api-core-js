@@ -8,6 +8,8 @@
 const path = require('path');
 const utils = require('../utils');
 const config = utils.getYaml('config.yaml');
+const REGEX = new RegExp('(?!\\()([\\w\\-\\/\\.]+)(?=\\:\\d+\\:\\d+\\))', 'g');
+const callerfolder = path.join(((new Error()).stack.toString()).match(REGEX)[1], '..');
 const regexFolderLimit = new RegExp(config.folderLimit);
 /**
  * Class de contexto da API

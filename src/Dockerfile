@@ -1,6 +1,6 @@
 FROM node:carbon-alpine
 LABEL maintainer="@douglaspands"
-LABEL version="2.8.3"
+LABEL version="2.8.4"
 ENV NODE_ENV=production
 COPY . /var/www
 WORKDIR /var/www

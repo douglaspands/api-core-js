@@ -1,16 +1,15 @@
 /**
  * @file Procura controller nos arquivos
- * @version 2.0.1
  * @author @douglaspands
  * @since 2018-03-02
- * Será pesquisado as controllers de apis rest e graphql.
- * versão 2: Nela não será mais pesquisados controller atraves de comentarios.
+ * @version 2.0.20180921
  */
 'use strict';
 const fs = require('fs');
-const path = require('path');
 const _ = require('lodash');
-const config = require('./config');
+const utils = require('../utils');
+const config = utils.getYaml('config.yaml');
+
 const REGEX_FILE_TYPE = new RegExp(config.file_type, 'i');
 /**
  * Identifica notações abaixo para identificação se é uma controller e anota a rota.
@@ -61,13 +60,11 @@ const searchController = filesList => {
                         routes.push(route);
                     }
                 }
-            } catch (error) {
-            // Ignored
+            } catch (error) { }
         }
-    }
         return routes;
-}, []);
-return routesList;
+    }, []);
+    return routesList;
 }
 
 module.exports = searchController;

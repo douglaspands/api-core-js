@@ -1,8 +1,8 @@
 /**
- * @file Motor de APIs em Node.js com GraphQL e MongoDB.
+ * @file Motor de APIs REST/GraphQL com MongoDB e Redis.
  * @author @douglaspands
  * @since 2017-12-26
- * @version 1.8.20180913
+ * @version 1.9.20180921
  */
 'use strict';
 // Obtendo informações do servidor
