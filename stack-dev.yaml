@@ -20,8 +20,6 @@ services:
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
         container_name: apicore-elastic
-        environment: 
-            - discovery.type=single-node
         volumes: 
             - es-data:/usr/share/elasticsearch/data
         ports:
