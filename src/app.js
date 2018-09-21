@@ -15,13 +15,9 @@ const app_health = require('express')();
 app.set('root', __dirname);
 app.set('package', require('./package'));
 // Configurando log
-const { logger, addLogElasticSeach } = require('./middleware/express-log')(app);
+const { logger } = require('./middleware/express-log')(app);
 // Executando modulos sincronamente
 (async () => {
-    // Incluindo middleware de conexão com o Elastic search
-    await require('./middleware/express-elastic-search')(app);
-    // Incluir log no Elastic Search
-    addLogElasticSeach();
     // Incluindo middleware do Express
     require('./middleware/express-modules')(app);
     // Inicializando cache

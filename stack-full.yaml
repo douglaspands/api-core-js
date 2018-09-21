@@ -1,17 +1,16 @@
-# file: stack-prd.yaml 
-# description: Criar container da aplicação (producao). 
+# file: stack-full.yaml 
+# description: Criar container da aplicação toda (producao). 
 version: '3.5'
 services:
     apicore:
         build:
             dockerfile: ./Dockerfile
             context: ./src
-        image: douglaspands/apicorejs:2.8.2
+        image: douglaspands/apicorejs:2.8.3
         container_name: apicore-app
         environment:
             - MONGO_URL=mongo:27017
             - REDIS_URL=redis:6379
-            - ELASTICSEARCH_URL=elasticsearch
             - LOG_LEVEL=info
             - PORT=3000
         volumes: 
@@ -24,7 +23,6 @@ services:
         depends_on:
             - mongo
             - redis
-            - elasticsearch
     mongo:
         image: mongo:4.0.1
         container_name: apicore-mongo
@@ -41,37 +39,11 @@ services:
             - 6379:6379
         networks: 
             - production-network
-    elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
-        container_name: apicore-elastic
-        volumes:
-            - es-data:/usr/share/elasticsearch/data
-        environment: 
-            - discovery.type=single-node
-        ports:
-            - 9200:9200
-            - 9300:9300
-        networks:
-            - production-network
-    kibana:
-        image: docker.elastic.co/kibana/kibana:6.4.0
-        container_name: apicore-kibana
-        environment: 
-            - ELASTICSEARCH_URL:elasticsearch:9200
-        ports:
-            - 5601:5601
-        networks:
-            - production-network
-        depends_on:
-            - elasticsearch
 networks: 
     production-network:
         driver: bridge
 volumes:
-    # /var/lib/docker/volumes/
     app-data: 
         driver: local
     mongo-data:
-        driver: local
-    es-data:
         driver: local

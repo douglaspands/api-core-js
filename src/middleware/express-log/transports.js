@@ -30,7 +30,7 @@ module.exports = (app) => {
     const customConsole = () => {
 
         return new transports.Console({
-            level: config.console.level,
+            level: (process.env.LOG_LEVEL || config.console.level),
             format: combine(
                 colorize(),
                 label({ label: config.label }),
@@ -88,25 +88,9 @@ module.exports = (app) => {
 
     }
 
-    /**
-      * Customização da geração de log para o Elastic Search
-      * @return {object} Objeto de transport do Winston. 
-      */
-    const customElasticSearch = () => {
-
-        const Elasticsearch = require('winston-elasticsearch');
-
-        return new Elasticsearch({
-            level: (process.env.LOG_LEVEL || config.elastic.level),
-            indexPrefix: config.elastic.index_prefix,
-            client: app.get('es')
-        });
-    }
-
     return {
         customConsole,
-        customFile,
-        customElasticSearch
+        customFile
     }
 
 }

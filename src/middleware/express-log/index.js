@@ -28,9 +28,10 @@ module.exports = app => {
         ]
     });
 
-    if (process.env.NODE_ENV !== 'production') {
-        logger.add(transports.customConsole());
-    };
+    logger.add(transports.customConsole());
+    // if (process.env.NODE_ENV !== 'production') {
+    //     logger.add(transports.customConsole());
+    // };
 
     /**
      * Função de geração de log no express.
@@ -56,10 +57,10 @@ module.exports = app => {
         };
 
         res.end = function (chunk) {
-            
+
             if (chunk) chunks.push(chunk);
 
-            let body = null; 
+            let body = null;
             try {
                 const _compact = Buffer.concat(chunks);
                 const _buffer = zlib.gunzipSync(_compact);
@@ -89,33 +90,17 @@ module.exports = app => {
                     body: body
                 }
             };
-    
+
             logger.info({
                 source: config.request.name,
                 request: dataLog
             });
             app.set('id', '');
-    
+
             oldEnd.apply(res, arguments);
         };
 
         next();
-    }
-
-    /**
-     * Inclui log no Elastic Search
-     * @return {void}
-     */
-    const addLogElasticSeach = () => {
-        const es = app.get('es');
-        if (es) {
-            logger.add(transports.customElasticSearch());
-        } else {
-            logger.warn({
-                source: source,
-                message: 'Não será possivel incluir log no Elastic Search'
-            });
-        }
     }
 
     // Armazenando logger no servidor
@@ -125,7 +110,6 @@ module.exports = app => {
     app.use(expressLogger);
 
     return {
-        logger,
-        addLogElasticSeach
+        logger
     }
 }
