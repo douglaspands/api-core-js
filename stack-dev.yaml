@@ -1,41 +1,52 @@
 # file: stack-dev.yaml 
-# description: Executar uma instancias de banco: mongo, redis e elaticsearch/kibana.
+# description: Criar container da aplicação (develop). 
 version: '3.5'
 services:
-    mongodb:
+    mongo:
         image: mongo:4.0.1
         container_name: apicore-mongo
         volumes: 
             - mongo-data:/data/db
-        ports: 
+        ports:
             - 27017:27017
+        networks: 
+            - develop-network
     redis:
         image: redis:4.0.11-alpine
         container_name: apicore-redis
-        command: ["redis-server", "--appendonly", "yes"]
-        volumes: 
-            - redis-data:/data
-        ports: 
+        ports:
             - 6379:6379
+        networks: 
+            - develop-network
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
         container_name: apicore-elastic
-        volumes: 
+        volumes:
             - es-data:/usr/share/elasticsearch/data
+        environment: 
+            - discovery.type=single-node
         ports:
-            - 9200:9200 
+            - 9200:9200
             - 9300:9300
+        networks:
+            - develop-network
     kibana:
         image: docker.elastic.co/kibana/kibana:6.4.0
         container_name: apicore-kibana
-        ports: 
+        environment: 
+            - ELASTICSEARCH_URL:elasticsearch:9200
+        ports:
             - 5601:5601
-        depends_on: 
-            - elasticsearch      
+        networks:
+            - develop-network
+        depends_on:
+            - elasticsearch
+networks: 
+    develop-network:
+        driver: bridge
 volumes:
-  mongo-data:
-    driver: local
-  redis-data:
-    driver: local
-  es-data:
-    driver: local
+    # /var/lib/docker/volumes/
+    mongo-data:
+        driver: local
+    es-data:
+        driver: local

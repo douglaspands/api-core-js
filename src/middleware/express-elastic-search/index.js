@@ -6,10 +6,10 @@
 'use strict';
 const elasticsearch = require('elasticsearch');
 const source = (__dirname).split('/').pop();
-const { uri } = require('./config');
+const { uri, port1, port2 } = require('./config');
 const ELASTIC_URL = [
-    `${(process.env.ELASTIC_URL || uri)}:9200`,
-    `${(process.env.ELASTIC_URL || uri)}:9300`
+    `${(process.env.ELASTICSEARCH_URL || uri)}:${port1}`,
+    `${(process.env.ELASTICSEARCH_URL || uri)}:${port2}`
 ];
 
 /**
@@ -33,17 +33,16 @@ const connect = app => {
                 logger.log({
                     level: 'warn',
                     source: source,
-                    message: `Elastic Search não esta ativo na(s) url(s): ${ELASTIC_URL.join(', ')}`
+                    message: `Erro ao conectar com o Elasticsearch nas url: ${ELASTIC_URL.join(', ')} - mensagem: ${error.toString()}`
                 });
                 resolve(null);
             } else {
-                client.url = ELASTIC_URL;
                 app.set('es', client);
                 app.set('es-config', configClient);
                 logger.log({
                     level: 'info',
                     source: source,
-                    message: `Elastic Search ativado com sucesso na url: ${ELASTIC_URL.join(',')}`
+                    message: `Elasticsearch ativado com sucesso na url: ${ELASTIC_URL.join(', ')}`
                 });
                 resolve(client);
             }

@@ -1,4 +1,6 @@
 {
     "uri": "localhost",
+    "port1": 9200,
+    "port2": 9300,
     "database": "apicore"
 }

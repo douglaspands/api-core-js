@@ -11,7 +11,7 @@ services:
         environment:
             - MONGO_URL=mongo:27017
             - REDIS_URL=redis:6379
-            - ELASTIC_URL=elasticsearch:9200
+            - ELASTICSEARCH_URL=elasticsearch
             - LOG_LEVEL=info
             - PORT=3000
         volumes: 
@@ -46,6 +46,8 @@ services:
         container_name: apicore-elastic
         volumes:
             - es-data:/usr/share/elasticsearch/data
+        environment: 
+            - discovery.type=single-node
         ports:
             - 9200:9200
             - 9300:9300
