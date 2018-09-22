@@ -27,7 +27,7 @@ module.exports.Container = () => {
      * @return {*} this 
      */
     this.set = (moduleName, moduleData) => {
-        if (typeof moduleName === 'string' && moduleName.length > 0 && moduleData !== null) {
+        if (typeof moduleName === 'string' && moduleName.length > 0 && moduleData) {
             _container[moduleName] = moduleData;
         }
         return this;
