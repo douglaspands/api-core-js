@@ -9,9 +9,11 @@
  * Classe para armazenar modulos
  * @constructor
  */
-module.exports.Container = () => {
+module.exports = function Container() {
     // É obrigatorio instanciar
-    if (!(this instanceof Container)) throw new Error('Class Container não foi instanciada!');
+    if (!(this instanceof Container)) {
+        return new Container();
+    }
     // Objeto de armazenamento 
     let _container = {};
     /**

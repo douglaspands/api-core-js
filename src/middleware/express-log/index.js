@@ -29,13 +29,8 @@ module.exports = app => {
 
     logger.add(transports.customConsole());
 
-    /**
-     * Função de geração de log no express.
-     * @param {object} req Request (express) 
-     * @param {object} res Response (express)
-     * @param {function} next Next (express)
-     */
-    const expressLogger = (req, res, next) => {
+    // Gera log da request da execução
+    app.use((req, res, next) => {
 
         const correlationId = uuid();
         app.set('id', correlationId);
@@ -98,15 +93,28 @@ module.exports = app => {
         };
 
         next();
-    }
+    });
 
     // Armazenando logger no servidor
-    app.set('logger', logger)
+    app.set('logger', logger);
 
-    // Incluindo gerador de log pelo Express
-    app.use(expressLogger);
-
+    // Armazenamento no container
+    setClient('logger', logger, app, 'client');
+    
     return {
         logger
     }
+}
+/**
+ * Incluir no client 
+ * @param {string} name nome do client
+ * @param {any} data dados para armazenar
+ * @param {object} app express.js
+ * @param {string} containerName nome do container
+ * @returns {void}
+ */
+function setClient(name, data, app, containerName) {
+    let container = app.get(containerName);
+    if (!container) container = utils.container();
+    app.set(containerName, container.set(name, data));
 }

@@ -8,3 +8,4 @@
 module.exports.replaceDoubleBraces = require('./find-replace-string');
 module.exports.getYaml = require('./yaml-require');
 module.exports.getStackList = require('./stack-list-files');
+module.exports.container = require('./Container');

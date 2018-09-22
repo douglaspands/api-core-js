@@ -20,7 +20,7 @@ const REDIS_URL = `redis://${REDIS_HOST}:${REDIS_PORT}`;
 module.exports = app => {
 
     const logger = app.get('logger');
-    
+
     /**
      * Criando conexão.
      */
@@ -51,5 +51,21 @@ module.exports = app => {
             message: `Redis ativado com sucesso na url: ${REDIS_URL}`
         });
     });
-
+    // Armazenamento no container
+    setClient('redis', client, app, 'client');
+    setClient('redis', redisConfig, app, 'client-config');
+    return client;
+}
+/**
+ * Incluir no client 
+ * @param {string} name nome do client
+ * @param {any} data dados para armazenar
+ * @param {object} app express.js
+ * @param {string} containerName nome do container
+ * @returns {void}
+ */
+function setClient(name, data, app, containerName) {
+    let container = app.get(containerName);
+    if (!container) container = utils.container();
+    app.set(containerName, container.set(name, data));
 }
