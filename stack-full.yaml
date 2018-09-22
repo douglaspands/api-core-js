@@ -6,7 +6,7 @@ services:
         build:
             dockerfile: ./Dockerfile
             context: ./src
-        image: douglaspands/apicorejs:2.8.4
+        image: douglaspands/apicorejs:2.8.5
         container_name: apicore-app
         environment:
             - MONGO_URL=mongo:27017

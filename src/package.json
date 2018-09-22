@@ -1,6 +1,6 @@
 {
   "name": "api-core-js",
-  "version": "2.8.4",
+  "version": "2.8.5",
   "description": "Motor de APIs em Node.js",
   "main": "app.js",
   "scripts": {
