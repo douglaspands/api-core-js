@@ -38,7 +38,7 @@ module.exports = app => {
         // Pra cada api na lista, sera feito o registro dela
         graphqlList.forEach(route => {
             try {
-                const resolverFunction = require(route.file).root(new Context(route.file, app));
+                const resolverFunction = require(route.file).root(new Context(app, route.file));
                 const stringSchema = fs.readFileSync(route.graphql, 'utf8');
                 if (graphqlSchemaIsValid(stringSchema)) {
                     Object.assign(resolvers, resolverFunction);
@@ -67,12 +67,7 @@ module.exports = app => {
                 graphqlServer = graphqlExpress(async (req, res) => {
                     return {
                         schema,
-                        context: {
-                            logger: app.get('logger'),
-                            mongo: app.get('mongodb'),
-                            cache: app.get('cache'),
-                            headers: req.headers
-                        }
+                        context: new Context(app)
                     }
                 });
                 if (process.env.NODE_ENV !== 'production') {

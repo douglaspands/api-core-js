@@ -2,29 +2,33 @@
  * @file Modulo de apoio a API.
  * @author @douglaspands
  * @since 2018-09-08
- * @version 2.1.20180921
+ * @version 2.2.20180921
  */
 'use strict';
 const path = require('path');
 const utils = require('../utils');
 const config = utils.getYaml('config.yaml');
 const regexFolderLimit = new RegExp(config.folderLimit);
+const regexStackFiles = new RegExp(config.stack.regexFiles, 'g');
+
 /**
  * Class de contexto da API
  * @class Context
- * @param {string} apiPath Diretorio da API
  * @param {object} app servidor Express 
+ * @param {string} modulePath Diretorio da API
  */
-function Context(modulePath, app) {
+function Context(app, modulePath) {
 
     if (!(this instanceof Context)) {
         throw new Error('Class Context não foi instanciada!');
     }
 
     const _app = app;
-    const _modulePath = path.join(modulePath, '..');
-    const _moduleName = (_modulePath.split(/[\\\/]/g)).pop();
     const _logger = app.get('logger');
+    const _modulePath = modulePath;
+
+    // Variavel que será atribuida a cada chamada
+    let caller = null;
 
     /**
      * Encapsulando em paradigmas funcionais
@@ -33,19 +37,23 @@ function Context(modulePath, app) {
         self: {
             context: {
                 module: (moduleName) => {
+                    caller = getCaller();
                     return getModule(moduleName, this);
                 }
             },
             module: (moduleName) => {
+                caller = getCaller();
                 return getModule(moduleName, null);
             }
         },
         server: (moduleName) => {
+            caller = getCaller();
             return getServer(moduleName);
         },
         module: (moduleName) => {
+            caller = getCaller();
             _logger.debug({
-                source: _moduleName,
+                source: caller.name,
                 message: `Foi solicitado o modulo "${moduleName}" do node_modules.`
             });
             return require(moduleName);
@@ -58,19 +66,24 @@ function Context(modulePath, app) {
     this.logger = _logger;
 
     /**
+     * Utilitarios de apoio
+     */
+    this.utils = utils;
+
+    /**
      * Obter variaveis do servidor
      * @param {string} name Nome da variavel do servidor
      * @return {any} Retornar o valor da variavel obtida.
      */
     function getServer(name) {
         _logger.debug({
-            source: _moduleName,
+            source: caller.name,
             message: `Foi solicitado a variavel "${name}" do servidor.`
         });
         const _mod = _app.get(name);
         if (!_mod) {
             _logger.error({
-                source: _moduleName,
+                source: caller.name,
                 message: `Modulo "${name}" do servidor não foi encontrada!`
             });
         }
@@ -86,7 +99,7 @@ function Context(modulePath, app) {
     function getModule(name, self) {
 
         _logger.debug({
-            source: _moduleName,
+            source: caller.name,
             message: `Foi solicitado o modulo "${name}".`
         });
 
@@ -105,7 +118,7 @@ function Context(modulePath, app) {
             }
         }
 
-        let _mod = getLocalModule(_modulePath, _name);
+        let _mod = getLocalModule(caller.folder, _name);
 
         if (_mod) {
             if (_self && (typeof _mod === 'function')) {
@@ -113,13 +126,32 @@ function Context(modulePath, app) {
             }
         } else {
             _logger.error({
-                source: _moduleName,
+                source: caller.name,
                 message: `Modulo "${_name}" não foi encontrado!`
             });
         }
 
         return _mod;
 
+    }
+
+    /**
+     * Obter o fonte chamador
+     * @returns {string} fonte chamador
+     */
+    function getCaller() {
+        let result = {};
+        if (_modulePath) {
+            result.file = _modulePath;
+            result.folder = path.join(_modulePath, '..');
+        } else {
+            const stack = (new Error()).stack.toString();
+            const callerfile = stack.match(regexStackFiles)[config.stack.fileOrder];
+            result.file = callerfile;
+            result.folder = path.join(callerfile, '..');
+        }
+        result.name = (result.folder.split(/[\\\/]/g)).pop();
+        return result;
     }
 
     if (this instanceof Context) {

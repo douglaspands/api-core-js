@@ -3,5 +3,11 @@
 # @date: 2018-09-21
 # @version: 1.0.0
 ---
-# Pasta limite de busca dos modulos
+# Pasta limite de busca dos modulos (recursividade)
 folderLimit: main
+# Stack
+stack:
+  # Arquivos na stack
+  regexFiles: "(?!\\()([\\w\\-\\/\\.]+)(?=\\:\\d+\\:\\d+\\))"
+  # Ordem do arquivo 
+  fileOrder: 2
