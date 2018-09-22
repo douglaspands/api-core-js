@@ -2,7 +2,7 @@
  * @file Motor de APIs REST/GraphQL com MongoDB e Redis.
  * @author @douglaspands
  * @since 2017-12-26
- * @version 1.9.20180921
+ * @version 2.8.5-20180922
  */
 'use strict';
 // Obtendo informações do servidor
