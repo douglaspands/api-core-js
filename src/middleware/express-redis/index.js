@@ -30,6 +30,7 @@ module.exports = app => {
         detect_buffers: true
     };
     const client = redis.createClient(redisConfig);
+    app.set('redis', client);
     app.set('redis-config', redisConfig);
     app.set('cache', new Cache(client, config, logger));
     /**
@@ -51,21 +52,5 @@ module.exports = app => {
             message: `Redis ativado com sucesso na url: ${REDIS_URL}`
         });
     });
-    // Armazenamento no container
-    setClient('redis', client, app, 'client');
-    setClient('redis', redisConfig, app, 'client-config');
     return client;
-}
-/**
- * Incluir no client 
- * @param {string} name nome do client
- * @param {any} data dados para armazenar
- * @param {object} app express.js
- * @param {string} containerName nome do container
- * @returns {void}
- */
-function setClient(name, data, app, containerName) {
-    let container = app.get(containerName);
-    if (!container) container = utils.container();
-    app.set(containerName, container.set(name, data));
 }

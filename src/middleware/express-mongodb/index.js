@@ -35,23 +35,7 @@ const mongoConnect = async app => {
             message: error
         });
     }
-    // Armazenamento no container
-    setClient('mongodb', db, app, 'client');
-    setClient('mongodb', { url: URL_MONGO }, app, 'client-config');
     return db;
-}
-/**
- * Incluir no client 
- * @param {string} name nome do client
- * @param {any} data dados para armazenar
- * @param {object} app express.js
- * @param {string} containerName nome do container
- * @returns {void}
- */
-function setClient(name, data, app, containerName) {
-    let container = app.get(containerName);
-    if (!container) container = utils.container();
-    app.set(containerName, container.set(name, data));
 }
 
 module.exports = mongoConnect;

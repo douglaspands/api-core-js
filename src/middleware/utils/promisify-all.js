@@ -10,8 +10,9 @@
  * @param {object} module 
  * @returns {object} Transforma todos os callbacks em promises retornando elas com o final Async
  */
-function promisify(module) {
-    return (Object.keys((module || {}))).reduce((final, it) => {
+module.exports = (module) => {
+    const listFn = (Object.keys(module)).concat(Object.keys(Object.getPrototypeOf(module)));
+    return (listFn).reduce((final, it) => {
         final[`${it}Async`] = function Async() {
             const args = [].slice.call(arguments);
             if (!(this instanceof Async)) {
@@ -22,11 +23,10 @@ function promisify(module) {
                     if (error) return reject(error);
                     else return resolve(result);
                 });
-                module[it].apply(this, args);
+                module[it].apply(module, args);
             });
         };
         final[it] = module[it];
         return final;
     }, {});
 }
-module.exports = promisify;

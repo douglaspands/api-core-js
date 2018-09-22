@@ -15,10 +15,10 @@ let moduleMock = {};
 /**
  * Class de contexto da API
  * @class Context
- * @param {string} apiPath Diretorio da API
  * @param {object} app servidor Express 
+ * @param {string} modulePath Diretorio da API
  */
-function Context(modulePath, app) {
+function Context(app, modulePath) {
 
     const _app = app;
     const _modulePath = path.join(modulePath, '..');

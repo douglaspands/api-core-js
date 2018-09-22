@@ -17,9 +17,6 @@ module.exports = (app, app_health, server) => {
     const rest = app.get('rest_list');
     const graphql = app.get('graphql_list');
 
-    const client = app.get('client');
-    const clientConfig = app.get('client-config');
-
     app_health.use((req, res) => {
 
         const flagJson = (req.headers['content-type'] === 'application/json') ? true : false;
@@ -35,19 +32,19 @@ module.exports = (app, app_health, server) => {
                 },
                 database: {
                     mongo: {
-                        status: (client.get('mongodb'))
+                        status: (app.get('mongodb'))
                             ? 'enable'
                             : 'disable',
-                        url: (client.get('mongodb'))
-                            ? (clientConfig.get('mongodb')).url
+                        url: (app.get('mongodb'))
+                            ? (app.get('mongodb-config')).url
                             : undefined
                     },
                     redis: {
-                        status: (client.get('redis'))
+                        status: (app.get('redis'))
                             ? 'enable'
                             : 'disable',
-                        url: (client.get('redis'))
-                            ? `redis://${(clientConfig.get('redis')).host}:${(clientConfig.get('redis')).port}`
+                        url: (app.get('redis'))
+                            ? `redis://${(app.get('redis-config')).host}:${(app.get('redis-config')).port}`
                             : undefined
                     }
                 },

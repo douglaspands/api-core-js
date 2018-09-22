@@ -9,7 +9,6 @@ const path = require('path');
 const utils = require('../utils');
 const config = utils.getYaml('config.yaml');
 const regexFolderLimit = new RegExp(config.folderLimit);
-const regexStackFiles = new RegExp(config.stack.regexFiles, 'g');
 
 /**
  * Class de contexto da API
@@ -29,7 +28,6 @@ function Context(app, modulePath) {
     // Variaveis privadas
     const _app = app;
     const _modulePath = modulePath;
-    const _client = app.get('client');
 
     // Variavel que será atribuida a cada chamada
     let caller = null;
@@ -61,14 +59,6 @@ function Context(app, modulePath) {
                 message: `Foi solicitado o modulo "${moduleName}" do node_modules.`
             });
             return require(moduleName);
-        },
-        client: (moduleName) => {
-            caller = getCaller();
-            logger.debug({
-                source: caller.name,
-                message: `Foi solicitado o client "${moduleName}" do servidor.`
-            });
-            return (_client) ? _client.get(moduleName) : null;
         }
     }
 
