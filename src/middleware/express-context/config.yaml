@@ -10,4 +10,4 @@ stack:
   # Arquivos na stack
   regexFiles: "(?!\\()([\\w\\-\\/\\.]+)(?=\\:\\d+\\:\\d+\\))"
   # Ordem do arquivo 
-  fileOrder: 2
+  fileOrder: 3

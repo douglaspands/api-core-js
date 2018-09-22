@@ -2,7 +2,7 @@
  * @file Substituir com dupla chaves 
  * @author @douglaspands
  * @since 2018-09-21
- * @version 1.0.0
+ * @version 1.0.20180922
  */
 'use strict';
 const VAR_GET = '(?!\\{\\{\\s*)(VAR)(?=\\s*\\}\\})';
@@ -17,6 +17,7 @@ const VAR_REPLACE = '(\\{\\{\\s*)(VAR)(\\s*\\}\\})';
  * Ex.: 'Joao Silva'
  */
 module.exports = (text, obj) => {
+    if (typeof text !== 'string' || typeof obj !== 'object') return '';
     const varGet = new RegExp(VAR_GET.replace('VAR', '[\\w\\.]+'), 'g');
     const list = text.match(varGet);
     return (list || []).reduce((textFinal, prop) => {

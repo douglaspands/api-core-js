@@ -23,9 +23,13 @@ function Context(app, modulePath) {
         throw new Error('Class Context não foi instanciada!');
     }
 
+    // Log
+    const logger = app.get('logger');
+
+    // Variaveis privadas
     const _app = app;
-    const _logger = app.get('logger');
     const _modulePath = modulePath;
+    const _client = app.get('client');
 
     // Variavel que será atribuida a cada chamada
     let caller = null;
@@ -52,18 +56,26 @@ function Context(app, modulePath) {
         },
         module: (moduleName) => {
             caller = getCaller();
-            _logger.debug({
+            logger.debug({
                 source: caller.name,
                 message: `Foi solicitado o modulo "${moduleName}" do node_modules.`
             });
             return require(moduleName);
+        },
+        client: (moduleName) => {
+            caller = getCaller();
+            logger.debug({
+                source: caller.name,
+                message: `Foi solicitado o client "${moduleName}" do servidor.`
+            });
+            return (_client) ? _client.get(moduleName) : null;
         }
     }
 
     /**
      * Modulo de log
      */
-    this.logger = _logger;
+    this.logger = logger;
 
     /**
      * Utilitarios de apoio
@@ -76,13 +88,13 @@ function Context(app, modulePath) {
      * @return {any} Retornar o valor da variavel obtida.
      */
     function getServer(name) {
-        _logger.debug({
+        logger.debug({
             source: caller.name,
             message: `Foi solicitado a variavel "${name}" do servidor.`
         });
         const _mod = _app.get(name);
         if (!_mod) {
-            _logger.error({
+            logger.error({
                 source: caller.name,
                 message: `Modulo "${name}" do servidor não foi encontrada!`
             });
@@ -93,12 +105,12 @@ function Context(app, modulePath) {
     /**
      * Obter modulos locais.
      * @param {string} name Nome do modulo
-     * @param {object} self "true" - Executa a primeira função passando o "this".
+     * @param {object} self this.
      * @return {object} Conexão com o MongoDB
      */
     function getModule(name, self) {
 
-        _logger.debug({
+        logger.debug({
             source: caller.name,
             message: `Foi solicitado o modulo "${name}".`
         });
@@ -125,7 +137,7 @@ function Context(app, modulePath) {
                 _mod = _mod(_self);
             }
         } else {
-            _logger.error({
+            logger.error({
                 source: caller.name,
                 message: `Modulo "${_name}" não foi encontrado!`
             });
@@ -143,20 +155,16 @@ function Context(app, modulePath) {
         let result = {};
         if (_modulePath) {
             result.file = _modulePath;
-            result.folder = path.join(_modulePath, '..');
         } else {
-            const stack = (new Error()).stack.toString();
-            const callerfile = stack.match(regexStackFiles)[config.stack.fileOrder];
+            const callerfile = (utils.getStackList())[config.stack.fileOrder];
             result.file = callerfile;
-            result.folder = path.join(callerfile, '..');
         }
+        result.folder = path.join(result.file, '..');
         result.name = (result.folder.split(/[\\\/]/g)).pop();
         return result;
     }
 
-    if (this instanceof Context) {
-        Object.freeze(this);
-    }
+    Object.freeze(this);
 
 }
 

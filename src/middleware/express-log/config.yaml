@@ -13,6 +13,8 @@ format_date: "YYYY-MM-DD HH.mm.ss.SSS"
 label: server
 # Configurações para log em arquivo
 file:
+  # Nome do arquivo de log
+  name: "{{name}}_v{{version}}_.log"
   # flags
   flags: a+
   # Pasta da log
@@ -25,8 +27,6 @@ file:
   max_files: 10
   # Encoding do arquivo
   encoding: utf8
-  # Nome do arquivo de log
-  filename: "{{name}}_v{{version}}_.log"
 # Configurações para log na console
 console:
   # Level padrão

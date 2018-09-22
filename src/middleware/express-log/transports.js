@@ -64,7 +64,7 @@ module.exports = (app, config) => {
             fs.mkdirSync(logFolder);
         }
 
-        const filename = utils.replaceDoubleBraces(config.file.filename, { name: pack.name, version: pack.version });
+        const filename = utils.replaceDoubleBraces(config.file.name, { name: pack.name, version: pack.version });
 
         return new transports.File({
             level: (process.env.LOG_LEVEL || config.file.level),
