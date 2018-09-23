@@ -2,12 +2,14 @@
  * @file Modulo de apoio a API.
  * @author @douglaspands
  * @since 2018-09-08
- * @version 2.0.0
+ * @version 2.1.20180923
  */
 'use strict';
 const path = require('path');
-const config = require('./config');
+const utils = require('../utils');
+const config = utils.getYaml('config.yaml');
 const regexFolderLimit = new RegExp(config.folderLimit);
+
 const winston = require('winston');
 let serverMock = {};
 let moduleMock = {};
@@ -20,10 +22,12 @@ let moduleMock = {};
  */
 function Context(app, modulePath) {
 
-    const _app = app;
-    const _modulePath = path.join(modulePath, '..');
-    const _moduleName = (_modulePath.split(/[\\\/]/g)).pop();
-    const _logger = winston.createLogger({
+    if (!(this instanceof Context)) {
+        throw new Error('Class Context não foi instanciada!');
+    }
+
+    // Log
+    const logger = winston.createLogger({
         transports: [
             new winston.transports.Console({
                 level: 'silly',
@@ -36,8 +40,68 @@ function Context(app, modulePath) {
             })
         ]
     });
+    serverMock['logger'] = logger;
 
-    serverMock['logger'] = _logger;
+    // Variaveis privadas
+    const _app = app;
+    const _modulePath = modulePath;
+
+    // Variavel que será atribuida a cada chamada
+    let caller = null;
+
+    /**
+     * Encapsulando em paradigmas funcionais
+     */
+    this.get = {
+        self: {
+            context: {
+                module: (moduleName) => {
+                    caller = getCaller();
+                    return getModule(moduleName, this);
+                }
+            },
+            module: (moduleName) => {
+                caller = getCaller();
+                return getModule(moduleName, null);
+            }
+        },
+        server: (moduleName) => {
+            caller = getCaller();
+            return getServer(moduleName);
+        },
+        module: (moduleName) => {
+            caller = getCaller();
+            logger.debug({
+                source: caller.name,
+                message: `Foi solicitado o modulo "${moduleName}" do node_modules.`
+            });
+            return require(moduleName);
+        }
+    }
+
+    /**
+     * Modulo de log
+     */
+    this.logger = logger;
+
+    /**
+     * Utilitarios de apoio
+     */
+    this.utils = utils;
+
+    /**
+     * Incluir os mocks de execução 
+     */
+    this.set = {
+        mock: {
+            module: (name, behavior) => {
+                setModuleMock(name, behavior)
+            },
+            server: (name, behavior) => {
+                setServerMock(name, behavior)
+            }
+        }
+    }
 
     /**
      * Obter variaveis do servidor
@@ -45,8 +109,8 @@ function Context(app, modulePath) {
      * @return {any} Retornar o valor da variavel obtida.
      */
     function getServer(name) {
-        _logger.debug({
-            source: _moduleName,
+        logger.debug({
+            source: caller.name,
             message: `Foi solicitado a variavel "${name}" do servidor.`
         });
         //-- mock
@@ -55,8 +119,8 @@ function Context(app, modulePath) {
         //--
         let _mod = _app.get(name);
         if (!_mod) {
-            _logger.error({
-                source: _moduleName,
+            logger.error({
+                source: caller.name,
                 message: `Modulo "${name}" do servidor não foi encontrada!`
             });
         }
@@ -71,15 +135,15 @@ function Context(app, modulePath) {
      */
     function getModule(name, self) {
 
-        _logger.debug({
-            source: _moduleName,
+        logger.debug({
+            source: caller.name,
             message: `Foi solicitado o modulo "${name}".`
         });
 
         if (typeof name !== 'string') return null;
 
         const _name = name;
-        const _self = (self) ? self : false;
+        const _self = (self) ? self : null;
 
         function getLocalModule(modulePath, name) {
             if (!regexFolderLimit.test(modulePath)) return null;
@@ -106,11 +170,11 @@ function Context(app, modulePath) {
 
         if (_mod) {
             if (_self && typeof _mod === 'function') {
-                _mod = _mod(self);
+                _mod = _mod(_self);
             }
         } else {
-            _logger.error({
-                source: _moduleName,
+            logger.error({
+                source: caller.name,
                 message: `Modulo "${_name}" não foi encontrado!`
             });
         }
@@ -142,57 +206,23 @@ function Context(app, modulePath) {
     }
 
     /**
-     * Encapsulando em paradigmas funcionais
+     * Obter o fonte chamador
+     * @returns {string} fonte chamador
      */
-    this.get = {
-        self: {
-            context: {
-                module: (moduleName) => {
-                    return getModule(moduleName, this);
-                }
-            },
-            module: (moduleName) => {
-                return getModule(moduleName, null);
-            }
-        },
-        server: (moduleName) => {
-            return getServer(moduleName);
-        },
-        module: (moduleName) => {
-            _logger.debug({
-                source: _moduleName,
-                message: `Foi solicitado o modulo "${moduleName}" do node_modules.`
-            });
-            //-- mock
-            let mock = moduleMock[moduleName];
-            if (mock) {
-                return mock;
-            } else {
-                return require(moduleName);
-            }
-            //--
+    function getCaller() {
+        let result = {};
+        if (_modulePath) {
+            result.file = _modulePath;
+        } else {
+            const callerfile = (utils.getStackList())[config.stack.fileOrder];
+            result.file = callerfile;
         }
+        result.folder = path.join(result.file, '..');
+        result.name = (result.folder.split(/[\\\/]/g)).pop();
+        return result;
     }
 
-    /**
-     * Modulo de log
-     */
-    this.logger = _logger;
-
-    this.set = {
-        mock: {
-            module: (name, behavior) => {
-                setModuleMock(name, behavior)
-            },
-            server: (name, behavior) => {
-                setServerMock(name, behavior)
-            }
-        }
-    }
-
-    if (this instanceof Context) {
-        Object.freeze(this);
-    }
+    Object.freeze(this);
 
 }
 

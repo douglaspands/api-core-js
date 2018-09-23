@@ -2,7 +2,7 @@
  * @file Transforma o YAML em objeto javascript
  * @author @douglaspands
  * @since 2018-09-21
- * @version 1.0.20180922
+ * @version 1.0.20180923
  */
 'use strict';
 const yaml = require('js-yaml');
