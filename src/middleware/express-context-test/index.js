@@ -17,10 +17,9 @@ let moduleMock = {};
 /**
  * Class de contexto da API
  * @class Context
- * @param {object} app servidor Express 
  * @param {string} modulePath Diretorio da API
  */
-function Context(app, modulePath) {
+function Context(modulePath) {
 
     if (!(this instanceof Context)) {
         throw new Error('Class Context não foi instanciada!');
@@ -43,7 +42,9 @@ function Context(app, modulePath) {
     serverMock['logger'] = logger;
 
     // Variaveis privadas
-    const _app = app;
+    const _app = {
+        get: () => null
+    };
     const _modulePath = modulePath;
 
     // Variavel que será atribuida a cada chamada
