@@ -5,7 +5,8 @@
  * @version 1.0.20180922
  */
 'use strict';
-const YAML = require('yamljs');
+const yaml = require('js-yaml');
+const fs = require('fs');
 const path = require('path');
 const utils = require('../utils');
 /**
@@ -15,10 +16,16 @@ const utils = require('../utils');
  */
 module.exports = (yamlFile) => {
     if (typeof yamlFile !== 'string' || yamlFile.length === 0) return undefined;
-    let json = undefined;
+    let json = null;
     try {
-        const callerfile = (utils.getStackList())[2];
-        json = YAML.load(path.join(callerfile, '..', yamlFile));
+        let yamlFileData = undefined;
+        if (yamlFile.substr(0, 1) === '/') {
+            yamlFileData = fs.readFileSync(yamlFile, 'utf8');
+        } else {
+            const callerfile = (utils.getStackList())[2];
+            yamlFileData = fs.readFileSync(path.join(callerfile, '..', yamlFile), 'utf8');
+        }
+        json = yaml.safeLoad(yamlFileData);
     } catch (error) { }
     return json;
 }
