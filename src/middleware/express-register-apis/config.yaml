@@ -1,0 +1,7 @@
+# @file: Configurações para a rotina de registro das APIs
+# @author: @douglaspands
+# @date: 2018-09-21
+# @version: 1.0.0
+---
+# Pasta inicial para a pesquisa de APIs (inclusive nas subpastas)
+directory: main

@@ -1,0 +1,13 @@
+# @file: Configurações do CRUD do banco de dados sincronizado
+# @author: @douglaspands
+# @date: 2018-09-22
+# @version: 1.0.0
+---
+# Configurações de cache
+cache:
+  # Prefixo
+  prefix: cache
+  # Em caso de pesquisa, prefixo da chave de pesquisa
+  search: search
+  # Tempo padrão do cache (sem segundos)
+  seconds: 600

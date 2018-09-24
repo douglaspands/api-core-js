@@ -17,7 +17,7 @@ describe('# ./index.js', () => {
 
     beforeEach(() => {
 
-        context = new Context(pathApp);;
+        context = new Context(pathApp);
 
     });
 

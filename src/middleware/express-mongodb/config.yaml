@@ -1,0 +1,9 @@
+# @file: Configurações do MongoDB
+# @author: @douglaspands
+# @date: 2018-09-21
+# @version: 1.0.0
+---
+# Url do servidor
+uri: "localhost:27017"
+# Nome do database
+database: "apicore"

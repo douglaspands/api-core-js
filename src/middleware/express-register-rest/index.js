@@ -32,7 +32,6 @@ module.exports = app => {
         // Pra cada api na lista, sera feito o registro dela
         restList.forEach(route => {
             const api = require(route.file);
-            const context = new Context(route.file, app);
             let functionsList = [];
             if (typeof api === 'function') functionsList = [api];
             else if (typeof api === 'object') functionsList = (_.pull(Object.keys(api), 'route')).map(fn => api[fn]);
@@ -40,7 +39,7 @@ module.exports = app => {
                 function createHandler(fn) {
                     function handler() {
                         let args = [].slice.call(arguments);
-                        args.push(context);
+                        args.push(new Context(app/*, route.file*/));
                         fn.apply(this, args);
                     }
                     return handler;

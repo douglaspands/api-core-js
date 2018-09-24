@@ -1,6 +1,6 @@
 {
   "name": "api-core-js",
-  "version": "2.8.2",
+  "version": "2.8.5",
   "description": "Motor de APIs em Node.js",
   "main": "app.js",
   "scripts": {
@@ -23,17 +23,16 @@
     "body-parser": "^1.18.3",
     "compression": "^1.7.3",
     "cors": "^2.8.4",
-    "elasticsearch": "^15.1.1",
     "express": "^4.16.3",
     "graphql": "^14.0.2",
     "graphql-tools": "^4.0.0",
+    "js-yaml": "^3.12.0",
     "lodash": "^4.17.5",
     "merge-graphql-schemas": "^1.5.4",
     "moment": "^2.21.0",
     "mongodb": "^3.0.4",
     "redis": "^2.8.0",
     "uuid": "^3.2.1",
-    "winston": "^3.0.0-rc1",
-    "winston-elasticsearch": "^0.7.4"
+    "winston": "^3.0.0-rc1"
   }
 }

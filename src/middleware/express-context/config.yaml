@@ -1,0 +1,11 @@
+# @file: Configurações da classe Context
+# @author: @douglaspands
+# @date: 2018-09-21
+# @version: 1.0.0
+---
+# Pasta limite de busca dos modulos (recursividade)
+folderLimit: main
+# Stack
+stack:
+  # Ordem do arquivo 
+  fileOrder: 3

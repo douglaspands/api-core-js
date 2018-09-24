@@ -1,0 +1,17 @@
+# @file: Configurações para pesquisa das controllers
+# @author: @douglaspands
+# @date: 2018-09-21
+# @version: 1.0.20180921
+---
+# Fonte onde esta o controller da API
+file: index.js
+# Expressão regular para testar a rota da controller
+file_type: "^(.+)([\\\\/])index.js$"
+# Verbos HTTP valido
+methods:
+  - get
+  - put
+  - post
+  - patch
+  - delete
+  - options

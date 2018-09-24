@@ -2,17 +2,19 @@
  * @file Modulo de sincronia entre os bancos
  * @author @douglaspands
  * @since 2018-09-18
- * @version 1.0.20180917
+ * @version 1.1.20180922
  */
 'use strict';
-
-module.exports = ({ get }) => {
+/**
+ * Executa a sincronia entre bancos
+ * @param {object} context 
+ */
+module.exports = ({ get, utils }) => {
 
     const qs = get.module('querystring');
-    const promisify = get.self.module('utils/module-promisify');
-    const mongo = promisify(get.self.context.module('utils/mongo-crud'));
+    const mongo = utils.promisifyAll(get.self.context.module('utils/mongo-crud'));
     const cache = get.server('cache');
-    const config = require('./config');
+    const config = utils.getYaml('./config.yaml');
 
     /**
      * Consultar no DB

@@ -2,28 +2,35 @@
  * @file Modulo de apoio a API.
  * @author @douglaspands
  * @since 2018-09-08
- * @version 2.0.1
+ * @version 2.2.20180921
  */
 'use strict';
 const path = require('path');
-const config = require('./config');
+const utils = require('../utils');
+const config = utils.getYaml('config.yaml');
 const regexFolderLimit = new RegExp(config.folderLimit);
+
 /**
  * Class de contexto da API
  * @class Context
- * @param {string} apiPath Diretorio da API
  * @param {object} app servidor Express 
+ * @param {string} modulePath Diretorio da API
  */
-function Context(modulePath, app) {
+function Context(app, modulePath) {
 
     if (!(this instanceof Context)) {
         throw new Error('Class Context não foi instanciada!');
     }
 
+    // Log
+    const logger = app.get('logger');
+
+    // Variaveis privadas
     const _app = app;
-    const _modulePath = path.join(modulePath, '..');
-    const _moduleName = (_modulePath.split(/[\\\/]/g)).pop();
-    const _logger = app.get('logger');
+    const _modulePath = modulePath;
+
+    // Variavel que será atribuida a cada chamada
+    let caller = null;
 
     /**
      * Encapsulando em paradigmas funcionais
@@ -32,21 +39,25 @@ function Context(modulePath, app) {
         self: {
             context: {
                 module: (moduleName) => {
+                    caller = getCaller();
                     return getModule(moduleName, this);
                 }
             },
             module: (moduleName) => {
+                caller = getCaller();
                 return getModule(moduleName, null);
             }
         },
         server: (moduleName) => {
+            caller = getCaller();
             return getServer(moduleName);
         },
         module: (moduleName) => {
-            _logger.debug({
-                source: _moduleName,
+            caller = getCaller();
+            logger.debug({
+                source: caller.name,
                 message: `Foi solicitado o modulo "${moduleName}" do node_modules.`
-            });    
+            });
             return require(moduleName);
         }
     }
@@ -54,7 +65,12 @@ function Context(modulePath, app) {
     /**
      * Modulo de log
      */
-    this.logger = _logger;
+    this.logger = logger;
+
+    /**
+     * Utilitarios de apoio
+     */
+    this.utils = utils;
 
     /**
      * Obter variaveis do servidor
@@ -62,14 +78,14 @@ function Context(modulePath, app) {
      * @return {any} Retornar o valor da variavel obtida.
      */
     function getServer(name) {
-        _logger.debug({
-            source: _moduleName,
+        logger.debug({
+            source: caller.name,
             message: `Foi solicitado a variavel "${name}" do servidor.`
         });
         const _mod = _app.get(name);
         if (!_mod) {
-            _logger.error({
-                source: _moduleName,
+            logger.error({
+                source: caller.name,
                 message: `Modulo "${name}" do servidor não foi encontrada!`
             });
         }
@@ -79,13 +95,13 @@ function Context(modulePath, app) {
     /**
      * Obter modulos locais.
      * @param {string} name Nome do modulo
-     * @param {object} self "true" - Executa a primeira função passando o "this".
+     * @param {object} self this.
      * @return {object} Conexão com o MongoDB
      */
     function getModule(name, self) {
 
-        _logger.debug({
-            source: _moduleName,
+        logger.debug({
+            source: caller.name,
             message: `Foi solicitado o modulo "${name}".`
         });
 
@@ -104,15 +120,15 @@ function Context(modulePath, app) {
             }
         }
 
-        let _mod = getLocalModule(_modulePath, _name);
+        let _mod = getLocalModule(caller.folder, _name);
 
         if (_mod) {
             if (_self && (typeof _mod === 'function')) {
                 _mod = _mod(_self);
             }
         } else {
-            _logger.error({
-                source: _moduleName,
+            logger.error({
+                source: caller.name,
                 message: `Modulo "${_name}" não foi encontrado!`
             });
         }
@@ -121,9 +137,24 @@ function Context(modulePath, app) {
 
     }
 
-    if (this instanceof Context) {
-        Object.freeze(this);
+    /**
+     * Obter o fonte chamador
+     * @returns {string} fonte chamador
+     */
+    function getCaller() {
+        let result = {};
+        if (_modulePath) {
+            result.file = _modulePath;
+        } else {
+            const callerfile = (utils.getStackList())[config.stack.fileOrder];
+            result.file = callerfile;
+        }
+        result.folder = path.join(result.file, '..');
+        result.name = (result.folder.split(/[\\\/]/g)).pop();
+        return result;
     }
+
+    Object.freeze(this);
 
 }
 

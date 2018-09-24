@@ -2,21 +2,26 @@
  * @file Classe de funções basicas do cache
  * @author @douglaspands
  * @since 2018-09-17
- * @version 1.0.0
+ * @version 1.0.1
  * Essa classe foi desenvolvida devido ao bug de não conseguir armazenar o client no Redis no Express.js
  */
 'use strict';
 /**
  * Classe com funções basicas do redis
- * @param {*} clientRedis 
+ * @param {*} clientRedis
+ * @param {*} config
  * @param {*} logger 
  */
-function Cache(clientRedis, logger) {
+function Cache(clientRedis, config, logger) {
+
     if (!(this instanceof Cache)) {
-        return new Cache(clientRedis);
+        return new Cache(clientRedis, config, logger);
     }
+
     const _client = clientRedis;
+    const _config = config;
     const _logger = logger;
+
     this.get = async (key) => new Promise((resolve, reject) => _client.get(key, (error, data) => {
         if (error) {
             _logger.warn({
@@ -25,7 +30,7 @@ function Cache(clientRedis, logger) {
             });
             reject(error);
         } else {
-            let _data = null; 
+            let _data = null;
             try {
                 _data = JSON.parse(data);
             } catch (error) {
@@ -35,10 +40,11 @@ function Cache(clientRedis, logger) {
                 source: 'cache',
                 message: `get(${key}):${data}`
             });
-            resolve(_data);    
+            resolve(_data);
         }
     }));
-    this.set = async (key, value, seconds) => new Promise((resolve, reject) => {
+
+    this.set = async (key, value, seconds = _config.time_default) => new Promise((resolve, reject) => {
         const _value = (typeof value === 'object') ? JSON.stringify(value) : value.toString();
         _client.set(key, _value, 'EX', seconds, error => {
             if (error) {
@@ -56,6 +62,7 @@ function Cache(clientRedis, logger) {
             }
         });
     });
+
     this.del = async (key) => new Promise((resolve, reject) => _client.del(key, (error) => {
         if (error) {
             _logger.warn({
@@ -71,5 +78,7 @@ function Cache(clientRedis, logger) {
             resolve();
         }
     }));
+
 }
+
 module.exports = Cache;

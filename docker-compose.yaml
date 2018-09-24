@@ -1,0 +1,23 @@
+# file: docker-compose.yaml 
+# description: Criar container da aplicação. 
+version: '3.5'
+services:
+    apicore:
+        build:
+            dockerfile: ./Dockerfile
+            context: ./src
+        image: douglaspands/apicorejs:2.8.5
+        container_name: apicore-app
+        environment:
+            - MONGO_URL=localhost:27017
+            - REDIS_URL=localhost:6379
+            - LOG_LEVEL=info
+            - PORT=3000
+        volumes: 
+            - app-data:/var/www/logs
+        ports:
+            - 3000:3000
+            - 3001:3001
+volumes:
+    app-data: 
+        driver: local

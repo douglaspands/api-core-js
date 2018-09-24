@@ -13,20 +13,13 @@ const os = require('os');
  */
 module.exports = (app, app_health, server) => {
 
-    const mongo = app.get('mongodb');
-    const mongoConfig = app.get('mongodb-config');
-    const redis = app.get('cache');
-    const redisConfig = app.get('redis-config');
     const pack = app.get('package');
-    const es = app.get('es');
-    const esConfig = app.get('es-config');
-
     const rest = app.get('rest_list');
     const graphql = app.get('graphql_list');
 
     app_health.use((req, res) => {
 
-        const flagJson = (req.headers['content-type'] === 'application/json')? true: false;
+        const flagJson = (req.headers['content-type'] === 'application/json') ? true : false;
         const resultData = {
             data: {
                 server: {
@@ -39,16 +32,20 @@ module.exports = (app, app_health, server) => {
                 },
                 database: {
                     mongo: {
-                        status: (mongo) ? 'enable' : 'disable',
-                        url: (mongo) ? mongoConfig.url : undefined
+                        status: (app.get('mongodb'))
+                            ? 'enable'
+                            : 'disable',
+                        url: (app.get('mongodb'))
+                            ? (app.get('mongodb-config')).url
+                            : undefined
                     },
                     redis: {
-                        status: (redis) ? 'enable' : 'disable',
-                        url: (redis) ? `redis://${redisConfig.host}:${redisConfig.port}` : undefined
-                    },
-                    elastic_search: {
-                        status: (es) ? 'enable' : 'disable',
-                        url: (es) ? esConfig.hosts : undefined
+                        status: (app.get('redis'))
+                            ? 'enable'
+                            : 'disable',
+                        url: (app.get('redis'))
+                            ? `redis://${(app.get('redis-config')).host}:${(app.get('redis-config')).port}`
+                            : undefined
                     }
                 },
                 machine: {
@@ -78,7 +75,7 @@ module.exports = (app, app_health, server) => {
             }
         };
 
-        const response = (flagJson)? resultData: `<pre>\n${JSON.stringify(resultData, null, 4)}\n</pre>`;
+        const response = (flagJson) ? resultData : `<pre>\n${JSON.stringify(resultData, null, 4)}\n</pre>`;
         return res.status(200).send(response);
 
     });

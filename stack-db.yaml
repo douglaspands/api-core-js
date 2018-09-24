@@ -1,0 +1,19 @@
+# file: stack-db.yaml 
+# description: Criar container dos bancos de dados. 
+version: '3.5'
+services:
+    mongo:
+        image: mongo:4.0.1
+        container_name: apicore-mongo
+        volumes: 
+            - mongo-data:/data/db
+        ports:
+            - 27017:27017
+    redis:
+        image: redis:4.0.11-alpine
+        container_name: apicore-redis
+        ports:
+            - 6379:6379
+volumes:
+    mongo-data:
+        driver: local

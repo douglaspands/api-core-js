@@ -5,7 +5,8 @@
  */
 'use strict';
 const path = require('path');
-const config = require('./config');
+const utils = require('../utils');
+const config = utils.getYaml('config.yaml');
 const bodyParser = require('body-parser');
 const searchFiles = require('../search-files');
 const searchController = require('../search-controllers');
