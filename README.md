@@ -1,7 +1,6 @@
 # API REST/GraphQL CORE JS
 
 Motor de API REST/GraphQL em Node.js com MongoDB e Redis.   
-Foi incluido o Elastic-Search e o Kibana para consulta de log (opcional).
 
 ## Objetivo  
 
@@ -83,8 +82,8 @@ service.consultar(123);
 
 Foi gerado 3 scripts yaml para rodar com o *docker-compose*
 - **stack-db.yaml**: Esse script baixa e executa o MongoDB e o Redis configurado para uma melhor utilização no desenvolvimento do projeto.   Utilizando esse script, é necessario baixar as dependencias e executar o server em Node.js;
-- **docker-compose.yaml** **(script principal)**: Esse script baixa baixa o Node.js e cria uma imagem e container com o server dentro;
 - **stack-full.yaml**: Esse script baixa e executa o MongoDB, Redis, baixa o Node.js e cria uma imagem e container com o server dentro. Utiliza as configurações para execução em produção;
+- **docker-compose.yaml** **(script principal)**: Esse script baixa baixa o Node.js e cria uma imagem e container com o server dentro;
 
 Eu criei esses scripts para ajudar em cada fase do desenvolvimento.
 
