@@ -24,25 +24,7 @@ const REGEX_FILE_TYPE = new RegExp(config.file_type, 'i');
  * file: endereço do arquivo
  */
 const searchController = filesList => {
-    /**
-     * Verifica se foi identificado todas as notações necessariaspara cadastro da rota.
-     * @param {object} route Representa os parametros minimos pra cadastrar a rota.
-     * @return {boolean} Retorna 'true' se a rota tiver o minimo necessario
-     */
-    const verifyRest = route => {
-        return route.controller && route.controller.length > 0 &&
-            route.method && route.method.length > 0 && _.includes(config.methods, route.method) &&
-            route.uri && route.uri.length > 0;
-    }
-    /**
-     * Verifica se foi identificado todas as notações necessariaspara cadastro da rota.
-     * @param {object} route Representa os parametros minimos pra cadastrar a rota.
-     * @return {boolean} Retorna 'true' se a rota tiver o minimo necessario
-     */
-    const verifyGraphql = route => {
-        return route.controller && route.controller.length > 0 &&
-            route.graphql && route.graphql.length > 0 && fs.existsSync(route.graphql) && fs.lstatSync(route.graphql).isFile();
-    }
+
     const routesList = filesList.reduce((routes, file) => {
         if ((REGEX_FILE_TYPE).test(file)) {
             try {
@@ -65,6 +47,26 @@ const searchController = filesList => {
         return routes;
     }, []);
     return routesList;
+}
+
+/**
+ * Verifica se foi identificado todas as notações necessariaspara cadastro da rota.
+ * @param {object} route Representa os parametros minimos pra cadastrar a rota.
+ * @return {boolean} Retorna 'true' se a rota tiver o minimo necessario
+ */
+function verifyRest(route) {
+    return route.controller && route.controller.length > 0 &&
+        route.method && route.method.length > 0 && _.includes(config.methods, route.method) &&
+        route.uri && route.uri.length > 0;
+}
+/**
+ * Verifica se foi identificado todas as notações necessariaspara cadastro da rota.
+ * @param {object} route Representa os parametros minimos pra cadastrar a rota.
+ * @return {boolean} Retorna 'true' se a rota tiver o minimo necessario
+ */
+function verifyGraphql(route) {
+    return route.controller && route.controller.length > 0 &&
+        route.graphql && route.graphql.length > 0 && fs.existsSync(route.graphql) && fs.lstatSync(route.graphql).isFile();
 }
 
 module.exports = searchController;
