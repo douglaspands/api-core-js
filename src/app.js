@@ -31,7 +31,7 @@ const { logger } = require('./middleware/express-log')(app);
     return apis;
 })().then(({ rest, graphql }) => {
     // Inicializando o servidor
-    const server = http.createServer(app).listen((process.env.PORT || 3000), () => {
+    const server = (http.createServer(app)).listen((process.env.PORT || 3000), () => {
         const environment = process.env.NODE_ENV || 'develop';
         // Log da inicialização do servidor
         logger.info(`Executando "${name}@${version}" em http://localhost:${server.address().port} (${environment}) (pid:${process.pid})`);
