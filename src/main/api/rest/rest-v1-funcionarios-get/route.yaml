@@ -4,7 +4,7 @@
 # @version: 1.0.0
 ---
 # Tipo de API
-controller: 'rest'
+type: 'rest'
 # Metodo HTTP da API
 method: 'get'
 # Rota da API
