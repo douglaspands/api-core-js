@@ -32,6 +32,7 @@ const searchController = filesList => {
                 const route = utils.getYaml(file);
                 if (route) {
                     if (verifyGraphql(route, file)) {
+                        route['schema'] = replaceFile(file, route.schema);
                         route['file'] = replaceFile(file, config.file);
                         routes.push(route);
                     } else if (verifyRest(route, file)) {
@@ -54,7 +55,7 @@ const searchController = filesList => {
 function verifyRest(route, file) {
     return route.type &&
         typeof route.type === 'string' &&
-        route.type.toUpperCase() === 'REST' &&
+        route.type.toUpperCase() === config.constants.rest &&
         route.method &&
         typeof route.method === 'string' &&
         _.includes(config.methods, route.method) &&
@@ -73,7 +74,7 @@ function verifyRest(route, file) {
 function verifyGraphql(route, file) {
     return route.type &&
         typeof route.type === 'string' &&
-        route.type.toUpperCase() === 'GRAPHQL' &&
+        route.type.toUpperCase() === config.constants.graphql &&
         route.schema &&
         typeof route.schema === 'string' &&
         route.schema.length > 0 &&

@@ -2,10 +2,9 @@
  * @file Cadastrando rotas REST no express.Router()
  * @author @douglaspands
  * @since 2018-09-13
- * @version 1.0.0
+ * @version 1.1.0-20181127
  */
 'use strict';
-const _ = require('lodash');
 const source = (__dirname).split('/').pop();
 // Objeto de contexto
 const Context = require('../../middleware/express-context');
@@ -34,12 +33,12 @@ module.exports = app => {
             const api = require(route.file);
             let functionsList = [];
             if (typeof api === 'function') functionsList = [api];
-            else if (typeof api === 'object') functionsList = (_.pull(Object.keys(api), 'route')).map(fn => api[fn]);
+            else if (typeof api === 'object') functionsList = (Object.keys(api)).map(fn => api[fn]);
             const handlersList = functionsList.reduce((handlers, fn) => {
                 function createHandler(fn) {
                     function handler() {
                         let args = [].slice.call(arguments);
-                        args.push(new Context(app/*, route.file*/));
+                        args.push(new Context(app, route.file));
                         fn.apply(this, args);
                     }
                     return handler;

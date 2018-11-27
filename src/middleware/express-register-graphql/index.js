@@ -2,14 +2,13 @@
  * @file Cadastrando rotas GraphQL no graphqlHTTP
  * @author @douglaspands
  * @since 2018-09-13
- * @version 1.0.0
+ * @version 1.1.0-20181127
  */
 'use strict';
 const _ = require('lodash');
 const fs = require('fs');
 const source = (__dirname).split('/').pop();
-const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
-const { makeExecutableSchema } = require('graphql-tools');
+const { ApolloServer } = require('apollo-server-express');
 const { mergeTypes } = require('merge-graphql-schemas');
 // Objeto de contexto
 const Context = require('../../middleware/express-context');
@@ -34,12 +33,11 @@ module.exports = app => {
         let resolvers = {};
         let schemas = [];
         let graphqlServer = null;
-        let graphiqlServer = null;
         // Pra cada api na lista, sera feito o registro dela
         graphqlList.forEach(route => {
             try {
-                const resolverFunction = require(route.file).root(new Context(app, route.file));
-                const stringSchema = fs.readFileSync(route.graphql, 'utf8');
+                const resolverFunction = require(route.file)(new Context(app, route.file));
+                const stringSchema = fs.readFileSync(route.schema, 'utf8');
                 if (graphqlSchemaIsValid(stringSchema)) {
                     Object.assign(resolvers, resolverFunction);
                     schemas.push(stringSchema);
@@ -50,7 +48,7 @@ module.exports = app => {
                     });
                     logger.error({
                         source: source,
-                        message: `schema...: ${route.graphql}`
+                        message: `schema...: ${route.schema}`
                     });
                 }
             } catch (error) {
@@ -63,16 +61,7 @@ module.exports = app => {
         if (!_.isEmpty(resolvers) && schemas.length > 0) {
             try {
                 const typeDefs = mergeTypes(schemas);
-                const schema = makeExecutableSchema({ typeDefs, resolvers });
-                graphqlServer = graphqlExpress(async (req, res) => {
-                    return {
-                        schema,
-                        context: new Context(app)
-                    }
-                });
-                if (process.env.NODE_ENV !== 'production') {
-                    graphiqlServer = graphiqlExpress({ endpointURL: '/graphql', });
-                }
+                graphqlServer = new ApolloServer({ typeDefs, resolvers, context: new Context(app) });
             } catch (error) {
                 logger.error({
                     source: source,
@@ -80,14 +69,14 @@ module.exports = app => {
                 });
                 resolvers = {};
             }
-        } 
+        }
         const listResolvers = (Object.keys(resolvers)).reduce((list, fn) => {
             if (fn === 'Query' || fn === 'Mutation') {
                 Object.keys(resolvers[fn]).forEach(i => list.push(i));
             }
             return list;
         }, []);
-        return { graphqlHTTP: graphqlServer, list: listResolvers, graphiqlHTTP: graphiqlServer };
+        return { graphqlHTTP: graphqlServer, list: listResolvers };
     }
     return { register };
 };

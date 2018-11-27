@@ -16,14 +16,7 @@
  * - removerFuncionario: Remover funcionarios
  * - pesquisarFuncionarios: Pesquisar funcionario atraves de qualquer parametro do recurso 
  */
-/**
- * Root do servidor GraphQL 
- * @param {object} context
- * @returns {object} 
- * - root
- * - route
- */
-const root = ({ get }) => {
+module.exports = ({ get }) => {
 
     const service = get.self.context.module('services/funcionarios-service');
     const validarEntrada = get.self.context.module('modules/validador-opcional');
@@ -127,9 +120,4 @@ const root = ({ get }) => {
         },
         ...transforms
     }
-}
-
-module.exports = {
-    route,
-    root
 }

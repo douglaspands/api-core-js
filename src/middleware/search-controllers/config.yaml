@@ -15,3 +15,7 @@ methods:
   - patch
   - delete
   - options
+#contantes
+constants:
+  rest: 'REST'
+  graphql: 'GRAPHQL'

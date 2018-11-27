@@ -2,7 +2,7 @@
  * @file Motor de APIs REST/GraphQL com MongoDB e Redis.
  * @author @douglaspands
  * @since 2017-12-26
- * @version 2.8.5-20181031
+ * @version 2.9.0-20181031
  */
 'use strict';
 // Obtendo informações do servidor
@@ -45,7 +45,7 @@ const { logger } = require('./middleware/express-log')(app);
             });
             // Caso seja o ambiente de desenvolvimento, disponibilizar interface para teste do GraphQL
             if (environment !== 'production') {
-                logger.debug(`GraphiQL disponivel em http://localhost:${server.address().port}/graphiql (${environment})`);
+                logger.debug(`GraphQL Playground disponivel em http://localhost:${server.address().port}/graphql (${environment})`);
             }
         }
         // Criando health-check
