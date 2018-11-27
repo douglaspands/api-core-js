@@ -5,5 +5,5 @@
 ---
 # Tipo de API
 type: 'graphql'
-# Graphql schema
+# GraphQL schema
 schema: 'funcionario.graphql'

@@ -19,7 +19,25 @@ Para iniciar a utilização desse motor de APIs, é necessario 2 coisas:
 
 ## APIs REST/GraphQL de exemplo
 
-No diretorio **src/main/api** existem 2 pastas: **rest** e **graphql** (as APIs estão nelas respectivamente).  
+No diretorio **src/main/api** existem 2 pastas: **rest** e **graphql** (as APIs estão nelas respectivamente).
+Nas pastas das APIs contem um arquivo chamado `route.yaml`, onde esta parametrizado informações de cadastro da API.
+Temos as seguintes opções:
+```yaml
+# API REST
+# Para API Rest é necessario cadastrar o tipo, o metodo e a rota
+# Tipo de API
+type: 'rest'
+# Metodo HTTP da API
+method: 'get'
+# Rota da API
+uri: '/v1/funcionarios'
+# API GraphQL
+# Para API GraphQL é necessario cadastrar o tipo e o nome do arquivo que contem o schema
+# Tipo de API
+type: 'graphql'
+# GraphQL schema
+schema: 'funcionario.graphql'
+```  
 No diretorio de cada API, contem a pasta de *test*, onde contem os testes utilizando os frameworks *mocha* para validação e o *nyc* para mostrar a cobertura teste numa forma visual.
 
 ### Objeto de contexto
