@@ -31,6 +31,7 @@ type: 'rest'
 method: 'get'
 # Rota da API
 uri: '/v1/funcionarios'
+---
 # API GraphQL
 # Para API GraphQL é necessario cadastrar o tipo e o nome do arquivo que contem o schema
 # Tipo de API
