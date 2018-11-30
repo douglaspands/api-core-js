@@ -13,6 +13,7 @@ services:
             - REDIS_URL=redis:6379
             - LOG_LEVEL=info
             - PORT=3000
+            - NODE_ENV=development
         volumes: 
             - app-data:/var/www/logs
         ports:
