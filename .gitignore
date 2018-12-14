@@ -58,8 +58,8 @@ typings/
 .env
 
 # Personal
-.vscode
 mongo_data/*
 redis_data/*
 elastic_data/*
 *.sh
+.DS_Store 

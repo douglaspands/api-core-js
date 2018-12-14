@@ -1,4 +1,4 @@
-# file: stack-full.yaml 
+# file: stack-full-dev.yaml 
 # description: Criar container da aplicação toda. 
 version: '3.5'
 services:
@@ -6,14 +6,14 @@ services:
         build:
             dockerfile: ./Dockerfile
             context: ./src
-        image: douglaspands/apicorejs:2.8.5
+        image: douglaspands/apicorejs:2.9.0
         container_name: apicore-app
         environment:
             - MONGO_URL=mongo:27017
             - REDIS_URL=redis:6379
             - LOG_LEVEL=info
             - PORT=3000
-            - NODE_ENV=development
+            - NODE_ENV=development # development : GraphQL IDE
         volumes: 
             - app-data:/var/www/logs
         ports:
