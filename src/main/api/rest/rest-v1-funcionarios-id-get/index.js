@@ -22,7 +22,7 @@ module.exports.controller = async ({ headers, params, query }, res, next, { get,
     const fields = get.self.module('utils/rest-fields');
     
     // Lista de campos que serão mostrados no resultado
-    const queryFields = (() => {
+    const filterFields = (() => {
         const fieldsList = (query['fields']) ? query['fields'] : '';
         delete query.fields;
         return fieldsList;
@@ -39,7 +39,7 @@ module.exports.controller = async ({ headers, params, query }, res, next, { get,
             return res.status(HttpStatus.NOT_FOUND).send();
         } else {
             // Filtrando campos selecionados
-            const _ret = (queryFields) ? fields(ret, queryFields) : ret;
+            const _ret = (filterFields) ? fields(ret, filterFields) : ret;
             return res.status(HttpStatus.OK).send({ data: _ret });
         }
     } catch (error) {
