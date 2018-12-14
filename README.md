@@ -173,14 +173,14 @@ GraphiQL disponivel na rota: http://localhost:3000/graphiql
 ```graphql
 # Inclusao de funcionario
 mutation example1 {
-  criarFuncionario(funcionario:{
+  criarFuncionario(
     nome: "Douglas"
     sobrenome: "Silva"
     cidade: "São Paulo"
     estado: "SP"
     telefone: "1170707070"
     email: "dougla.silva@enterprise.com"
-  }) {
+  ) {
     _id
     nome
     sobrenome
