@@ -2,13 +2,12 @@
  * @file Cadastrando rotas REST no express.Router()
  * @author @douglaspands
  * @since 2018-09-13
- * @version 1.0.0
+ * @version 1.2.0-20181213
  */
 'use strict';
 const _ = require('lodash');
 const source = (__dirname).split('/').pop();
-// Objeto de contexto
-const Context = require('../../middleware/express-context');
+const utils = require('./handlers-utils');
 
 module.exports = app => {
     // Objeto de log
@@ -30,32 +29,17 @@ module.exports = app => {
         let router = null;
         let list = [];
         // Pra cada api na lista, sera feito o registro dela
-        restList.forEach(route => {
+        _.forEach(restList, route => {
             const api = require(route.file);
-            let functionsList = [];
-            if (typeof api === 'function') functionsList = [api];
-            else if (typeof api === 'object') functionsList = (_.pull(Object.keys(api), 'route')).map(fn => api[fn]);
-            const handlersList = functionsList.reduce((handlers, fn) => {
-                function createHandler(fn) {
-                    function handler() {
-                        let args = [].slice.call(arguments);
-                        args.push(new Context(app/*, route.file*/));
-                        fn.apply(this, args);
-                    }
-                    return handler;
-                }
-                if (typeof fn === 'function') handlers.push(new createHandler(fn));
-                return handlers;
-            }, []);
-            try {
+            const handlersList = utils.handlerList(api, app);
+            if (_.size(handlersList) > 0) {
                 if (!router) router = require('express').Router();
-                router[route.method](route.uri, handlersList);
-                list.push({ uri: route.uri, method: route.method });
-            } catch (error) {
-                logger.error({
-                    source: source,
-                    message: error.stack
-                });
+                try {
+                    router[route.method](route.uri, handlersList);
+                    list.push({ uri: route.uri, method: route.method });
+                } catch (error) {
+                    logger.error({ source: source, message: error.stack });
+                }
             }
         });
         return { router, list };

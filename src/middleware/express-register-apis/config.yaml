@@ -5,3 +5,7 @@
 ---
 # Pasta inicial para a pesquisa de APIs (inclusive nas subpastas)
 directory: main
+#contantes
+constants:
+  rest: 'REST'
+  graphql: 'GRAPHQL'

@@ -1,0 +1,11 @@
+# @file: Router
+# @author: @douglaspands
+# @date: 2018-10-31
+# @version: 1.0.0
+---
+# Tipo de API
+type: 'rest'
+# Metodo HTTP da API
+method: 'get'
+# Rota da API
+uri: '/v1/funcionarios'

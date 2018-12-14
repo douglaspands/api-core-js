@@ -16,28 +16,7 @@
  * - removerFuncionario: Remover funcionarios
  * - pesquisarFuncionarios: Pesquisar funcionario atraves de qualquer parametro do recurso 
  */
-/** 
- * Configuracoes da rota
- * @returns {object} Retorna os campos:
- * controller: tipo de api (rest:graphql)
- * method: verbo http que esta sendo executado
- * uri: rota 
- * graphql: nome do arquivo .gql
- */
-const route = () => {
-    return {
-        controller: 'graphql',
-        graphql: 'funcionario.graphql'
-    }
-};
-/**
- * Root do servidor GraphQL 
- * @param {object} context
- * @returns {object} 
- * - root
- * - route
- */
-const root = ({ get }) => {
+module.exports = ({ get }) => {
 
     const service = get.self.context.module('services/funcionarios-service');
     const validarEntrada = get.self.context.module('modules/validador-opcional');
@@ -141,9 +120,4 @@ const root = ({ get }) => {
         },
         ...transforms
     }
-}
-
-module.exports = {
-    route,
-    root
 }

@@ -1,12 +1,12 @@
 # @file: Configurações para pesquisa das controllers
 # @author: @douglaspands
 # @date: 2018-09-21
-# @version: 1.0.20180921
+# @version: 1.1.20180926
 ---
 # Fonte onde esta o controller da API
 file: index.js
-# Expressão regular para testar a rota da controller
-file_type: "^(.+)([\\\\/])index.js$"
+# Expressão regular para obter informações da rota
+file_type: "^(.+)([\\\\/])route.(yaml|yml)$"
 # Verbos HTTP valido
 methods:
   - get
@@ -15,3 +15,7 @@ methods:
   - patch
   - delete
   - options
+#contantes
+constants:
+  rest: 'REST'
+  graphql: 'GRAPHQL'

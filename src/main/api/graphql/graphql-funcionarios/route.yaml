@@ -1,0 +1,9 @@
+# @file: Router
+# @author: @douglaspands
+# @date: 2018-10-31
+# @version: 1.0.0
+---
+# Tipo de API
+type: 'graphql'
+# GraphQL schema
+schema: 'funcionario.graphql'

@@ -1,16 +1,16 @@
 # file: docker-compose.yaml 
-# description: Criar container da aplicação. 
+# description: Criar container da aplicação toda. 
 version: '3.5'
 services:
     apicore:
         build:
             dockerfile: ./Dockerfile
             context: ./src
-        image: douglaspands/apicorejs:2.8.5
+        image: douglaspands/apicorejs:2.9.0
         container_name: apicore-app
         environment:
-            - MONGO_URL=localhost:27017
-            - REDIS_URL=localhost:6379
+            - MONGO_URL=mongo:27017
+            - REDIS_URL=redis:6379
             - LOG_LEVEL=info
             - PORT=3000
         volumes: 
@@ -18,6 +18,32 @@ services:
         ports:
             - 3000:3000
             - 3001:3001
+        networks:
+            - production-network
+        depends_on:
+            - mongo
+            - redis
+    mongo:
+        image: mongo:4.0.1
+        container_name: apicore-mongo
+        volumes: 
+            - mongo-data:/data/db
+        ports:
+            - 27017:27017
+        networks: 
+            - production-network
+    redis:
+        image: redis:4.0.11-alpine
+        container_name: apicore-redis
+        ports:
+            - 6379:6379
+        networks: 
+            - production-network
+networks: 
+    production-network:
+        driver: bridge
 volumes:
     app-data: 
+        driver: local
+    mongo-data:
         driver: local
